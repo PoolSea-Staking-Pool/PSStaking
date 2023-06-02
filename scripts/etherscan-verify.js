@@ -22,6 +22,8 @@ function apiEndpoint (network) {
       return 'https://api-goerli.etherscan.io/api'
     case 'mainnet':
       return 'https://api.etherscan.io/api'
+    case 'pulseTest':
+      return 'https://scan.v4.testnet.pulsechain.com/api'
   }
   throw new Error(`Unknown network ${network}`)
 }
@@ -32,6 +34,8 @@ function networkToId (network) {
       return '5'
     case 'mainnet':
       return '1'
+    case 'pulseTest':
+      return '943'
   }
   throw new Error(`Unknown network ${network}`)
 }

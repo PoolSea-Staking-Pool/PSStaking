@@ -50,6 +50,16 @@ module.exports = {
             },
             network_id: '*',
         },
+        pulseTest: {
+            url: 'https://rpc.v4.testnet.pulsechain.com',
+            accounts: {
+                mnemonic: mnemonicPhrase,
+                path: 'm/44\'/60\'/0\'/0',
+                initialIndex: 0,
+                count: 1,
+                passphrase: mnemonicPassword,
+            },
+        },
     },
     paths: {
         sources: './contracts',

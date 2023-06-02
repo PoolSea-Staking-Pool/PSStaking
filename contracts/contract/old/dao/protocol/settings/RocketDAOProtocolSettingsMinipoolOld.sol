@@ -45,7 +45,7 @@ contract RocketDAOProtocolSettingsMinipoolOld is RocketDAOProtocolSettings, Rock
 
     // Balance required to launch minipool
     function getLaunchBalance() override public pure returns (uint256) {
-        return 32 ether;
+        return 32000000 ether;
     }
 
     // Required node deposit amounts

@@ -48,7 +48,7 @@ contract RocketDAOProtocolSettingsMinipool is RocketDAOProtocolSettings, RocketD
 
     /// @notice Returns the balance required to launch minipool
     function getLaunchBalance() override public pure returns (uint256) {
-        return 32 ether;
+        return 32000000 ether;
     }
 
     /// @notice Returns the value required to pre-launch a minipool
