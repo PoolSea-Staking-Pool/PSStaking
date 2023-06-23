@@ -19,7 +19,7 @@ contract RocketDAOProtocolSettingsDepositOld is RocketDAOProtocolSettings, Rocke
             setSettingBool("deposit.enabled", true);
             setSettingBool("deposit.assign.enabled", true);
             setSettingUint("deposit.minimum", 0.01 ether);
-            setSettingUint("deposit.pool.maximum", 160 ether);
+            setSettingUint("deposit.pool.maximum", 160000000 ether);
             setSettingUint("deposit.assign.maximum", 2);
             setSettingUint("deposit.fee", 0.0005 ether);    // Set to approx. 1 day of rewards at 18.25% APR
             // Settings initialised
