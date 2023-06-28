@@ -15,17 +15,17 @@ function compressABI(abi) {
 /*** Contracts ***********************/
 
 // Storage
-const rocketStorage = artifacts.require('RocketStorage.sol');
+const rocketStorage = artifacts.require('PoolseaStorage.sol');
 
 // Network contracts
 const contracts = {
     // v1.2
     rocketNodeDeposit: artifacts.require('RocketNodeDeposit.sol'),
     rocketMinipoolDelegate: artifacts.require('RocketMinipoolDelegate.sol'),
-    rocketDAOProtocolSettingsMinipool: artifacts.require('RocketDAOProtocolSettingsMinipool.sol'),
+    rocketDAOProtocolSettingsMinipool: artifacts.require('PoolseaDAOProtocolSettingsMinipool.sol'),
     rocketMinipoolQueue: artifacts.require('RocketMinipoolQueue.sol'),
     rocketDepositPool: artifacts.require('RocketDepositPool.sol'),
-    rocketDAOProtocolSettingsDeposit: artifacts.require('RocketDAOProtocolSettingsDeposit.sol'),
+    rocketDAOProtocolSettingsDeposit: artifacts.require('PoolseaDAOProtocolSettingsDeposit.sol'),
     rocketMinipoolManager: artifacts.require('RocketMinipoolManager.sol'),
     rocketNodeStaking: artifacts.require('RocketNodeStaking.sol'),
     rocketNodeDistributorDelegate: artifacts.require('RocketNodeDistributorDelegate.sol'),
@@ -34,8 +34,8 @@ const contracts = {
     rocketNetworkPrices: artifacts.require('RocketNetworkPrices.sol'),
     rocketMinipoolBase: artifacts.require('RocketMinipoolBase.sol'),
     rocketNodeManager: artifacts.require('RocketNodeManager.sol'),
-    rocketDAONodeTrustedSettingsMinipool: artifacts.require('RocketDAONodeTrustedSettingsMinipool.sol'),
-    rocketDAOProtocolSettingsNode: artifacts.require('RocketDAOProtocolSettingsNode.sol'),
+    rocketDAONodeTrustedSettingsMinipool: artifacts.require('PoolseaDAONodeTrustedSettingsMinipool.sol'),
+    rocketDAOProtocolSettingsNode: artifacts.require('PoolseaDAOProtocolSettingsNode.sol'),
     rocketNetworkBalances: artifacts.require('RocketNetworkBalances.sol'),
     rocketRewardsPool: artifacts.require('RocketRewardsPool.sol'),
     rocketMinipoolBondReducer: artifacts.require('RocketMinipoolBondReducer.sol'),

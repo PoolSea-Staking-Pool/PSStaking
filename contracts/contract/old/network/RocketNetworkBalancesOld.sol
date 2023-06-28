@@ -4,14 +4,14 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
 import "../../../interface/network/PoolseaNetworkBalancesInterface.sol";
 import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 // Network balances
 
-contract RocketNetworkBalancesOld is RocketBase, PoolseaNetworkBalancesInterface {
+contract RocketNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterface {
 
     // Libs
     using SafeMath for uint;
@@ -21,7 +21,7 @@ contract RocketNetworkBalancesOld is RocketBase, PoolseaNetworkBalancesInterface
     event BalancesUpdated(uint256 block, uint256 totalEth, uint256 stakingEth, uint256 rethSupply, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 

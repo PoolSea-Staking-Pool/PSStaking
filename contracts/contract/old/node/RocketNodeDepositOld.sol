@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/deposit/PoolseaDepositPoolInterface.sol";
 import "../../../interface/minipool/PoolseaMinipoolInterface.sol";
 import "../../../interface/old/PoolseaMinipoolManagerInterfaceOld.sol";
@@ -22,7 +22,7 @@ import "../../../interface/old/PoolseaMinipoolInterfaceOld.sol";
 
 // Handles node deposits and minipool creation
 
-contract RocketNodeDepositOld is RocketBase, PoolseaNodeDepositInterfaceOld {
+contract RocketNodeDepositOld is PoolseaBase, PoolseaNodeDepositInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -31,7 +31,7 @@ contract RocketNodeDepositOld is RocketBase, PoolseaNodeDepositInterfaceOld {
     event DepositReceived(address indexed from, uint256 amount, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 2;
     }
 

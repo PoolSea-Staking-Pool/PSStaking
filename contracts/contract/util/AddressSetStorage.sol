@@ -2,19 +2,19 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/util/AddressSetStorageInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 // Address set storage helper for RocketStorage data (contains unique items; has reverse index lookups)
 
-contract AddressSetStorage is RocketBase, AddressSetStorageInterface {
+contract AddressSetStorage is PoolseaBase, AddressSetStorageInterface {
 
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 

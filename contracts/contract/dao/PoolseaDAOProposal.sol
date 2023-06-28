@@ -2,14 +2,14 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/dao/PoolseaDAOProposalInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
 // A DAO proposal
-contract RocketDAOProposal is RocketBase, PoolseaDAOProposalInterface {
+contract PoolseaDAOProposal is PoolseaBase, PoolseaDAOProposalInterface {
 
     using SafeMath for uint;
 
@@ -32,7 +32,7 @@ contract RocketDAOProposal is RocketBase, PoolseaDAOProposalInterface {
 
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         // Version
         version = 1;
     }

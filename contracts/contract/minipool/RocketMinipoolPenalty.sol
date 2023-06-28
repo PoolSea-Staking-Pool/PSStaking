@@ -4,12 +4,12 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 
 // Non-upgradable contract which gives guardian control over maximum penalty rates
 
-contract RocketMinipoolPenalty is RocketBase, PoolseaMinipoolPenaltyInterface {
+contract RocketMinipoolPenalty is PoolseaBase, PoolseaMinipoolPenaltyInterface {
 
     // Events
     event MaxPenaltyRateUpdated(uint256 rate, uint256 time);
@@ -21,7 +21,7 @@ contract RocketMinipoolPenalty is RocketBase, PoolseaMinipoolPenaltyInterface {
     uint256 maxPenaltyRate = 0 ether;                     // The most the oDAO is allowed to penalty a minipool (as a percentage)
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
     }
 
     // Get/set the current max penalty rate

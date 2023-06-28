@@ -2,15 +2,15 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "./RocketDAOProtocolSettings.sol";
+import "./PoolseaDAOProtocolSettings.sol";
 import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNodeInterface.sol";
 
 // Network auction settings
 
-contract RocketDAOProtocolSettingsNode is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsNodeInterface {
+contract PoolseaDAOProtocolSettingsNode is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsNodeInterface {
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "node") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAOProtocolSettings(_poolseaStorageAddress, "node") {
         // Set version
         version = 3;
         // Initialize settings on deployment

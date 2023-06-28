@@ -3,17 +3,17 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "./RocketDAONodeTrustedSettings.sol";
+import "./PoolseaDAONodeTrustedSettings.sol";
 import "../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsMinipoolInterface.sol";
 import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
 
 
 /// @notice The Trusted Node DAO Minipool settings
-contract RocketDAONodeTrustedSettingsMinipool is RocketDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsMinipoolInterface {
+contract PoolseaDAONodeTrustedSettingsMinipool is PoolseaDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsMinipoolInterface {
 
     using SafeMath for uint;
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "minipool") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAONodeTrustedSettings(_poolseaStorageAddress, "minipool") {
         // Set version
         version = 2;
 
@@ -39,8 +39,8 @@ contract RocketDAONodeTrustedSettingsMinipool is RocketDAONodeTrustedSettings, P
         // Some safety guards for certain settings
         if(getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) {
             if(keccak256(abi.encodePacked(_settingPath)) == keccak256(abi.encodePacked("minipool.scrub.period"))) {
-                PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-                require(_value <= (rocketDAOProtocolSettingsMinipool.getLaunchTimeout().sub(1 hours)), "Scrub period must be less than launch timeout");
+                PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+                require(_value <= (poolseaDAOProtocolSettingsMinipool.getLaunchTimeout().sub(1 hours)), "Scrub period must be less than launch timeout");
             }
         }
         // Update setting now

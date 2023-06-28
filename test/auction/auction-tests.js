@@ -56,8 +56,8 @@ export default function() {
             const rplAmount = '10000'.ether;
             await mintRPL(owner, node, rplAmount);
             await nodeStakeRPL(rplAmount, {from: node});
-            minipool = await createMinipool({from: node, value: '8'.ether});
-            await userDeposit({from: random1, value: '24'.ether});
+            minipool = await createMinipool({from: node, value: '8000000'.ether});
+            await userDeposit({from: random1, value: '24000000'.ether});
             await increaseTime(web3, scrubPeriod + 1);
             await stakeMinipool(minipool, {from: node});
 

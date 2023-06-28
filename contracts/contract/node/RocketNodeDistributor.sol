@@ -2,7 +2,7 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "./RocketNodeDistributorStorageLayout.sol";
 
 contract RocketNodeDistributor is RocketNodeDistributorStorageLayout {

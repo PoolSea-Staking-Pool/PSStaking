@@ -2,17 +2,17 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "./RocketDAOProtocolSettings.sol";
+import "./PoolseaDAOProtocolSettings.sol";
 import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInflationInterface.sol";
 import "../../../../interface/token/PoolseaTokenRPLInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 // RPL Inflation settings in RP which the DAO will have full control over
-contract RocketDAOProtocolSettingsInflation is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsInflationInterface {
+contract PoolseaDAOProtocolSettingsInflation is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsInflationInterface {
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "inflation") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAOProtocolSettings(_poolseaStorageAddress, "inflation") {
         // Set version
         version = 1;
          // Set some initial settings on first deployment
@@ -43,7 +43,7 @@ contract RocketDAOProtocolSettingsInflation is RocketDAOProtocolSettings, Poolse
             }
         } else if(settingKey == keccak256(bytes("rpl.inflation.interval.rate"))) {
             // RPL contract address
-            address rplContractAddress = getContractAddressUnsafe("rocketTokenRPL");
+            address rplContractAddress = getContractAddressUnsafe("poolseaTokenRPL");
             if(rplContractAddress != address(0x0)) {
                 // Force inflation at old rate before updating inflation rate
                 PoolseaTokenRPLInterface rplContract = PoolseaTokenRPLInterface(rplContractAddress);

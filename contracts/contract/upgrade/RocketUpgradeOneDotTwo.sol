@@ -2,7 +2,7 @@
 pragma solidity 0.7.6;
 pragma abicoder v2;
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 
 import "../minipool/RocketMinipoolManager.sol";
 import "../node/RocketNodeManager.sol";
@@ -11,7 +11,7 @@ import "../node/RocketNodeDistributorDelegate.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 /// @notice Transient contract to upgrade Rocket Pool with the Atlas set of contract upgrades
-contract RocketUpgradeOneDotTwo is RocketBase {
+contract RocketUpgradeOneDotTwo is PoolseaBase {
 
     struct ClaimInterval {
         uint256 interval;
@@ -78,7 +78,7 @@ contract RocketUpgradeOneDotTwo is RocketBase {
     // Construct
     constructor(
         PoolseaStorageInterface _rocketStorageAddress
-    ) RocketBase(_rocketStorageAddress) {
+    ) PoolseaBase(_rocketStorageAddress) {
         // Version
         version = 1;
         deployer = msg.sender;
@@ -86,7 +86,7 @@ contract RocketUpgradeOneDotTwo is RocketBase {
 
     /// @notice Returns the address of the RocketStorage contract
     function getRocketStorageAddress() external view returns (address) {
-        return address(rocketStorage);
+        return address(poolseaStorage);
     }
 
     function set(address[] memory _addresses, string[] memory _abis) external {

@@ -5,7 +5,7 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/SafeCast.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/deposit/PoolseaDepositPoolInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolQueueInterface.sol";
 import "../../interface/network/PoolseaNetworkFeesInterface.sol";
@@ -13,14 +13,14 @@ import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkI
 
 // Network node demand and commission rate
 
-contract RocketNetworkFeesOld is RocketBase, PoolseaNetworkFeesInterface {
+contract RocketNetworkFeesOld is PoolseaBase, PoolseaNetworkFeesInterface {
 
     // Libs
     using SafeMath for uint;
     using SafeCast for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 

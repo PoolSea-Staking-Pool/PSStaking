@@ -2,7 +2,7 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/PoolseaVaultInterface.sol";
 import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
 import "../../../interface/dao/node/PoolseaDAONodeTrustedProposalsInterface.sol";
@@ -15,7 +15,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
 // The Trusted Node DAO
-contract RocketDAONodeTrusted is RocketBase, PoolseaDAONodeTrustedInterface {
+contract PoolseaDAONodeTrusted is PoolseaBase, PoolseaDAONodeTrustedInterface {
 
     using SafeMath for uint;
 
@@ -40,7 +40,7 @@ contract RocketDAONodeTrusted is RocketBase, PoolseaDAONodeTrustedInterface {
 
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         // Version
         version = 1;
     }
@@ -61,9 +61,9 @@ contract RocketDAONodeTrusted is RocketBase, PoolseaDAONodeTrustedInterface {
     // Return the amount of member votes need for a proposal to pass
     function getMemberQuorumVotesRequired() override external view returns (uint256) {
         // Load contracts
-        PoolseaDAONodeTrustedSettingsMembersInterface rocketDAONodeTrustedSettingsMembers = PoolseaDAONodeTrustedSettingsMembersInterface(getContractAddress("rocketDAONodeTrustedSettingsMembers"));
+        PoolseaDAONodeTrustedSettingsMembersInterface poolseaDAONodeTrustedSettingsMembers = PoolseaDAONodeTrustedSettingsMembersInterface(getContractAddress("poolseaDAONodeTrustedSettingsMembers"));
         // Calculate and return votes required
-        return getMemberCount().mul(rocketDAONodeTrustedSettingsMembers.getQuorum());
+        return getMemberCount().mul(poolseaDAONodeTrustedSettingsMembers.getQuorum());
     }
 
 
@@ -133,11 +133,11 @@ contract RocketDAONodeTrusted is RocketBase, PoolseaDAONodeTrustedInterface {
     }
 
     // Increment/decrement a member's unbonded validator count
-    // Only accepts calls from the RocketMinipoolManager contract
-    function incrementMemberUnbondedValidatorCount(address _nodeAddress) override external onlyLatestContract("rocketDAONodeTrusted", address(this)) onlyLatestContract("rocketMinipoolManager", msg.sender) {
+    // Only accepts calls from the PoolseaMinipoolManager contract
+    function incrementMemberUnbondedValidatorCount(address _nodeAddress) override external onlyLatestContract("poolseaDAONodeTrusted", address(this)) onlyLatestContract("poolseaMinipoolManager", msg.sender) {
         addUint(keccak256(abi.encodePacked(daoNameSpace, "member.validator.unbonded.count", _nodeAddress)), 1);
     }
-    function decrementMemberUnbondedValidatorCount(address _nodeAddress) override external onlyLatestContract("rocketDAONodeTrusted", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function decrementMemberUnbondedValidatorCount(address _nodeAddress) override external onlyLatestContract("poolseaDAONodeTrusted", address(this)) onlyRegisteredMinipool(msg.sender) {
         subUint(keccak256(abi.encodePacked(daoNameSpace, "member.validator.unbonded.count", _nodeAddress)), 1);
     }
 
@@ -146,33 +146,33 @@ contract RocketDAONodeTrusted is RocketBase, PoolseaDAONodeTrustedInterface {
 
 
     // Bootstrap mode - In bootstrap mode, guardian can add members at will
-    function bootstrapMember(string memory _id, string memory _url, address _nodeAddress) override external onlyGuardian onlyBootstrapMode onlyRegisteredNode(_nodeAddress) onlyLatestContract("rocketDAONodeTrusted", address(this)) {
+    function bootstrapMember(string memory _id, string memory _url, address _nodeAddress) override external onlyGuardian onlyBootstrapMode onlyRegisteredNode(_nodeAddress) onlyLatestContract("poolseaDAONodeTrusted", address(this)) {
         // Ok good to go, lets add them
-        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("rocketDAONodeTrustedProposals")).proposalInvite(_id, _url, _nodeAddress);
+        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("poolseaDAONodeTrustedProposals")).proposalInvite(_id, _url, _nodeAddress);
     }
 
 
     // Bootstrap mode - Uint Setting
-    function bootstrapSettingUint(string memory _settingContractName, string memory _settingPath, uint256 _value) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAONodeTrusted", address(this)) {
+    function bootstrapSettingUint(string memory _settingContractName, string memory _settingPath, uint256 _value) override external onlyGuardian onlyBootstrapMode onlyLatestContract("poolseaDAONodeTrusted", address(this)) {
         // Ok good to go, lets update the settings
-        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("rocketDAONodeTrustedProposals")).proposalSettingUint(_settingContractName, _settingPath, _value);
+        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("poolseaDAONodeTrustedProposals")).proposalSettingUint(_settingContractName, _settingPath, _value);
     }
 
     // Bootstrap mode - Bool Setting
-    function bootstrapSettingBool(string memory _settingContractName, string memory _settingPath, bool _value) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAONodeTrusted", address(this)) {
+    function bootstrapSettingBool(string memory _settingContractName, string memory _settingPath, bool _value) override external onlyGuardian onlyBootstrapMode onlyLatestContract("poolseaDAONodeTrusted", address(this)) {
         // Ok good to go, lets update the settings
-        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("rocketDAONodeTrustedProposals")).proposalSettingBool(_settingContractName, _settingPath, _value);
+        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("poolseaDAONodeTrustedProposals")).proposalSettingBool(_settingContractName, _settingPath, _value);
     }
 
 
     // Bootstrap mode - Upgrade contracts or their ABI
-    function bootstrapUpgrade(string memory _type, string memory _name, string memory _contractAbi, address _contractAddress) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAONodeTrusted", address(this)) {
+    function bootstrapUpgrade(string memory _type, string memory _name, string memory _contractAbi, address _contractAddress) override external onlyGuardian onlyBootstrapMode onlyLatestContract("poolseaDAONodeTrusted", address(this)) {
         // Ok good to go, lets update the settings
-        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("rocketDAONodeTrustedProposals")).proposalUpgrade(_type, _name, _contractAbi, _contractAddress);
+        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("poolseaDAONodeTrustedProposals")).proposalUpgrade(_type, _name, _contractAbi, _contractAddress);
     }
 
     // Bootstrap mode - Disable RP Access (only RP can call this to hand over full control to the DAO)
-    function bootstrapDisable(bool _confirmDisableBootstrapMode) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAONodeTrusted", address(this)) {
+    function bootstrapDisable(bool _confirmDisableBootstrapMode) override external onlyGuardian onlyBootstrapMode onlyLatestContract("poolseaDAONodeTrusted", address(this)) {
         require(_confirmDisableBootstrapMode == true, "You must confirm disabling bootstrap mode, it can only be done once!");
         setBool(keccak256(abi.encodePacked(daoNameSpace, "bootstrapmode.disabled")), true);
     }
@@ -182,11 +182,11 @@ contract RocketDAONodeTrusted is RocketBase, PoolseaDAONodeTrustedInterface {
 
     // In an explicable black swan scenario where the DAO loses more than the min membership required (3), this method can be used by a regular node operator to join the DAO
     // Must have their ID, URL, current RPL bond amount available and must be called by their current registered node account
-    function memberJoinRequired(string memory _id, string memory _url) override external onlyLowMemberMode onlyRegisteredNode(msg.sender) onlyLatestContract("rocketDAONodeTrusted", address(this)) {
+    function memberJoinRequired(string memory _id, string memory _url) override external onlyLowMemberMode onlyRegisteredNode(msg.sender) onlyLatestContract("poolseaDAONodeTrusted", address(this)) {
         // Ok good to go, lets update the settings
-        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("rocketDAONodeTrustedProposals")).proposalInvite(_id, _url, msg.sender);
+        PoolseaDAONodeTrustedProposalsInterface(getContractAddress("poolseaDAONodeTrustedProposals")).proposalInvite(_id, _url, msg.sender);
         // Get the to automatically join as a member (by a regular proposal, they would have to manually accept, but this is no ordinary situation)
-        PoolseaDAONodeTrustedActionsInterface(getContractAddress("rocketDAONodeTrustedActions")).actionJoinRequired(msg.sender);
+        PoolseaDAONodeTrustedActionsInterface(getContractAddress("poolseaDAONodeTrustedActions")).actionJoinRequired(msg.sender);
     }
 
 }

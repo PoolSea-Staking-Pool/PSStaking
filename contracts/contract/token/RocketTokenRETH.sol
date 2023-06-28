@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/deposit/PoolseaDepositPoolInterface.sol";
 import "../../interface/network/PoolseaNetworkBalancesInterface.sol";
 import "../../interface/token/PoolseaTokenRETHInterface.sol";
@@ -13,7 +13,7 @@ import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkI
 // rETH is a tokenised stake in the Rocket Pool network
 // rETH is backed by ETH (subject to liquidity) at a variable exchange rate
 
-contract RocketTokenRETH is RocketBase, ERC20, PoolseaTokenRETHInterface {
+contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
 
     // Libs
     using SafeMath for uint;
@@ -24,7 +24,7 @@ contract RocketTokenRETH is RocketBase, ERC20, PoolseaTokenRETHInterface {
     event TokensBurned(address indexed from, uint256 amount, uint256 ethAmount, uint256 time);
 
     // Construct with our token details
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) ERC20("PoolSea PLS", "rPLS") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) ERC20("PoolSea PLS", "rPLS") {
         // Version
         version = 1;
     }

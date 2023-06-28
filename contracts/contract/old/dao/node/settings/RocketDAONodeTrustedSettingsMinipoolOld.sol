@@ -4,18 +4,18 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../../../dao/node/settings/RocketDAONodeTrustedSettings.sol";
+import "../../../../dao/node/settings/PoolseaDAONodeTrustedSettings.sol";
 import "../../../../../interface/old/PoolseaDAONodeTrustedSettingsMinipoolInterfaceOld.sol";
 import "../../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
 
 
 // The Trusted Node DAO Minipool settings
-contract RocketDAONodeTrustedSettingsMinipoolOld is RocketDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsMinipoolInterfaceOld {
+contract RocketDAONodeTrustedSettingsMinipoolOld is PoolseaDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsMinipoolInterfaceOld {
 
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "minipool") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaDAONodeTrustedSettings(_rocketStorageAddress, "minipool") {
         // Set version
         version = 2;
 

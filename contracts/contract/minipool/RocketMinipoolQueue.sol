@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/math/SignedSafeMath.sol";
 import "@openzeppelin/contracts/utils/SafeCast.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/minipool/PoolseaMinipoolInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolQueueInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
@@ -13,7 +13,7 @@ import "../../interface/util/AddressQueueStorageInterface.sol";
 import "../../types/MinipoolDeposit.sol";
 
 /// @notice Minipool queueing for deposit assignment
-contract RocketMinipoolQueue is RocketBase, PoolseaMinipoolQueueInterface {
+contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
 
     // Libs
     using SafeMath for uint;
@@ -29,7 +29,7 @@ contract RocketMinipoolQueue is RocketBase, PoolseaMinipoolQueueInterface {
     event MinipoolDequeued(address indexed minipool, bytes32 indexed queueId, uint256 time);
     event MinipoolRemoved(address indexed minipool, bytes32 indexed queueId, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 2;
     }
 

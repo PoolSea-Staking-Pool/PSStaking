@@ -4,14 +4,14 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/util/AddressQueueStorageInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 // Address queue storage helper for RocketStorage data (ring buffer implementation)
 
-contract AddressQueueStorage is RocketBase, AddressQueueStorageInterface {
+contract AddressQueueStorage is PoolseaBase, AddressQueueStorageInterface {
 
     // Libs
     using SafeMath for uint256;
@@ -20,7 +20,7 @@ contract AddressQueueStorage is RocketBase, AddressQueueStorageInterface {
     uint256 constant public capacity = 2 ** 255; // max uint256 / 2
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 

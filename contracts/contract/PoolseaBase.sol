@@ -4,10 +4,10 @@ pragma solidity 0.7.6;
 
 import "../interface/PoolseaStorageInterface.sol";
 
-/// @title Base settings / modifiers for each contract in Rocket Pool
+/// @title Base settings / modifiers for each contract in Poolsea Pool
 /// @author David Rugendyke
 
-abstract contract RocketBase {
+abstract contract PoolseaBase {
 
     // Calculate using this as the base
     uint256 constant calcBase = 1 ether;
@@ -16,13 +16,13 @@ abstract contract RocketBase {
     uint8 public version;
 
     // The main storage contract where primary persistant storage is maintained
-    PoolseaStorageInterface rocketStorage = PoolseaStorageInterface(0);
+    PoolseaStorageInterface poolseaStorage = PoolseaStorageInterface(0);
 
 
     /*** Modifiers **********************************************************/
 
     /**
-    * @dev Throws if called by any sender that doesn't match a Rocket Pool network contract
+    * @dev Throws if called by any sender that doesn't match a Poolsea Pool network contract
     */
     modifier onlyLatestNetworkContract() {
         require(getBool(keccak256(abi.encodePacked("contract.exists", msg.sender))), "Invalid or outdated network contract");
@@ -66,7 +66,7 @@ abstract contract RocketBase {
     * @dev Throws if called by any account other than a guardian account (temporary account allowed access to settings before DAO is fully enabled)
     */
     modifier onlyGuardian() {
-        require(msg.sender == rocketStorage.getGuardian(), "Account is not a temporary guardian");
+        require(msg.sender == poolseaStorage.getGuardian(), "Account is not a temporary guardian");
         _;
     }
 
@@ -75,10 +75,10 @@ abstract contract RocketBase {
 
     /*** Methods **********************************************************/
 
-    /// @dev Set the main Rocket Storage address
-    constructor(PoolseaStorageInterface _rocketStorageAddress) {
+    /// @dev Set the main Poolsea Storage address
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) {
         // Update the contract address
-        rocketStorage = PoolseaStorageInterface(_rocketStorageAddress);
+        poolseaStorage = PoolseaStorageInterface(_poolseaStorageAddress);
     }
 
 
@@ -125,38 +125,38 @@ abstract contract RocketBase {
 
 
 
-    /*** Rocket Storage Methods ****************************************/
+    /*** Poolsea Storage Methods ****************************************/
 
     // Note: Unused helpers have been removed to keep contract sizes down
 
     /// @dev Storage get methods
-    function getAddress(bytes32 _key) internal view returns (address) { return rocketStorage.getAddress(_key); }
-    function getUint(bytes32 _key) internal view returns (uint) { return rocketStorage.getUint(_key); }
-    function getString(bytes32 _key) internal view returns (string memory) { return rocketStorage.getString(_key); }
-    function getBytes(bytes32 _key) internal view returns (bytes memory) { return rocketStorage.getBytes(_key); }
-    function getBool(bytes32 _key) internal view returns (bool) { return rocketStorage.getBool(_key); }
-    function getInt(bytes32 _key) internal view returns (int) { return rocketStorage.getInt(_key); }
-    function getBytes32(bytes32 _key) internal view returns (bytes32) { return rocketStorage.getBytes32(_key); }
+    function getAddress(bytes32 _key) internal view returns (address) { return poolseaStorage.getAddress(_key); }
+    function getUint(bytes32 _key) internal view returns (uint) { return poolseaStorage.getUint(_key); }
+    function getString(bytes32 _key) internal view returns (string memory) { return poolseaStorage.getString(_key); }
+    function getBytes(bytes32 _key) internal view returns (bytes memory) { return poolseaStorage.getBytes(_key); }
+    function getBool(bytes32 _key) internal view returns (bool) { return poolseaStorage.getBool(_key); }
+    function getInt(bytes32 _key) internal view returns (int) { return poolseaStorage.getInt(_key); }
+    function getBytes32(bytes32 _key) internal view returns (bytes32) { return poolseaStorage.getBytes32(_key); }
 
     /// @dev Storage set methods
-    function setAddress(bytes32 _key, address _value) internal { rocketStorage.setAddress(_key, _value); }
-    function setUint(bytes32 _key, uint _value) internal { rocketStorage.setUint(_key, _value); }
-    function setString(bytes32 _key, string memory _value) internal { rocketStorage.setString(_key, _value); }
-    function setBytes(bytes32 _key, bytes memory _value) internal { rocketStorage.setBytes(_key, _value); }
-    function setBool(bytes32 _key, bool _value) internal { rocketStorage.setBool(_key, _value); }
-    function setInt(bytes32 _key, int _value) internal { rocketStorage.setInt(_key, _value); }
-    function setBytes32(bytes32 _key, bytes32 _value) internal { rocketStorage.setBytes32(_key, _value); }
+    function setAddress(bytes32 _key, address _value) internal { poolseaStorage.setAddress(_key, _value); }
+    function setUint(bytes32 _key, uint _value) internal { poolseaStorage.setUint(_key, _value); }
+    function setString(bytes32 _key, string memory _value) internal { poolseaStorage.setString(_key, _value); }
+    function setBytes(bytes32 _key, bytes memory _value) internal { poolseaStorage.setBytes(_key, _value); }
+    function setBool(bytes32 _key, bool _value) internal { poolseaStorage.setBool(_key, _value); }
+    function setInt(bytes32 _key, int _value) internal { poolseaStorage.setInt(_key, _value); }
+    function setBytes32(bytes32 _key, bytes32 _value) internal { poolseaStorage.setBytes32(_key, _value); }
 
     /// @dev Storage delete methods
-    function deleteAddress(bytes32 _key) internal { rocketStorage.deleteAddress(_key); }
-    function deleteUint(bytes32 _key) internal { rocketStorage.deleteUint(_key); }
-    function deleteString(bytes32 _key) internal { rocketStorage.deleteString(_key); }
-    function deleteBytes(bytes32 _key) internal { rocketStorage.deleteBytes(_key); }
-    function deleteBool(bytes32 _key) internal { rocketStorage.deleteBool(_key); }
-    function deleteInt(bytes32 _key) internal { rocketStorage.deleteInt(_key); }
-    function deleteBytes32(bytes32 _key) internal { rocketStorage.deleteBytes32(_key); }
+    function deleteAddress(bytes32 _key) internal { poolseaStorage.deleteAddress(_key); }
+    function deleteUint(bytes32 _key) internal { poolseaStorage.deleteUint(_key); }
+    function deleteString(bytes32 _key) internal { poolseaStorage.deleteString(_key); }
+    function deleteBytes(bytes32 _key) internal { poolseaStorage.deleteBytes(_key); }
+    function deleteBool(bytes32 _key) internal { poolseaStorage.deleteBool(_key); }
+    function deleteInt(bytes32 _key) internal { poolseaStorage.deleteInt(_key); }
+    function deleteBytes32(bytes32 _key) internal { poolseaStorage.deleteBytes32(_key); }
 
     /// @dev Storage arithmetic methods
-    function addUint(bytes32 _key, uint256 _amount) internal { rocketStorage.addUint(_key, _amount); }
-    function subUint(bytes32 _key, uint256 _amount) internal { rocketStorage.subUint(_key, _amount); }
+    function addUint(bytes32 _key, uint256 _amount) internal { poolseaStorage.addUint(_key, _amount); }
+    function subUint(bytes32 _key, uint256 _amount) internal { poolseaStorage.subUint(_key, _amount); }
 }

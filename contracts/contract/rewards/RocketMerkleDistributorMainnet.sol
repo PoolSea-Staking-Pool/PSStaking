@@ -3,7 +3,7 @@ pragma abicoder v2;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/token/PoolseaTokenRPLInterface.sol";
 import "../../interface/PoolseaVaultInterface.sol";
 import "../../interface/node/PoolseaNodeStakingInterface.sol";
@@ -18,7 +18,7 @@ import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
 * handle cross-chain messaging.
 */
 
-contract RocketMerkleDistributorMainnet is RocketBase, PoolseaRewardsRelayInterface, PoolseaVaultWithdrawerInterface {
+contract RocketMerkleDistributorMainnet is PoolseaBase, PoolseaRewardsRelayInterface, PoolseaVaultWithdrawerInterface {
 
     // Libs
     using SafeMath for uint;
@@ -37,7 +37,7 @@ contract RocketMerkleDistributorMainnet is RocketBase, PoolseaRewardsRelayInterf
     receive() payable external {}
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         // Version
         version = 1;
         // Precompute keys
@@ -78,7 +78,7 @@ contract RocketMerkleDistributorMainnet is RocketBase, PoolseaRewardsRelayInterf
         _claim(_rewardIndex, _nodeAddress, _amountRPL, _amountETH, _merkleProof);
         {
             // Get withdrawal address
-            address withdrawalAddress = rocketStorage.getNodeWithdrawalAddress(_nodeAddress);
+            address withdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(_nodeAddress);
             require(msg.sender == _nodeAddress || msg.sender == withdrawalAddress, "Can only claim from node or withdrawal address");
             // Calculate totals
             uint256 totalAmountRPL = 0;

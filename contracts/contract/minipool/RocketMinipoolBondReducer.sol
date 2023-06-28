@@ -4,7 +4,7 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/minipool/PoolseaMinipoolInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolBondReducerInterface.sol";
 import "../../interface/node/PoolseaNodeDepositInterface.sol";
@@ -15,7 +15,7 @@ import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipool
 import "../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
 
 /// @notice Handles bond reduction window and trusted node cancellation
-contract RocketMinipoolBondReducer is RocketBase, PoolseaMinipoolBondReducerInterface {
+contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInterface {
 
     // Libs
     using SafeMath for uint;
@@ -25,7 +25,7 @@ contract RocketMinipoolBondReducer is RocketBase, PoolseaMinipoolBondReducerInte
     event CancelReductionVoted(address indexed minipool, address indexed member, uint256 time);
     event ReductionCancelled(address indexed minipool, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 

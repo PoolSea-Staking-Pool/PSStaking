@@ -3,7 +3,7 @@ pragma abicoder v2;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/rewards/PoolseaSmoothingPoolInterface.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
@@ -15,7 +15,7 @@ added to this contract via fee_recipient. This also means if this contract is up
 transferred from this contract to the upgraded one.
 */
 
-contract RocketSmoothingPool is RocketBase, PoolseaSmoothingPoolInterface {
+contract RocketSmoothingPool is PoolseaBase, PoolseaSmoothingPoolInterface {
 
     // Libs
     using SafeMath for uint256;
@@ -24,7 +24,7 @@ contract RocketSmoothingPool is RocketBase, PoolseaSmoothingPoolInterface {
     event EtherWithdrawn(string indexed by, address indexed to, uint256 amount, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         // Version
         version = 1;
     }

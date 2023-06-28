@@ -2,15 +2,15 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 
 // THIS CONTRACT IS NOT DEPLOYED TO MAINNET
 
 // Helper contract used in unit tests that can set the penalty rate on a minipool (a feature that will be implemented at a later time)
-contract PenaltyTest is RocketBase {
+contract PenaltyTest is PoolseaBase {
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
     }
 
     // Sets the penalty rate for the given minipool

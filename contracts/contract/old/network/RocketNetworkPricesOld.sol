@@ -4,14 +4,14 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
 import "../../../interface/old/PoolseaNetworkPricesInterfaceOld.sol";
 import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 // Network token price data
 
-contract RocketNetworkPricesOld is RocketBase, PoolseaNetworkPricesInterfaceOld {
+contract RocketNetworkPricesOld is PoolseaBase, PoolseaNetworkPricesInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -21,7 +21,7 @@ contract RocketNetworkPricesOld is RocketBase, PoolseaNetworkPricesInterfaceOld 
     event PricesUpdated(uint256 block, uint256 rplPrice, uint256 effectiveRplStake, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         // Set contract version
         version = 1;
         // Set initial RPL price

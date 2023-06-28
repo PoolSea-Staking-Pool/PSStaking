@@ -3,7 +3,7 @@ pragma abicoder v2;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/dao/protocol/PoolseaDAOProtocolInterface.sol";
 import "../../../interface/dao/protocol/PoolseaDAOProtocolProposalsInterface.sol";
 import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInterface.sol";
@@ -16,7 +16,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
 // The protocol DAO Proposals - Placeholder contracts until DAO is implemented
-contract RocketDAOProtocolProposals is RocketBase, PoolseaDAOProtocolProposalsInterface {
+contract PoolseaDAOProtocolProposals is PoolseaBase, PoolseaDAOProtocolProposalsInterface {
 
     using SafeMath for uint;
 
@@ -25,13 +25,13 @@ contract RocketDAOProtocolProposals is RocketBase, PoolseaDAOProtocolProposalsIn
 
     // Only allow certain contracts to execute methods
     modifier onlyExecutingContracts() {
-        // Methods are either executed by bootstrapping methods in rocketDAONodeTrusted or by people executing passed proposals in rocketDAOProposal
-        require(msg.sender == getContractAddress("rocketDAOProtocol") || msg.sender == getContractAddress("rocketDAOProposal"), "Sender is not permitted to access executing methods");
+        // Methods are either executed by bootstrapping methods in poolseaDAONodeTrusted or by people executing passed proposals in poolseaDAOProposal
+        require(msg.sender == getContractAddress("poolseaDAOProtocol") || msg.sender == getContractAddress("poolseaDAOProposal"), "Sender is not permitted to access executing methods");
         _;
     }
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         // Version
         version = 1;
     }
@@ -63,41 +63,41 @@ contract RocketDAOProtocolProposals is RocketBase, PoolseaDAOProtocolProposalsIn
     // Change one of the current uint256 settings of the protocol DAO
     function proposalSettingUint(string memory _settingContractName, string memory _settingPath, uint256 _value) override public onlyExecutingContracts() {
         // Load contracts
-        PoolseaDAOProtocolSettingsInterface rocketDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
+        PoolseaDAOProtocolSettingsInterface poolseaDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
         // Lets update
-        rocketDAOProtocolSettings.setSettingUint(_settingPath, _value);
+        poolseaDAOProtocolSettings.setSettingUint(_settingPath, _value);
     }
 
     // Change one of the current bool settings of the protocol DAO
     function proposalSettingBool(string memory _settingContractName, string memory _settingPath, bool _value) override public onlyExecutingContracts() {
         // Load contracts
-        PoolseaDAOProtocolSettingsInterface rocketDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
+        PoolseaDAOProtocolSettingsInterface poolseaDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
         // Lets update
-        rocketDAOProtocolSettings.setSettingBool(_settingPath, _value);
+        poolseaDAOProtocolSettings.setSettingBool(_settingPath, _value);
     }
 
     // Change one of the current address settings of the protocol DAO
     function proposalSettingAddress(string memory _settingContractName, string memory _settingPath, address _value) override public onlyExecutingContracts() {
         // Load contracts
-        PoolseaDAOProtocolSettingsInterface rocketDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
+        PoolseaDAOProtocolSettingsInterface poolseaDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
         // Lets update
-        rocketDAOProtocolSettings.setSettingAddress(_settingPath, _value);
+        poolseaDAOProtocolSettings.setSettingAddress(_settingPath, _value);
     }
 
     // Update a claimer for the rpl rewards, must specify a unique contract name that will be claiming from and a percentage of the rewards
     function proposalSettingRewardsClaimer(string memory _contractName, uint256 _perc) override external onlyExecutingContracts() {
         // Load contracts
-        PoolseaDAOProtocolSettingsRewardsInterface rocketDAOProtocolSettingsRewards = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("rocketDAOProtocolSettingsRewards"));
+        PoolseaDAOProtocolSettingsRewardsInterface poolseaDAOProtocolSettingsRewards = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("poolseaDAOProtocolSettingsRewards"));
         // Update now
-        rocketDAOProtocolSettingsRewards.setSettingRewardsClaimer(_contractName, _perc);
+        poolseaDAOProtocolSettingsRewards.setSettingRewardsClaimer(_contractName, _perc);
     }
 
     // Spend RPL from the DAO's treasury
     function proposalSpendTreasury(string memory _invoiceID, address _recipientAddress, uint256 _amount) override external onlyExecutingContracts() {
         // Load contracts
-        PoolseaClaimDAOInterface rocketDAOTreasury = PoolseaClaimDAOInterface(getContractAddress("rocketClaimDAO"));
+        PoolseaClaimDAOInterface poolseaDAOTreasury = PoolseaClaimDAOInterface(getContractAddress("poolseaClaimDAO"));
         // Update now
-        rocketDAOTreasury.spend(_invoiceID, _recipientAddress, _amount);
+        poolseaDAOTreasury.spend(_invoiceID, _recipientAddress, _amount);
     }
 
 

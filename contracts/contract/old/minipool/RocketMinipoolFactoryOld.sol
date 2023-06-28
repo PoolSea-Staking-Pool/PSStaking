@@ -5,7 +5,7 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./RocketMinipoolOld.sol";
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../types/MinipoolStatus.sol";
 import "../../../types/MinipoolDeposit.sol";
 import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
@@ -22,13 +22,13 @@ import "../../../interface/old/PoolseaMinipoolFactoryInterfaceOld.sol";
 
 // Minipool creation, removal and management
 
-contract RocketMinipoolFactoryOld is RocketBase, PoolseaMinipoolFactoryInterfaceOld {
+contract RocketMinipoolFactoryOld is PoolseaBase, PoolseaMinipoolFactoryInterfaceOld {
 
     // Libs
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 
@@ -41,7 +41,7 @@ contract RocketMinipoolFactoryOld is RocketBase, PoolseaMinipoolFactoryInterface
     function deployContract(address _nodeAddress, MinipoolDeposit _depositType, uint256 _salt) override external onlyLatestContract("rocketMinipoolFactory", address(this)) onlyLatestContract("rocketMinipoolManager", msg.sender) returns (address) {
         // Construct deployment bytecode
         bytes memory creationCode = getMinipoolBytecode();
-        bytes memory bytecode = abi.encodePacked(creationCode, abi.encode(rocketStorage, _nodeAddress, _depositType));
+        bytes memory bytecode = abi.encodePacked(creationCode, abi.encode(poolseaStorage, _nodeAddress, _depositType));
         // Construct final salt
         uint256 salt = uint256(keccak256(abi.encodePacked(_nodeAddress, _salt)));
         // CREATE2 deployment

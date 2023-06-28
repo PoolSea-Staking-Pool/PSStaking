@@ -3,13 +3,13 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
 import "../../interface/network/PoolseaNetworkPricesInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 /// @notice Oracle contract for network token price data
-contract RocketNetworkPrices is RocketBase, PoolseaNetworkPricesInterface {
+contract RocketNetworkPrices is PoolseaBase, PoolseaNetworkPricesInterface {
 
     // Libs
     using SafeMath for uint;
@@ -18,7 +18,7 @@ contract RocketNetworkPrices is RocketBase, PoolseaNetworkPricesInterface {
     event PricesSubmitted(address indexed from, uint256 block, uint256 rplPrice, uint256 time);
     event PricesUpdated(uint256 block, uint256 rplPrice, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         // Set contract version
         version = 2;
 

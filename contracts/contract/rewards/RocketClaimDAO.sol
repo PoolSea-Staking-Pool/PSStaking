@@ -2,20 +2,20 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/PoolseaVaultInterface.sol";
 import "../../interface/rewards/PoolseaRewardsPoolInterface.sol";
 import "../../interface/rewards/claims/PoolseaClaimDAOInterface.sol";
 
 
 // RPL Rewards claiming by the DAO
-contract RocketClaimDAO is RocketBase, PoolseaClaimDAOInterface {
+contract RocketClaimDAO is PoolseaBase, PoolseaClaimDAOInterface {
 
     // Events
     event RPLTokensSentByDAOProtocol(string invoiceID, address indexed from, address indexed to, uint256 amount, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         // Version
         version = 2;
     }

@@ -5,7 +5,7 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
 import "../../../interface/old/PoolseaNetworkPricesInterfaceOld.sol";
 import "../../../interface/old/PoolseaNodeStakingInterfaceOld.sol";
@@ -17,7 +17,7 @@ import "../../../interface/util/AddressSetStorageInterface.sol";
 
 // Handles node deposits and minipool creation
 
-contract RocketNodeStakingOld is RocketBase, PoolseaNodeStakingInterfaceOld {
+contract RocketNodeStakingOld is PoolseaBase, PoolseaNodeStakingInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -28,7 +28,7 @@ contract RocketNodeStakingOld is RocketBase, PoolseaNodeStakingInterfaceOld {
     event RPLSlashed(address indexed node, uint256 amount, uint256 ethValue, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 2;
     }
 
@@ -212,7 +212,7 @@ contract RocketNodeStakingOld is RocketBase, PoolseaNodeStakingInterfaceOld {
         decreaseNodeRPLStake(msg.sender, _amount);
         updateTotalEffectiveRPLStake(msg.sender, rplStake, rplStake.sub(_amount));
         // Transfer RPL tokens to node address
-        rocketVault.withdrawToken(rocketStorage.getNodeWithdrawalAddress(msg.sender), IERC20(getContractAddress("rocketTokenRPL")), _amount);
+        rocketVault.withdrawToken(poolseaStorage.getNodeWithdrawalAddress(msg.sender), IERC20(getContractAddress("rocketTokenRPL")), _amount);
         // Emit RPL withdrawn event
         emit RPLWithdrawn(msg.sender, _amount, block.timestamp);
     }

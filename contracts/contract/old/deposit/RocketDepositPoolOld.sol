@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/PoolseaVaultInterface.sol";
 import "../../../interface/PoolseaVaultWithdrawerInterface.sol";
 import "../../../interface/old/PoolseaDepositPoolInterfaceOld.sol";
@@ -19,7 +19,7 @@ import "../../../types/MinipoolDeposit.sol";
 // The main entry point for deposits into the RP network
 // Accepts user deposits and mints rETH; handles assignment of deposited ETH to minipools
 
-contract RocketDepositPoolOld is RocketBase, PoolseaDepositPoolInterfaceOld, PoolseaVaultWithdrawerInterface {
+contract RocketDepositPoolOld is PoolseaBase, PoolseaDepositPoolInterfaceOld, PoolseaVaultWithdrawerInterface {
 
     // Libs
     using SafeMath for uint;
@@ -45,7 +45,7 @@ contract RocketDepositPoolOld is RocketBase, PoolseaDepositPoolInterfaceOld, Poo
     }
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 2;
     }
 

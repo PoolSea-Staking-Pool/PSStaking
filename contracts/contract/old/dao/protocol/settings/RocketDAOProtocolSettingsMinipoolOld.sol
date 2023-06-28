@@ -4,19 +4,19 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../../../dao/protocol/settings/RocketDAOProtocolSettings.sol";
+import "../../../../dao/protocol/settings/PoolseaDAOProtocolSettings.sol";
 import "../../../../../interface/old/PoolseaDAOProtocolSettingsMinipoolInterfaceOld.sol";
 import "../../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsMinipoolInterface.sol";
 import "../../../../../types/MinipoolDeposit.sol";
 
 // Network minipool settings
-contract RocketDAOProtocolSettingsMinipoolOld is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsMinipoolInterfaceOld {
+contract RocketDAOProtocolSettingsMinipoolOld is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsMinipoolInterfaceOld {
 
     // Libs
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "minipool") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaDAOProtocolSettings(_rocketStorageAddress, "minipool") {
         // Set version
         version = 1;
         // Initialize settings on deployment

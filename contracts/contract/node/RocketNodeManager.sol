@@ -6,7 +6,7 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../types/MinipoolStatus.sol";
 import "../../types/NodeDetails.sol";
 import "../../interface/node/PoolseaNodeManagerInterface.sol";
@@ -23,7 +23,7 @@ import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipool
 
 
 // Node registration and management
-contract RocketNodeManager is RocketBase, PoolseaNodeManagerInterface {
+contract RocketNodeManager is PoolseaBase, PoolseaNodeManagerInterface {
 
     // Libraries
     using SafeMath for uint256;
@@ -35,7 +35,7 @@ contract RocketNodeManager is RocketBase, PoolseaNodeManagerInterface {
     event NodeSmoothingPoolStateChanged(address indexed node, bool state);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 3;
     }
 
@@ -99,12 +99,12 @@ contract RocketNodeManager is RocketBase, PoolseaNodeManagerInterface {
 
     // Get a node's current withdrawal address
     function getNodeWithdrawalAddress(address _nodeAddress) override public view returns (address) {
-        return rocketStorage.getNodeWithdrawalAddress(_nodeAddress);
+        return poolseaStorage.getNodeWithdrawalAddress(_nodeAddress);
     }
 
     // Get a node's pending withdrawal address
     function getNodePendingWithdrawalAddress(address _nodeAddress) override public view returns (address) {
-        return rocketStorage.getNodePendingWithdrawalAddress(_nodeAddress);
+        return poolseaStorage.getNodePendingWithdrawalAddress(_nodeAddress);
     }
 
     // Get a node's timezone location
@@ -245,7 +245,7 @@ contract RocketNodeManager is RocketBase, PoolseaNodeManagerInterface {
     // Designates which network a node would like their rewards relayed to
     function setRewardNetwork(address _nodeAddress, uint256 _network) override external onlyLatestContract("rocketNodeManager", address(this)) {
         // Confirm the transaction is from the node's current withdrawal address
-        address withdrawalAddress = rocketStorage.getNodeWithdrawalAddress(_nodeAddress);
+        address withdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(_nodeAddress);
         require(withdrawalAddress == msg.sender, "Only a tx from a node's withdrawal address can change reward network");
         // Check network is enabled
         PoolseaDAONodeTrustedSettingsRewardsInterface rocketDAONodeTrustedSettingsRewards = PoolseaDAONodeTrustedSettingsRewardsInterface(getContractAddress("rocketDAONodeTrustedSettingsRewards"));
@@ -327,8 +327,8 @@ contract RocketNodeManager is RocketBase, PoolseaNodeManagerInterface {
         IERC20 rocketTokenRPLFixedSupply = IERC20(getContractAddress("rocketTokenRPLFixedSupply"));
         // Node details
         nodeDetails.nodeAddress = _nodeAddress;
-        nodeDetails.withdrawalAddress = rocketStorage.getNodeWithdrawalAddress(_nodeAddress);
-        nodeDetails.pendingWithdrawalAddress = rocketStorage.getNodePendingWithdrawalAddress(_nodeAddress);
+        nodeDetails.withdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(_nodeAddress);
+        nodeDetails.pendingWithdrawalAddress = poolseaStorage.getNodePendingWithdrawalAddress(_nodeAddress);
         nodeDetails.exists = getNodeExists(_nodeAddress);
         nodeDetails.registrationTime = getNodeRegistrationTime(_nodeAddress);
         nodeDetails.timezoneLocation = getNodeTimezoneLocation(_nodeAddress);

@@ -28,18 +28,18 @@ function loadABI(abiFilePath) {
 
 
 // Storage
-const rocketStorage =                       artifacts.require('RocketStorage.sol');
+const rocketStorage =                       artifacts.require('PoolseaStorage.sol');
 
 // Network contracts
 const contracts = {
     // Vault
-    rocketVault:                              artifacts.require('RocketVault.sol'),
+    rocketVault:                              artifacts.require('PoolseaVault.sol'),
     // Tokens
     rocketTokenRPLFixedSupply:                artifacts.require('RocketTokenDummyRPL.sol'),
     rocketTokenRETH:                          artifacts.require('RocketTokenRETH.sol'),
     rocketTokenRPL:                           artifacts.require('RocketTokenRPL.sol'),
     // Auction
-    rocketAuctionManager:                     artifacts.require('RocketAuctionManager.sol'),
+    rocketAuctionManager:                     artifacts.require('PoolseaAuctionManager.sol'),
     // Deposit
     rocketDepositPool:                        artifacts.require('RocketDepositPoolOld.sol'),
     // Minipool
@@ -61,27 +61,27 @@ const contracts = {
     rocketNodeManager:                        artifacts.require('RocketNodeManagerOld.sol'),
     rocketNodeStaking:                        artifacts.require('RocketNodeStakingOld.sol'),
     // DAOs
-    rocketDAOProposal:                        artifacts.require('RocketDAOProposal.sol'),
-    rocketDAONodeTrusted:                     artifacts.require('RocketDAONodeTrusted.sol'),
-    rocketDAONodeTrustedProposals:            artifacts.require('RocketDAONodeTrustedProposals.sol'),
-    rocketDAONodeTrustedActions:              artifacts.require('RocketDAONodeTrustedActions.sol'),
-    rocketDAONodeTrustedUpgrade:              artifacts.require('RocketDAONodeTrustedUpgrade.sol'),
-    rocketDAONodeTrustedSettingsMembers:      artifacts.require('RocketDAONodeTrustedSettingsMembers.sol'),
-    rocketDAONodeTrustedSettingsProposals:    artifacts.require('RocketDAONodeTrustedSettingsProposals.sol'),
+    rocketDAOProposal:                        artifacts.require('PoolseaDAOProposal.sol'),
+    rocketDAONodeTrusted:                     artifacts.require('PoolseaDAONodeTrusted.sol'),
+    rocketDAONodeTrustedProposals:            artifacts.require('PoolseaDAONodeTrustedProposals.sol'),
+    rocketDAONodeTrustedActions:              artifacts.require('PoolseaDAONodeTrustedActions.sol'),
+    rocketDAONodeTrustedUpgrade:              artifacts.require('PoolseaDAONodeTrustedUpgrade.sol'),
+    rocketDAONodeTrustedSettingsMembers:      artifacts.require('PoolseaDAONodeTrustedSettingsMembers.sol'),
+    rocketDAONodeTrustedSettingsProposals:    artifacts.require('PoolseaDAONodeTrustedSettingsProposals.sol'),
     rocketDAONodeTrustedSettingsMinipool:     artifacts.require('RocketDAONodeTrustedSettingsMinipoolOld.sol'),
-    rocketDAOProtocol:                        artifacts.require('RocketDAOProtocol.sol'),
-    rocketDAOProtocolProposals:               artifacts.require('RocketDAOProtocolProposals.sol'),
-    rocketDAOProtocolActions:                 artifacts.require('RocketDAOProtocolActions.sol'),
-    rocketDAOProtocolSettingsInflation:       artifacts.require('RocketDAOProtocolSettingsInflation.sol'),
-    rocketDAOProtocolSettingsRewards:         artifacts.require('RocketDAOProtocolSettingsRewards.sol'),
-    rocketDAOProtocolSettingsAuction:         artifacts.require('RocketDAOProtocolSettingsAuction.sol'),
+    rocketDAOProtocol:                        artifacts.require('PoolseaDAOProtocol.sol'),
+    rocketDAOProtocolProposals:               artifacts.require('PoolseaDAOProtocolProposals.sol'),
+    rocketDAOProtocolActions:                 artifacts.require('PoolseaDAOProtocolActions.sol'),
+    rocketDAOProtocolSettingsInflation:       artifacts.require('PoolseaDAOProtocolSettingsInflation.sol'),
+    rocketDAOProtocolSettingsRewards:         artifacts.require('PoolseaDAOProtocolSettingsRewards.sol'),
+    rocketDAOProtocolSettingsAuction:         artifacts.require('PoolseaDAOProtocolSettingsAuction.sol'),
     rocketDAOProtocolSettingsNode:            artifacts.require('RocketDAOProtocolSettingsNodeOld.sol'),
-    rocketDAOProtocolSettingsNetwork:         artifacts.require('RocketDAOProtocolSettingsNetwork.sol'),
+    rocketDAOProtocolSettingsNetwork:         artifacts.require('PoolseaDAOProtocolSettingsNetwork.sol'),
     rocketDAOProtocolSettingsDeposit:         artifacts.require('RocketDAOProtocolSettingsDepositOld.sol'),
     rocketDAOProtocolSettingsMinipool:        artifacts.require('RocketDAOProtocolSettingsMinipoolOld.sol'),
     // v1.1
     rocketMerkleDistributorMainnet:           artifacts.require('RocketMerkleDistributorMainnet.sol'),
-    rocketDAONodeTrustedSettingsRewards:      artifacts.require('RocketDAONodeTrustedSettingsRewards.sol'),
+    rocketDAONodeTrustedSettingsRewards:      artifacts.require('PoolseaDAONodeTrustedSettingsRewards.sol'),
     rocketSmoothingPool:                      artifacts.require('RocketSmoothingPool.sol'),
     rocketNodeDistributorFactory:             artifacts.require('RocketNodeDistributorFactory.sol'),
     rocketNodeDistributorDelegate:            artifacts.require('RocketNodeDistributorDelegateOld.sol'),
@@ -89,10 +89,10 @@ const contracts = {
     // v1.2
     rocketNodeDepositNew:                     artifacts.require('RocketNodeDeposit.sol'),
     rocketMinipoolDelegateNew:                artifacts.require('RocketMinipoolDelegate.sol'),
-    rocketDAOProtocolSettingsMinipoolNew:     artifacts.require('RocketDAOProtocolSettingsMinipool.sol'),
+    rocketDAOProtocolSettingsMinipoolNew:     artifacts.require('PoolseaDAOProtocolSettingsMinipool.sol'),
     rocketMinipoolQueueNew:                   artifacts.require('RocketMinipoolQueue.sol'),
     rocketDepositPoolNew:                     artifacts.require('RocketDepositPool.sol'),
-    rocketDAOProtocolSettingsDepositNew:      artifacts.require('RocketDAOProtocolSettingsDeposit.sol'),
+    rocketDAOProtocolSettingsDepositNew:      artifacts.require('PoolseaDAOProtocolSettingsDeposit.sol'),
     rocketMinipoolManagerNew:                 artifacts.require('RocketMinipoolManager.sol'),
     rocketNodeStakingNew:                     artifacts.require('RocketNodeStaking.sol'),
     rocketNodeDistributorDelegateNew:         artifacts.require('RocketNodeDistributorDelegate.sol'),
@@ -100,9 +100,9 @@ const contracts = {
     rocketNetworkFeesNew:                     artifacts.require('RocketNetworkFees.sol'),
     rocketNetworkPricesNew:                   artifacts.require('RocketNetworkPrices.sol'),
     rocketMinipoolBase:                       artifacts.require('RocketMinipoolBase.sol'),
-    rocketDAONodeTrustedSettingsMinipoolNew:  artifacts.require('RocketDAONodeTrustedSettingsMinipool.sol'),
+    rocketDAONodeTrustedSettingsMinipoolNew:  artifacts.require('PoolseaDAONodeTrustedSettingsMinipool.sol'),
     rocketNodeManagerNew:                     artifacts.require('RocketNodeManager.sol'),
-    rocketDAOProtocolSettingsNodeNew:         artifacts.require('RocketDAOProtocolSettingsNode.sol'),
+    rocketDAOProtocolSettingsNodeNew:         artifacts.require('PoolseaDAOProtocolSettingsNode.sol'),
     rocketRewardsPoolNew:                     artifacts.require('RocketRewardsPool.sol'),
     rocketMinipoolBondReducer:                artifacts.require('RocketMinipoolBondReducer.sol'),
     rocketNetworkBalancesNew:                 artifacts.require('RocketNetworkBalances.sol'),
@@ -320,7 +320,7 @@ export async function deployRocketPool() {
         console.log('\x1b[31m%s\x1b[0m:', '   Set Storage Address');
         console.log('     ' + (await rocketStorage.deployed()).address);
         // Add Rocket Storage to deployed contracts
-        contracts.rocketStorage = artifacts.require('RocketStorage.sol');
+        contracts.rocketStorage = artifacts.require('PoolseaStorage.sol');
         // Now process the rest
         for (let contract in contracts) {
             if(contracts.hasOwnProperty(contract)) {

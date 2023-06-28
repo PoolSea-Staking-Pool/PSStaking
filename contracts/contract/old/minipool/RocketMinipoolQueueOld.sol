@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "../../../interface/minipool/PoolseaMinipoolInterface.sol";
 import "../../../interface/old/PoolseaMinipoolQueueInterfaceOld.sol";
 import "../../../interface/old/PoolseaDAOProtocolSettingsMinipoolInterfaceOld.sol";
@@ -13,7 +13,7 @@ import "../../../types/MinipoolDeposit.sol";
 
 // Minipool queueing for deposit assignment
 
-contract RocketMinipoolQueueOld is RocketBase, PoolseaMinipoolQueueInterfaceOld {
+contract RocketMinipoolQueueOld is PoolseaBase, PoolseaMinipoolQueueInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -29,7 +29,7 @@ contract RocketMinipoolQueueOld is RocketBase, PoolseaMinipoolQueueInterfaceOld 
     event MinipoolRemoved(address indexed minipool, bytes32 indexed queueId, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 

@@ -5,7 +5,7 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../RocketBase.sol";
+import "../../PoolseaBase.sol";
 import "./RocketMinipoolOld.sol";
 import "../../../types/MinipoolStatus.sol";
 import "../../../types/MinipoolDeposit.sol";
@@ -29,7 +29,7 @@ import "../../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 
 // Minipool creation, removal and management
 
-contract RocketMinipoolManagerOld is RocketBase, PoolseaMinipoolManagerInterfaceOld {
+contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -39,7 +39,7 @@ contract RocketMinipoolManagerOld is RocketBase, PoolseaMinipoolManagerInterface
     event MinipoolDestroyed(address indexed minipool, address indexed node, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 2;
     }
 

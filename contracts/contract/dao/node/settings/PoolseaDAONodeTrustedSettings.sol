@@ -2,12 +2,12 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../../../RocketBase.sol";
+import "../../../PoolseaBase.sol";
 import "../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsInterface.sol";
 
 // Settings in RP which the DAO will have full control over
 // This settings contract enables storage using setting paths with namespaces, rather than explicit set methods
-abstract contract RocketDAONodeTrustedSettings is RocketBase, PoolseaDAONodeTrustedSettingsInterface {
+abstract contract PoolseaDAONodeTrustedSettings is PoolseaBase, PoolseaDAONodeTrustedSettingsInterface {
 
 
     // The namespace for a particular group of settings
@@ -17,13 +17,13 @@ abstract contract RocketDAONodeTrustedSettings is RocketBase, PoolseaDAONodeTrus
     // Only allow updating from the DAO proposals contract
     modifier onlyDAONodeTrustedProposal() {
         // If this contract has been initialised, only allow access from the proposals contract
-        if(getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) require(getContractAddress("rocketDAONodeTrustedProposals") == msg.sender, "Only DAO Node Trusted Proposals contract can update a setting");
+        if(getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) require(getContractAddress("poolseaDAONodeTrustedProposals") == msg.sender, "Only DAO Node Trusted Proposals contract can update a setting");
         _;
     }
 
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress, string memory _settingNameSpace) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress, string memory _settingNameSpace) PoolseaBase(_poolseaStorageAddress) {
         // Apply the setting namespace
         settingNameSpace = keccak256(abi.encodePacked("dao.trustednodes.setting.", _settingNameSpace));
     }

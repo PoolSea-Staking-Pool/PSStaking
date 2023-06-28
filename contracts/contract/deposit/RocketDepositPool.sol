@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/math/SignedSafeMath.sol";
 import "@openzeppelin/contracts/utils/SafeCast.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/PoolseaVaultInterface.sol";
 import "../../interface/PoolseaVaultWithdrawerInterface.sol";
 import "../../interface/deposit/PoolseaDepositPoolInterface.sol";
@@ -18,7 +18,7 @@ import "../../interface/token/PoolseaTokenRETHInterface.sol";
 import "../../types/MinipoolDeposit.sol";
 
 /// @notice Accepts user deposits and mints rETH; handles assignment of deposited ETH to minipools
-contract RocketDepositPool is RocketBase, PoolseaDepositPoolInterface, PoolseaVaultWithdrawerInterface {
+contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaVaultWithdrawerInterface {
 
     // Libs
     using SafeMath for uint256;
@@ -48,7 +48,7 @@ contract RocketDepositPool is RocketBase, PoolseaDepositPoolInterface, PoolseaVa
         _;
     }
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 3;
 
         // Pre-retrieve non-upgradable contract addresses to save gas

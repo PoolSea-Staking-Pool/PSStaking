@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/old/PoolseaMinipoolInterfaceOld.sol";
 import "../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolStatusInterface.sol";
@@ -16,7 +16,7 @@ import "../../types/MinipoolStatus.sol";
 
 // Handles updates to minipool status by trusted (oracle) nodes
 
-contract RocketMinipoolStatus is RocketBase, PoolseaMinipoolStatusInterface {
+contract RocketMinipoolStatus is PoolseaBase, PoolseaMinipoolStatusInterface {
 
     // Libs
     using SafeMath for uint;
@@ -26,7 +26,7 @@ contract RocketMinipoolStatus is RocketBase, PoolseaMinipoolStatusInterface {
     event MinipoolSetWithdrawable(address indexed minipool, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 

@@ -5,7 +5,7 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInflationInterface.sol";
 import "../../interface/token/PoolseaTokenRPLInterface.sol";
 import "../../interface/PoolseaVaultInterface.sol";
@@ -13,7 +13,7 @@ import "../../interface/PoolseaVaultInterface.sol";
 // RPL Governance and utility token
 // Inlfationary with rate determined by DAO
 
-contract RocketTokenRPL is RocketBase, ERC20Burnable, PoolseaTokenRPLInterface {
+contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface {
 
     // Libs
     using SafeMath for uint;
@@ -44,7 +44,7 @@ contract RocketTokenRPL is RocketBase, ERC20Burnable, PoolseaTokenRPLInterface {
 
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress, IERC20 _rocketTokenRPLFixedSupplyAddress) RocketBase(_rocketStorageAddress) ERC20("POOL", "POOL") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress, IERC20 _rocketTokenRPLFixedSupplyAddress) PoolseaBase(_rocketStorageAddress) ERC20("POOL", "POOL") {
         // Version
         version = 1;
         // Set the mainnet RPL fixed supply token address

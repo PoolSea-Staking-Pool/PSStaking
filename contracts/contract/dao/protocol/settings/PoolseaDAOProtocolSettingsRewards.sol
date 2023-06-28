@@ -2,26 +2,26 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "./RocketDAOProtocolSettings.sol";
+import "./PoolseaDAOProtocolSettings.sol";
 import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsRewardsInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 // Settings in RP which the DAO will have full control over
-contract RocketDAOProtocolSettingsRewards is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsRewardsInterface {
+contract PoolseaDAOProtocolSettingsRewards is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsRewardsInterface {
 
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "rewards") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAOProtocolSettings(_poolseaStorageAddress, "rewards") {
         // Set version
         version = 1;
          // Set some initial settings on first deployment
         if(!getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) {
             // Each of the initial RPL reward claiming contracts
-            setSettingRewardsClaimer('rocketClaimDAO', 0.1 ether);                                              // DAO Rewards claim % amount - Percentage given of 1 ether
-            setSettingRewardsClaimer('rocketClaimNode', 0.70 ether);                                            // Bonded Node Rewards claim % amount - Percentage given of 1 ether
-            setSettingRewardsClaimer('rocketClaimTrustedNode', 0.2 ether);                                      // Trusted Node Rewards claim % amount - Percentage given of 1 ether
+            setSettingRewardsClaimer('poolseaClaimDAO', 0.1 ether);                                              // DAO Rewards claim % amount - Percentage given of 1 ether
+            setSettingRewardsClaimer('poolseaClaimNode', 0.70 ether);                                            // Bonded Node Rewards claim % amount - Percentage given of 1 ether
+            setSettingRewardsClaimer('poolseaClaimTrustedNode', 0.2 ether);                                      // Trusted Node Rewards claim % amount - Percentage given of 1 ether
             // RPL Claims settings
             setSettingUint("rpl.rewards.claim.period.time", 28 days);                                           // The time in which a claim period will span in seconds - 28 days by default
             // Deployment check

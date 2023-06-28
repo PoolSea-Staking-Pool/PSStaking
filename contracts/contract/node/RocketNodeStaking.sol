@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
 import "../../interface/network/PoolseaNetworkPricesInterface.sol";
 import "../../interface/node/PoolseaNodeStakingInterface.sol";
@@ -15,7 +15,7 @@ import "../../interface/PoolseaVaultInterface.sol";
 import "../../interface/util/AddressSetStorageInterface.sol";
 
 /// @notice Handles node deposits and minipool creation
-contract RocketNodeStaking is RocketBase, PoolseaNodeStakingInterface {
+contract RocketNodeStaking is PoolseaBase, PoolseaNodeStakingInterface {
 
     // Libs
     using SafeMath for uint;
@@ -26,7 +26,7 @@ contract RocketNodeStaking is RocketBase, PoolseaNodeStakingInterface {
     event RPLSlashed(address indexed node, uint256 amount, uint256 ethValue, uint256 time);
     event StakeRPLForAllowed(address indexed node, address indexed caller, bool allowed, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 4;
     }
 
@@ -213,7 +213,7 @@ contract RocketNodeStaking is RocketBase, PoolseaNodeStakingInterface {
     function stakeRPLFor(address _nodeAddress, uint256 _amount) override external onlyLatestContract("rocketNodeStaking", address(this)) onlyRegisteredNode(_nodeAddress) {
        // Must be node's withdrawal address, allow listed address or rocketMerkleDistributorMainnet
        if (msg.sender != getAddress(keccak256(abi.encodePacked("contract.address", "rocketMerkleDistributorMainnet")))) {
-           address withdrawalAddress = rocketStorage.getNodeWithdrawalAddress(_nodeAddress);
+           address withdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(_nodeAddress);
            if (msg.sender != withdrawalAddress) {
                require(getBool(keccak256(abi.encodePacked("node.stake.for.allowed", _nodeAddress, msg.sender))), "Not allowed to stake for");
            }
@@ -270,7 +270,7 @@ contract RocketNodeStaking is RocketBase, PoolseaNodeStakingInterface {
         decreaseTotalRPLStake(_amount);
         decreaseNodeRPLStake(msg.sender, _amount);
         // Transfer RPL tokens to node address
-        rocketVault.withdrawToken(rocketStorage.getNodeWithdrawalAddress(msg.sender), IERC20(getContractAddress("rocketTokenRPL")), _amount);
+        rocketVault.withdrawToken(poolseaStorage.getNodeWithdrawalAddress(msg.sender), IERC20(getContractAddress("rocketTokenRPL")), _amount);
         // Emit RPL withdrawn event
         emit RPLWithdrawn(msg.sender, _amount, block.timestamp);
     }

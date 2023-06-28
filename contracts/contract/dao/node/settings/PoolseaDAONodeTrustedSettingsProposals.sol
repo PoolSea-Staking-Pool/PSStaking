@@ -2,15 +2,15 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "./RocketDAONodeTrustedSettings.sol";
+import "./PoolseaDAONodeTrustedSettings.sol";
 import "../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsProposalsInterface.sol";
 
 
 // The Trusted Node DAO Members
-contract RocketDAONodeTrustedSettingsProposals is RocketDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsProposalsInterface {
+contract PoolseaDAONodeTrustedSettingsProposals is PoolseaDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsProposalsInterface {
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "proposals") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAONodeTrustedSettings(_poolseaStorageAddress, "proposals") {
         // Set version
         version = 1;
         // Initialize settings on deployment

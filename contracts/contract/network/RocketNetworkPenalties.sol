@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../RocketBase.sol";
+import "../PoolseaBase.sol";
 import "../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
 import "../../interface/network/PoolseaNetworkPenaltiesInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
@@ -12,7 +12,7 @@ import "../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 
 // Minipool penalties
 
-contract RocketNetworkPenalties is RocketBase, PoolseaNetworkPenaltiesInterface {
+contract RocketNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface {
 
     // Libs
     using SafeMath for uint;
@@ -22,7 +22,7 @@ contract RocketNetworkPenalties is RocketBase, PoolseaNetworkPenaltiesInterface 
     event PenaltyUpdated(address indexed minipoolAddress, uint256 penalty, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
         version = 1;
     }
 
