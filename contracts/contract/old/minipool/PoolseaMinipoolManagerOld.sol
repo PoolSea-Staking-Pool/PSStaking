@@ -29,7 +29,7 @@ import "../../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 
 // Minipool creation, removal and management
 
-contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfaceOld {
+contract PoolseaMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -39,7 +39,7 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
     event MinipoolDestroyed(address indexed minipool, address indexed node, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 2;
     }
 
@@ -207,7 +207,7 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
     }
 
     // Increments _nodeAddress' number of minipools in staking status
-    function incrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function incrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Get contracts
         PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(msg.sender);
         // Try to distribute current fees at previous average commission rate
@@ -227,7 +227,7 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
     }
 
     // Decrements _nodeAddress' number of minipools in staking status
-    function decrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function decrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Get contracts
         PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(msg.sender);
         // Try to distribute current fees at previous average commission rate
@@ -249,21 +249,21 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
     // Calls distribute on the given node's distributor if it has a balance and has been initialised
     function _tryDistribute(address _nodeAddress) internal {
         // Get contracts
-        PoolseaNodeDistributorFactoryInterface rocketNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("rocketNodeDistributorFactory"));
-        address distributorAddress = rocketNodeDistributorFactory.getProxyAddress(_nodeAddress);
+        PoolseaNodeDistributorFactoryInterface poolseaNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("poolseaNodeDistributorFactory"));
+        address distributorAddress = poolseaNodeDistributorFactory.getProxyAddress(_nodeAddress);
         // If there are funds to distribute than call distribute
         if (distributorAddress.balance > 0) {
             // Get contracts
-            PoolseaNodeManagerInterface rocketNodeManager = PoolseaNodeManagerInterface(getContractAddress("rocketNodeManager"));
+            PoolseaNodeManagerInterface poolseaNodeManager = PoolseaNodeManagerInterface(getContractAddress("poolseaNodeManager"));
             // Ensure distributor has been initialised
-            require(rocketNodeManager.getFeeDistributorInitialised(_nodeAddress), "Distributor not initialised");
+            require(poolseaNodeManager.getFeeDistributorInitialised(_nodeAddress), "Distributor not initialised");
             PoolseaNodeDistributorInterface distributor = PoolseaNodeDistributorInterface(distributorAddress);
             distributor.distribute();
         }
     }
 
     // Increments _nodeAddress' number of minipools that have been finalised
-    function incrementNodeFinalisedMinipoolCount(address _nodeAddress) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function incrementNodeFinalisedMinipoolCount(address _nodeAddress) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Update the node specific count
         addUint(keccak256(abi.encodePacked("node.minipools.finalised.count", _nodeAddress)), 1);
         // Update the total count
@@ -271,21 +271,21 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
     }
 
     // Create a minipool
-    // Only accepts calls from the RocketNodeDeposit contract
-    function createMinipool(address _nodeAddress, MinipoolDeposit _depositType, uint256 _salt) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyLatestContract("rocketNodeDeposit", msg.sender) returns (PoolseaMinipoolInterface) {
+    // Only accepts calls from the PoolseaNodeDeposit contract
+    function createMinipool(address _nodeAddress, MinipoolDeposit _depositType, uint256 _salt) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyLatestContract("poolseaNodeDeposit", msg.sender) returns (PoolseaMinipoolInterface) {
         // Load contracts
-        PoolseaNodeStakingInterfaceOld rocketNodeStaking = PoolseaNodeStakingInterfaceOld(getContractAddress("rocketNodeStaking"));
+        PoolseaNodeStakingInterfaceOld poolseaNodeStaking = PoolseaNodeStakingInterfaceOld(getContractAddress("poolseaNodeStaking"));
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         // Check node minipool limit based on RPL stake
         require(
-            getNodeActiveMinipoolCount(_nodeAddress) < rocketNodeStaking.getNodeMinipoolLimit(_nodeAddress),
+            getNodeActiveMinipoolCount(_nodeAddress) < poolseaNodeStaking.getNodeMinipoolLimit(_nodeAddress),
             "Minipool count after deposit exceeds limit based on node RPL stake"
         );
         { // Local scope to prevent stack too deep error
-          PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+          PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
           // Check global minipool limit
           uint256 totalMinipoolCount = getActiveMinipoolCount();
-          require(totalMinipoolCount.add(1) <= rocketDAOProtocolSettingsMinipool.getMaximumCount(), "Global minipool limit reached");
+          require(totalMinipoolCount.add(1) <= poolseaDAOProtocolSettingsMinipool.getMaximumCount(), "Global minipool limit reached");
         }
         // Create minipool contract
         address contractAddress = deployContract(_nodeAddress, _depositType, _salt);
@@ -296,20 +296,20 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
         addressSetStorage.addItem(keccak256(abi.encodePacked("node.minipools.index", _nodeAddress)), contractAddress);
         // Update unbonded validator count if minipool is unbonded
         if (_depositType == MinipoolDeposit.Empty) {
-            PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-            rocketDAONodeTrusted.incrementMemberUnbondedValidatorCount(_nodeAddress);
+            PoolseaDAONodeTrustedInterface poolseaDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+            poolseaDAONodeTrusted.incrementMemberUnbondedValidatorCount(_nodeAddress);
         }
         // Emit minipool created event
         emit MinipoolCreated(contractAddress, _nodeAddress, block.timestamp);
         // Add minipool to queue
-        PoolseaMinipoolQueueInterfaceOld(getContractAddress("rocketMinipoolQueue")).enqueueMinipool(_depositType, contractAddress);
+        PoolseaMinipoolQueueInterfaceOld(getContractAddress("poolseaMinipoolQueue")).enqueueMinipool(_depositType, contractAddress);
         // Return created minipool address
         return PoolseaMinipoolInterface(contractAddress);
     }
 
     // Destroy a minipool
     // Only accepts calls from registered minipools
-    function destroyMinipool() override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function destroyMinipool() override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Load contracts
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         // Initialize minipool & get properties
@@ -333,23 +333,23 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
     // Updates the stored total effective rate based on a node's changing minipool count
     function updateTotalEffectiveRPLStake(address _nodeAddress, uint256 _oldCount, uint256 _newCount) private {
         // Load contracts
-        PoolseaNetworkPricesInterfaceOld rocketNetworkPrices = PoolseaNetworkPricesInterfaceOld(getContractAddress("rocketNetworkPrices"));
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-        PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
-        PoolseaNodeStakingInterfaceOld rocketNodeStaking = PoolseaNodeStakingInterfaceOld(getContractAddress("rocketNodeStaking"));
+        PoolseaNetworkPricesInterfaceOld poolseaNetworkPrices = PoolseaNetworkPricesInterfaceOld(getContractAddress("poolseaNetworkPrices"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsNodeInterface poolseaDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("poolseaDAOProtocolSettingsNode"));
+        PoolseaNodeStakingInterfaceOld poolseaNodeStaking = PoolseaNodeStakingInterfaceOld(getContractAddress("poolseaNodeStaking"));
         // Require price consensus
-        require(rocketNetworkPrices.inConsensus(), "Network is not in consensus");
+        require(poolseaNetworkPrices.inConsensus(), "Network is not in consensus");
         // Get node's RPL stake
-        uint256 rplStake = rocketNodeStaking.getNodeRPLStake(_nodeAddress);
+        uint256 rplStake = poolseaNodeStaking.getNodeRPLStake(_nodeAddress);
         // Get the node's maximum possible stake
-        uint256 maxRplStakePerMinipool = rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount()
-            .mul(rocketDAOProtocolSettingsNode.getMaximumPerMinipoolStake());
+        uint256 maxRplStakePerMinipool = poolseaDAOProtocolSettingsMinipool.getHalfDepositUserAmount()
+            .mul(poolseaDAOProtocolSettingsNode.getMaximumPerMinipoolStake());
         uint256 oldMaxRplStake = maxRplStakePerMinipool
             .mul(_oldCount)
-            .div(rocketNetworkPrices.getRPLPrice());
+            .div(poolseaNetworkPrices.getRPLPrice());
         uint256 newMaxRplStake = maxRplStakePerMinipool
             .mul(_newCount)
-            .div(rocketNetworkPrices.getRPLPrice());
+            .div(poolseaNetworkPrices.getRPLPrice());
         // Check if we have to decrease total
         if (_oldCount > _newCount) {
             if (rplStake <= newMaxRplStake) {
@@ -358,7 +358,7 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
             uint256 decrease = oldMaxRplStake.sub(newMaxRplStake);
             uint256 delta = rplStake.sub(newMaxRplStake);
             if (delta > decrease) { delta = decrease; }
-            rocketNetworkPrices.decreaseEffectiveRPLStake(delta);
+            poolseaNetworkPrices.decreaseEffectiveRPLStake(delta);
             return;
         }
         // Check if we have to increase total
@@ -369,7 +369,7 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
             uint256 increase = newMaxRplStake.sub(oldMaxRplStake);
             uint256 delta = rplStake.sub(oldMaxRplStake);
             if (delta > increase) { delta = increase; }
-            rocketNetworkPrices.increaseEffectiveRPLStake(delta);
+            poolseaNetworkPrices.increaseEffectiveRPLStake(delta);
             return;
         }
         // _oldCount == _newCount (do nothing but shouldn't happen)
@@ -377,7 +377,7 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
 
     // Set a minipool's validator pubkey
     // Only accepts calls from registered minipools
-    function setMinipoolPubkey(bytes calldata _pubkey) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function setMinipoolPubkey(bytes calldata _pubkey) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Load contracts
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         // Initialize minipool & get properties
@@ -392,8 +392,8 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
 
     // Performs a CREATE2 deployment of a minipool contract with given salt
     function deployContract(address _nodeAddress, MinipoolDeposit _depositType, uint256 _salt) private returns (address) {
-        PoolseaMinipoolFactoryInterfaceOld rocketMinipoolFactory = PoolseaMinipoolFactoryInterfaceOld(getContractAddress("rocketMinipoolFactory"));
-        return rocketMinipoolFactory.deployContract(_nodeAddress, _depositType, _salt);
+        PoolseaMinipoolFactoryInterfaceOld poolseaMinipoolFactory = PoolseaMinipoolFactoryInterfaceOld(getContractAddress("poolseaMinipoolFactory"));
+        return poolseaMinipoolFactory.deployContract(_nodeAddress, _depositType, _salt);
     }
 
     // Retrieves all on-chain information about a given minipool in a single convenience view function
@@ -401,8 +401,8 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
         // Get contracts
         PoolseaMinipoolInterface minipoolInterface = PoolseaMinipoolInterface(_minipoolAddress);
         PoolseaMinipoolOld minipool = PoolseaMinipoolOld(payable(_minipoolAddress));
-        PoolseaNetworkPenaltiesInterface rocketNetworkPenalties = PoolseaNetworkPenaltiesInterface(getContractAddress("rocketNetworkPenalties"));
-        PoolseaMinipoolPenaltyInterface rocketMinipoolPenalty = PoolseaMinipoolPenaltyInterface(getContractAddress("rocketMinipoolPenalty"));
+        PoolseaNetworkPenaltiesInterface poolseaNetworkPenalties = PoolseaNetworkPenaltiesInterface(getContractAddress("poolseaNetworkPenalties"));
+        PoolseaMinipoolPenaltyInterface poolseaMinipoolPenalty = PoolseaMinipoolPenaltyInterface(getContractAddress("poolseaMinipoolPenalty"));
         // Minipool details
         MinipoolDetails memory details;
         details.exists = getMinipoolExists(_minipoolAddress);
@@ -424,8 +424,8 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
         details.previousDelegate = minipool.getPreviousDelegate();
         details.effectiveDelegate = minipool.getEffectiveDelegate();
         // Penalty details
-        details.penaltyCount = rocketNetworkPenalties.getPenaltyCount(_minipoolAddress);
-        details.penaltyRate = rocketMinipoolPenalty.getPenaltyRate(_minipoolAddress);
+        details.penaltyCount = poolseaNetworkPenalties.getPenaltyCount(_minipoolAddress);
+        details.penaltyRate = poolseaMinipoolPenalty.getPenaltyRate(_minipoolAddress);
         return details;
     }
 }

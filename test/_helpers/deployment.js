@@ -44,7 +44,7 @@ const contracts = {
     rocketDepositPool:                        artifacts.require('PoolseaDepositPoolOld.sol'),
     // Minipool
     rocketMinipoolDelegate:                   artifacts.require('PoolseaMinipoolDelegateOld.sol'),
-    rocketMinipoolManager:                    artifacts.require('RocketMinipoolManagerOld.sol'),
+    rocketMinipoolManager:                    artifacts.require('PoolseaMinipoolManagerOld.sol'),
     rocketMinipoolQueue:                      artifacts.require('PoolseaMinipoolQueueOld.sol'),
     rocketMinipoolStatus:                     artifacts.require('PoolseaMinipoolStatus.sol'),
     rocketMinipoolPenalty:                    artifacts.require('PoolseaMinipoolPenalty.sol'),
