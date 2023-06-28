@@ -18,7 +18,7 @@ import "../../interface/token/PoolseaTokenRETHInterface.sol";
 import "../../types/MinipoolDeposit.sol";
 
 /// @notice Accepts user deposits and mints rETH; handles assignment of deposited ETH to minipools
-contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaVaultWithdrawerInterface {
+contract PoolseaDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaVaultWithdrawerInterface {
 
     // Libs
     using SafeMath for uint256;
@@ -26,8 +26,8 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
     using SafeCast for uint256;
 
     // Immutables
-    PoolseaVaultInterface immutable rocketVault;
-    PoolseaTokenRETHInterface immutable rocketTokenRETH;
+    PoolseaVaultInterface immutable poolseaVault;
+    PoolseaTokenRETHInterface immutable poolseaTokenRETH;
 
     // Events
     event DepositReceived(address indexed from, uint256 amount, uint256 time);
@@ -44,21 +44,21 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
     // Modifiers
     modifier onlyThisLatestContract() {
         // Compiler can optimise out this keccak at compile time
-        require(address(this) == getAddress(keccak256("contract.addressrocketDepositPool")), "Invalid or outdated contract");
+        require(address(this) == getAddress(keccak256("contract.addresspoolseaDepositPool")), "Invalid or outdated contract");
         _;
     }
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 3;
 
         // Pre-retrieve non-upgradable contract addresses to save gas
-        rocketVault = PoolseaVaultInterface(getContractAddress("rocketVault"));
-        rocketTokenRETH = PoolseaTokenRETHInterface(getContractAddress("rocketTokenRETH"));
+        poolseaVault = PoolseaVaultInterface(getContractAddress("poolseaVault"));
+        poolseaTokenRETH = PoolseaTokenRETHInterface(getContractAddress("poolseaTokenRETH"));
     }
 
     /// @notice Returns the current deposit pool balance
     function getBalance() override public view returns (uint256) {
-        return rocketVault.balanceOf("rocketDepositPool");
+        return poolseaVault.balanceOf("poolseaDepositPool");
     }
 
     /// @notice Returns the amount of ETH contributed to the deposit pool by node operators waiting in the queue
@@ -75,8 +75,8 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
     /// @notice Excess deposit pool balance (in excess of minipool queue capacity)
     function getExcessBalance() override public view returns (uint256) {
         // Get minipool queue capacity
-        PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
-        uint256 minipoolCapacity = rocketMinipoolQueue.getEffectiveCapacity();
+        PoolseaMinipoolQueueInterface poolseaMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("poolseaMinipoolQueue"));
+        uint256 minipoolCapacity = poolseaMinipoolQueue.getEffectiveCapacity();
         uint256 balance = getBalance();
         // Calculate and return
         if (minipoolCapacity >= balance) { return 0; }
@@ -84,14 +84,14 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
     }
 
     /// @dev Callback required to receive ETH withdrawal from the vault
-    function receiveVaultWithdrawalETH() override external payable onlyThisLatestContract onlyLatestContract("rocketVault", msg.sender) {}
+    function receiveVaultWithdrawalETH() override external payable onlyThisLatestContract onlyLatestContract("poolseaVault", msg.sender) {}
 
-    /// @notice Deposits ETH into Rocket Pool and mints the corresponding amount of rETH to the caller
+    /// @notice Deposits ETH into Poolsea Pool and mints the corresponding amount of rETH to the caller
     function deposit() override external payable onlyThisLatestContract {
         // Check deposit settings
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
-        require(rocketDAOProtocolSettingsDeposit.getDepositEnabled(), "Deposits into Rocket Pool are currently disabled");
-        require(msg.value >= rocketDAOProtocolSettingsDeposit.getMinimumDeposit(), "The deposited amount is less than the minimum deposit size");
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
+        require(poolseaDAOProtocolSettingsDeposit.getDepositEnabled(), "Deposits into Poolsea Pool are currently disabled");
+        require(msg.value >= poolseaDAOProtocolSettingsDeposit.getMinimumDeposit(), "The deposited amount is less than the minimum deposit size");
         /*
             Check if deposit exceeds limit based on current deposit size and minipool queue capacity.
 
@@ -103,42 +103,42 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
             assert(capacityNeeded <= maxCapacity)
         */
         uint256 capacityNeeded = getBalance().add(msg.value);
-        uint256 maxDepositPoolSize = rocketDAOProtocolSettingsDeposit.getMaximumDepositPoolSize();
+        uint256 maxDepositPoolSize = poolseaDAOProtocolSettingsDeposit.getMaximumDepositPoolSize();
         if (capacityNeeded > maxDepositPoolSize) {
             // Doing a conditional require() instead of a single one optimises for the common
             // case where capacityNeeded fits in the deposit pool without looking at the queue
-            if (rocketDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
-                PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
-                require(capacityNeeded <= maxDepositPoolSize.add(rocketMinipoolQueue.getEffectiveCapacity()),
+            if (poolseaDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
+                PoolseaMinipoolQueueInterface poolseaMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("poolseaMinipoolQueue"));
+                require(capacityNeeded <= maxDepositPoolSize.add(poolseaMinipoolQueue.getEffectiveCapacity()),
                     "The deposit pool size after depositing (and matching with minipools) exceeds the maximum size");
             } else {
                 revert("The deposit pool size after depositing exceeds the maximum size");
             }
         }
         // Calculate deposit fee
-        uint256 depositFee = msg.value.mul(rocketDAOProtocolSettingsDeposit.getDepositFee()).div(calcBase);
+        uint256 depositFee = msg.value.mul(poolseaDAOProtocolSettingsDeposit.getDepositFee()).div(calcBase);
         uint256 depositNet = msg.value.sub(depositFee);
         // Mint rETH to user account
-        rocketTokenRETH.mint(depositNet, msg.sender);
+        poolseaTokenRETH.mint(depositNet, msg.sender);
         // Emit deposit received event
         emit DepositReceived(msg.sender, msg.value, block.timestamp);
         // Process deposit
-        processDeposit(rocketDAOProtocolSettingsDeposit);
+        processDeposit(poolseaDAOProtocolSettingsDeposit);
     }
 
     /// @notice Returns the maximum amount that can be accepted into the deposit pool at this time in wei
     function getMaximumDepositAmount() override external view returns (uint256) {
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
         // If deposits are enabled max deposit is 0
-        if (!rocketDAOProtocolSettingsDeposit.getDepositEnabled()) {
+        if (!poolseaDAOProtocolSettingsDeposit.getDepositEnabled()) {
             return 0;
         }
         uint256 depositPoolBalance = getBalance();
-        uint256 maxCapacity = rocketDAOProtocolSettingsDeposit.getMaximumDepositPoolSize();
+        uint256 maxCapacity = poolseaDAOProtocolSettingsDeposit.getMaximumDepositPoolSize();
         // When assignments are enabled, we can accept the max amount plus whatever space is available in the minipool queue
-        if (rocketDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
-            PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
-            maxCapacity = maxCapacity.add(rocketMinipoolQueue.getEffectiveCapacity());
+        if (poolseaDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
+            PoolseaMinipoolQueueInterface poolseaMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("poolseaMinipoolQueue"));
+            maxCapacity = maxCapacity.add(poolseaMinipoolQueue.getEffectiveCapacity());
         }
         // Check we aren't already over
         if (depositPoolBalance >= maxCapacity) {
@@ -149,21 +149,21 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
 
     /// @dev Accepts ETH deposit from the node deposit contract (does not mint rETH)
     /// @param _totalAmount The total node deposit amount including any credit balance used
-    function nodeDeposit(uint256 _totalAmount) override external payable onlyThisLatestContract onlyLatestContract("rocketNodeDeposit", msg.sender) {
+    function nodeDeposit(uint256 _totalAmount) override external payable onlyThisLatestContract onlyLatestContract("poolseaNodeDeposit", msg.sender) {
         // Deposit ETH into the vault
         if (msg.value > 0) {
-            rocketVault.depositEther{value: msg.value}();
+            poolseaVault.depositEther{value: msg.value}();
         }
         // Increase recorded node balance
         addUint("deposit.pool.node.balance", _totalAmount);
     }
 
-    /// @dev Withdraws ETH from the deposit pool to RocketNodeDeposit contract to be used for a new minipool
+    /// @dev Withdraws ETH from the deposit pool to PoolseaNodeDeposit contract to be used for a new minipool
     /// @param _amount The amount of ETH to withdraw
-    function nodeCreditWithdrawal(uint256 _amount) override external onlyThisLatestContract onlyLatestContract("rocketNodeDeposit", msg.sender) {
+    function nodeCreditWithdrawal(uint256 _amount) override external onlyThisLatestContract onlyLatestContract("poolseaNodeDeposit", msg.sender) {
         // Withdraw ETH from the vault
-        rocketVault.withdrawEther(_amount);
-        // Send it to msg.sender (function modifier verifies msg.sender is RocketNodeDeposit)
+        poolseaVault.withdrawEther(_amount);
+        // Send it to msg.sender (function modifier verifies msg.sender is PoolseaNodeDeposit)
         (bool success, ) = address(msg.sender).call{value: _amount}("");
         require(success, "Failed to send ETH");
     }
@@ -171,91 +171,91 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
     /// @dev Recycle a deposit from a dissolved minipool
     function recycleDissolvedDeposit() override external payable onlyThisLatestContract onlyRegisteredMinipool(msg.sender) {
         // Load contracts
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
         // Recycle ETH
         emit DepositRecycled(msg.sender, msg.value, block.timestamp);
-        processDeposit(rocketDAOProtocolSettingsDeposit);
+        processDeposit(poolseaDAOProtocolSettingsDeposit);
     }
 
     /// @dev Recycle excess ETH from the rETH token contract
-    function recycleExcessCollateral() override external payable onlyThisLatestContract onlyLatestContract("rocketTokenRETH", msg.sender) {
+    function recycleExcessCollateral() override external payable onlyThisLatestContract onlyLatestContract("poolseaTokenRETH", msg.sender) {
         // Load contracts
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
         // Recycle ETH
         emit DepositRecycled(msg.sender, msg.value, block.timestamp);
-        processDeposit(rocketDAOProtocolSettingsDeposit);
+        processDeposit(poolseaDAOProtocolSettingsDeposit);
     }
 
     /// @dev Recycle a liquidated RPL stake from a slashed minipool
-    function recycleLiquidatedStake() override external payable onlyThisLatestContract onlyLatestContract("rocketAuctionManager", msg.sender) {
+    function recycleLiquidatedStake() override external payable onlyThisLatestContract onlyLatestContract("poolseaAuctionManager", msg.sender) {
         // Load contracts
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
         // Recycle ETH
         emit DepositRecycled(msg.sender, msg.value, block.timestamp);
-        processDeposit(rocketDAOProtocolSettingsDeposit);
+        processDeposit(poolseaDAOProtocolSettingsDeposit);
     }
 
     /// @dev Process a deposit
-    function processDeposit(PoolseaDAOProtocolSettingsDepositInterface _rocketDAOProtocolSettingsDeposit) private {
+    function processDeposit(PoolseaDAOProtocolSettingsDepositInterface _poolseaDAOProtocolSettingsDeposit) private {
         // Transfer ETH to vault
-        rocketVault.depositEther{value: msg.value}();
+        poolseaVault.depositEther{value: msg.value}();
         // Assign deposits if enabled
-        _assignDeposits(_rocketDAOProtocolSettingsDeposit);
+        _assignDeposits(_poolseaDAOProtocolSettingsDeposit);
     }
 
     /// @notice Assign deposits to available minipools. Reverts if assigning deposits is disabled.
     function assignDeposits() override external onlyThisLatestContract {
         // Load contracts
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
         // Revert if assigning is disabled
-        require(_assignDeposits(rocketDAOProtocolSettingsDeposit), "Deposit assignments are currently disabled");
+        require(_assignDeposits(poolseaDAOProtocolSettingsDeposit), "Deposit assignments are currently disabled");
     }
 
     /// @dev Assign deposits to available minipools. Does nothing if assigning deposits is disabled.
     function maybeAssignDeposits() override external onlyThisLatestContract returns (bool) {
         // Load contracts
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
         // Revert if assigning is disabled
-        return _assignDeposits(rocketDAOProtocolSettingsDeposit);
+        return _assignDeposits(poolseaDAOProtocolSettingsDeposit);
     }
 
     /// @dev Assigns deposits to available minipools, returns false if assignment is currently disabled
-    function _assignDeposits(PoolseaDAOProtocolSettingsDepositInterface _rocketDAOProtocolSettingsDeposit) private returns (bool) {
+    function _assignDeposits(PoolseaDAOProtocolSettingsDepositInterface _poolseaDAOProtocolSettingsDeposit) private returns (bool) {
         // Check if assigning deposits is enabled
-        if (!_rocketDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
+        if (!_poolseaDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
             return false;
         }
         // Load contracts
-        PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
+        PoolseaMinipoolQueueInterface poolseaMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("poolseaMinipoolQueue"));
         // Decide which queue processing implementation to use based on queue contents
-        if (rocketMinipoolQueue.getContainsLegacy()) {
-            return _assignDepositsLegacy(rocketMinipoolQueue, _rocketDAOProtocolSettingsDeposit);
+        if (poolseaMinipoolQueue.getContainsLegacy()) {
+            return _assignDepositsLegacy(poolseaMinipoolQueue, _poolseaDAOProtocolSettingsDeposit);
         } else {
-            return _assignDepositsNew(rocketMinipoolQueue, _rocketDAOProtocolSettingsDeposit);
+            return _assignDepositsNew(poolseaMinipoolQueue, _poolseaDAOProtocolSettingsDeposit);
         }
     }
 
     /// @dev Assigns deposits using the new minipool queue
-    function _assignDepositsNew(PoolseaMinipoolQueueInterface _rocketMinipoolQueue, PoolseaDAOProtocolSettingsDepositInterface _rocketDAOProtocolSettingsDeposit) private returns (bool) {
+    function _assignDepositsNew(PoolseaMinipoolQueueInterface _poolseaMinipoolQueue, PoolseaDAOProtocolSettingsDepositInterface _poolseaDAOProtocolSettingsDeposit) private returns (bool) {
         // Load contracts
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         // Calculate the number of minipools to assign
-        uint256 maxAssignments = _rocketDAOProtocolSettingsDeposit.getMaximumDepositAssignments();
-        uint256 variableDepositAmount = rocketDAOProtocolSettingsMinipool.getVariableDepositAmount();
+        uint256 maxAssignments = _poolseaDAOProtocolSettingsDeposit.getMaximumDepositAssignments();
+        uint256 variableDepositAmount = poolseaDAOProtocolSettingsMinipool.getVariableDepositAmount();
         uint256 scalingCount = msg.value.div(variableDepositAmount);
         uint256 totalEthCount = getBalance().div(variableDepositAmount);
-        uint256 assignments = _rocketDAOProtocolSettingsDeposit.getMaximumDepositSocialisedAssignments().add(scalingCount);
+        uint256 assignments = _poolseaDAOProtocolSettingsDeposit.getMaximumDepositSocialisedAssignments().add(scalingCount);
         if (assignments > totalEthCount) {
             assignments = totalEthCount;
         }
         if (assignments > maxAssignments) {
             assignments = maxAssignments;
         }
-        address[] memory minipools = _rocketMinipoolQueue.dequeueMinipools(assignments);
+        address[] memory minipools = _poolseaMinipoolQueue.dequeueMinipools(assignments);
         if (minipools.length > 0){
             // Withdraw ETH from vault
             uint256 totalEther = minipools.length.mul(variableDepositAmount);
-            rocketVault.withdrawEther(totalEther);
+            poolseaVault.withdrawEther(totalEther);
             uint256 nodeBalanceUsed = 0;
             // Loop over minipools and deposit the amount required to reach launch balance
             for (uint256 i = 0; i < minipools.length; i++) {
@@ -273,14 +273,14 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
     }
 
     /// @dev Assigns deposits using the legacy minipool queue
-    function _assignDepositsLegacy(PoolseaMinipoolQueueInterface _rocketMinipoolQueue, PoolseaDAOProtocolSettingsDepositInterface _rocketDAOProtocolSettingsDeposit) private returns (bool) {
+    function _assignDepositsLegacy(PoolseaMinipoolQueueInterface _poolseaMinipoolQueue, PoolseaDAOProtocolSettingsDepositInterface _poolseaDAOProtocolSettingsDeposit) private returns (bool) {
         // Load contracts
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         // Setup initial variable values
         uint256 balance = getBalance();
         uint256 totalEther = 0;
         // Calculate minipool assignments
-        uint256 maxAssignments = _rocketDAOProtocolSettingsDeposit.getMaximumDepositAssignments();
+        uint256 maxAssignments = _poolseaDAOProtocolSettingsDeposit.getMaximumDepositAssignments();
         MinipoolAssignment[] memory assignments = new MinipoolAssignment[](maxAssignments);
         MinipoolDeposit depositType = MinipoolDeposit.None;
         uint256 count = 0;
@@ -288,14 +288,14 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
         for (uint256 i = 0; i < maxAssignments; ++i) {
             // Optimised for multiple of the same deposit type
             if (count == 0) {
-                (depositType, count) = _rocketMinipoolQueue.getNextDepositLegacy();
+                (depositType, count) = _poolseaMinipoolQueue.getNextDepositLegacy();
                 if (depositType == MinipoolDeposit.None) { break; }
-                minipoolCapacity = rocketDAOProtocolSettingsMinipool.getDepositUserAmount(depositType);
+                minipoolCapacity = poolseaDAOProtocolSettingsMinipool.getDepositUserAmount(depositType);
             }
             count--;
             if (minipoolCapacity == 0 || balance.sub(totalEther) < minipoolCapacity) { break; }
             // Dequeue the minipool
-            address minipoolAddress = _rocketMinipoolQueue.dequeueMinipoolByDepositLegacy(depositType);
+            address minipoolAddress = _poolseaMinipoolQueue.dequeueMinipoolByDepositLegacy(depositType);
             // Update running total
             totalEther = totalEther.add(minipoolCapacity);
             // Add assignment
@@ -304,7 +304,7 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
         }
         if (totalEther > 0) {
             // Withdraw ETH from vault
-            rocketVault.withdrawEther(totalEther);
+            poolseaVault.withdrawEther(totalEther);
             // Perform assignments
             for (uint256 i = 0; i < maxAssignments; ++i) {
                 if (assignments[i].etherAssigned == 0) { break; }
@@ -320,13 +320,13 @@ contract RocketDepositPool is PoolseaBase, PoolseaDepositPoolInterface, PoolseaV
 
     /// @dev Withdraw excess deposit pool balance for rETH collateral
     /// @param _amount The amount of excess ETH to withdraw
-    function withdrawExcessBalance(uint256 _amount) override external onlyThisLatestContract onlyLatestContract("rocketTokenRETH", msg.sender) {
+    function withdrawExcessBalance(uint256 _amount) override external onlyThisLatestContract onlyLatestContract("poolseaTokenRETH", msg.sender) {
         // Check amount
         require(_amount <= getExcessBalance(), "Insufficient excess balance for withdrawal");
         // Withdraw ETH from vault
-        rocketVault.withdrawEther(_amount);
+        poolseaVault.withdrawEther(_amount);
         // Transfer to rETH contract
-        rocketTokenRETH.depositExcess{value: _amount}();
+        poolseaTokenRETH.depositExcess{value: _amount}();
         // Emit excess withdrawn event
         emit ExcessWithdrawn(msg.sender, _amount, block.timestamp);
     }

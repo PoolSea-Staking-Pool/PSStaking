@@ -218,7 +218,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, PoolseaMin
         setStatus(MinipoolStatus.Staking);
         // Load contracts
         DepositInterface casperDeposit = DepositInterface(getContractAddress("casperDeposit"));
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Get launch amount
         uint256 launchAmount = rocketDAOProtocolSettingsMinipool.getLaunchBalance().sub(prelaunchAmount);
         // Check minipool balance
@@ -235,7 +235,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, PoolseaMin
     function preStake(bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot) internal {
         // Load contracts
         DepositInterface casperDeposit = DepositInterface(getContractAddress("casperDeposit"));
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Check minipool balance
         require(address(this).balance >= prelaunchAmount, "Insufficient balance to pre-stake");
         // Check validator pubkey is not in use
@@ -254,7 +254,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, PoolseaMin
     // Only accepts calls from the RocketMinipoolStatus contract
     function setWithdrawable() override external onlyLatestContract("rocketMinipoolStatus", msg.sender) onlyInitialised {
         // Get contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Check current status
         require(status == MinipoolStatus.Staking, "The minipool can only become withdrawable while staking");
         // Progress to withdrawable
@@ -311,7 +311,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, PoolseaMin
     // Perform any slashings, refunds, and unlock NO's stake
     function _finalise() private {
         // Get contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Can only finalise the pool once
         require(!finalised, "Minipool has already been finalised");
         // If slash is required then perform it
@@ -460,7 +460,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, PoolseaMin
             rocketDAONodeTrusted.decrementMemberUnbondedValidatorCount(nodeAddress);
         }
         // Destroy minipool
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         rocketMinipoolManager.destroyMinipool();
         // Self destruct
         selfdestruct(payable(rocketTokenRETH));

@@ -4,7 +4,7 @@ pragma abicoder v2;
 
 import "../PoolseaBase.sol";
 
-import "../minipool/RocketMinipoolManager.sol";
+import "../minipool/PoolseaMinipoolManager.sol";
 import "../node/RocketNodeManager.sol";
 import "../node/RocketNodeDistributorFactory.sol";
 import "../node/RocketNodeDistributorDelegate.sol";

@@ -168,7 +168,7 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
         // Prevent multiple calls
         require(!getFeeDistributorInitialised(msg.sender), "Already initialised");
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Calculate and set current average fee numerator
         uint256 count = rocketMinipoolManager.getNodeMinipoolCount(msg.sender);
         if (count > 0){
@@ -197,7 +197,7 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     // Calculates a nodes average node fee
     function getAverageNodeFee(address _nodeAddress) override external view returns (uint256) {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Calculate average
         uint256 denominator = rocketMinipoolManager.getNodeStakingMinipoolCount(_nodeAddress);
         if (denominator == 0) {
@@ -284,7 +284,7 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
         // Get contracts
         PoolseaNodeStakingInterfaceOld rocketNodeStaking = PoolseaNodeStakingInterfaceOld(getContractAddress("rocketNodeStaking"));
         PoolseaNodeDistributorFactoryInterface rocketNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("rocketNodeDistributorFactory"));
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         IERC20 rocketTokenRETH = IERC20(getContractAddress("rocketTokenRETH"));
         IERC20 rocketTokenRPL = IERC20(getContractAddress("rocketTokenRPL"));
         IERC20 rocketTokenRPLFixedSupply = IERC20(getContractAddress("rocketTokenRPLFixedSupply"));

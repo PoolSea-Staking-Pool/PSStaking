@@ -3,7 +3,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "./RocketMinipoolStorageLayout.sol";
+import "./PoolseaMinipoolStorageLayout.sol";
 import "../../interface/casper/DepositInterface.sol";
 import "../../interface/deposit/PoolseaDepositPoolInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolInterface.sol";
@@ -22,9 +22,9 @@ import "../../types/MinipoolStatus.sol";
 import "../../interface/node/PoolseaNodeDepositInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolBondReducerInterface.sol";
 
-/// @notice Provides the logic for each individual minipool in the Rocket Pool network
+/// @notice Provides the logic for each individual minipool in the Poolsea Pool network
 /// @dev Minipools exclusively DELEGATECALL into this contract it is never called directly
-contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolInterface {
+contract PoolseaMinipoolDelegate is PoolseaMinipoolStorageLayout, PoolseaMinipoolInterface {
 
     // Constants
     uint8 public constant override version = 3;                   // Used to identify which delegate contract each minipool is using
@@ -100,20 +100,20 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
 
     /// @dev Only allow access from the owning node address or their withdrawal address
     modifier onlyMinipoolOwnerOrWithdrawalAddress(address _nodeAddress) {
-        require(_nodeAddress == nodeAddress || _nodeAddress == rocketStorage.getNodeWithdrawalAddress(nodeAddress), "Invalid minipool owner");
+        require(_nodeAddress == nodeAddress || _nodeAddress == poolseaStorage.getNodeWithdrawalAddress(nodeAddress), "Invalid minipool owner");
         _;
     }
 
-    /// @dev Only allow access from the latest version of the specified Rocket Pool contract
+    /// @dev Only allow access from the latest version of the specified Poolsea Pool contract
     modifier onlyLatestContract(string memory _contractName, address _contractAddress) {
         require(_contractAddress == getContractAddress(_contractName), "Invalid or outdated contract");
         _;
     }
 
-    /// @dev Get the address of a Rocket Pool network contract
+    /// @dev Get the address of a Poolsea Pool network contract
     /// @param _contractName The internal name of the contract to retrieve the address for
     function getContractAddress(string memory _contractName) private view returns (address) {
-        address contractAddress = rocketStorage.getAddress(keccak256(abi.encodePacked("contract.address", _contractName)));
+        address contractAddress = poolseaStorage.getAddress(keccak256(abi.encodePacked("contract.address", _contractName)));
         require(contractAddress != address(0x0), "Contract not found");
         return contractAddress;
     }
@@ -124,7 +124,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Check parameters
         require(_nodeAddress != address(0x0), "Invalid node address");
         // Load contracts
-        PoolseaNetworkFeesInterface rocketNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("rocketNetworkFees"));
+        PoolseaNetworkFeesInterface poolseaNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("poolseaNetworkFees"));
         // Set initial status
         status = MinipoolStatus.Initialised;
         statusBlock = block.number;
@@ -132,11 +132,11 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Set details
         depositType = MinipoolDeposit.Variable;
         nodeAddress = _nodeAddress;
-        nodeFee = rocketNetworkFees.getNodeFee();
+        nodeFee = poolseaNetworkFees.getNodeFee();
         // Set the rETH address
-        rocketTokenRETH = getContractAddress("rocketTokenRETH");
+        poolseaTokenRETH = getContractAddress("poolseaTokenRETH");
         // Set local copy of penalty contract
-        rocketMinipoolPenalty = getContractAddress("rocketMinipoolPenalty");
+        poolseaMinipoolPenalty = getContractAddress("poolseaMinipoolPenalty");
         // Intialise storage state
         storageState = StorageState.Initialised;
     }
@@ -146,7 +146,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     /// @param _validatorPubkey The public key of the validator
     /// @param _validatorSignature A signature over the deposit message object
     /// @param _depositDataRoot The hash tree root of the deposit data object
-    function preDeposit(uint256 _bondValue, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot) override external payable onlyLatestContract("rocketNodeDeposit", msg.sender) onlyInitialised {
+    function preDeposit(uint256 _bondValue, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot) override external payable onlyLatestContract("poolseaNodeDeposit", msg.sender) onlyInitialised {
         // Check current status & node deposit status
         require(status == MinipoolStatus.Initialised, "The pre-deposit can only be made while initialised");
         require(preLaunchValue == 0, "Pre-deposit already performed");
@@ -160,7 +160,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     }
 
     /// @notice Performs the second deposit which provides the validator with the remaining balance to become active
-    function deposit() override external payable onlyLatestContract("rocketDepositPool", msg.sender) onlyInitialised {
+    function deposit() override external payable onlyLatestContract("poolseaDepositPool", msg.sender) onlyInitialised {
         // Check current status & node deposit status
         require(status == MinipoolStatus.Initialised, "The node deposit can only be assigned while initialised");
         require(userDepositAssignedTime == 0, "The user deposit has already been assigned");
@@ -175,7 +175,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
 
     /// @notice Assign user deposited ETH to the minipool and mark it as prelaunch
     /// @dev No longer used in "Variable" type minipools (only retained for legacy minipools still in queue)
-    function userDeposit() override external payable onlyLatestContract("rocketDepositPool", msg.sender) onlyInitialised {
+    function userDeposit() override external payable onlyLatestContract("poolseaDepositPool", msg.sender) onlyInitialised {
         // Check current status & user deposit status
         require(status >= MinipoolStatus.Initialised && status <= MinipoolStatus.Staking, "The user deposit can only be assigned while initialised, in prelaunch, or staking");
         require(userDepositAssignedTime == 0, "The user deposit has already been assigned");
@@ -223,9 +223,9 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
             return false;
         }
         // Get contracts
-        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
         // Get scrub period
-        uint256 scrubPeriod = rocketDAONodeTrustedSettingsMinipool.getScrubPeriod();
+        uint256 scrubPeriod = poolseaDAONodeTrustedSettingsMinipool.getScrubPeriod();
         // Check if we have been in prelaunch status for long enough
         return block.timestamp > statusTime + scrubPeriod;
     }
@@ -237,9 +237,9 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
             return false;
         }
         // Get contracts
-        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
         // Get scrub period
-        uint256 scrubPeriod = rocketDAONodeTrustedSettingsMinipool.getPromotionScrubPeriod();
+        uint256 scrubPeriod = poolseaDAONodeTrustedSettingsMinipool.getPromotionScrubPeriod();
         // Check if we have been in prelaunch status for long enough
         return block.timestamp > statusTime + scrubPeriod;
     }
@@ -249,11 +249,11 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     /// @param _depositDataRoot The hash tree root of the deposit data object
     function stake(bytes calldata _validatorSignature, bytes32 _depositDataRoot) override external onlyMinipoolOwner(msg.sender) onlyInitialised {
         // Get contracts
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         {
             // Get scrub period
-            PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
-            uint256 scrubPeriod = rocketDAONodeTrustedSettingsMinipool.getScrubPeriod();
+            PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
+            uint256 scrubPeriod = poolseaDAONodeTrustedSettingsMinipool.getScrubPeriod();
             // Check current status
             require(status == MinipoolStatus.Prelaunch, "The minipool can only begin staking while in prelaunch");
             require(block.timestamp > statusTime + scrubPeriod, "Not enough time has passed to stake");
@@ -263,9 +263,9 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         setStatus(MinipoolStatus.Staking);
         // Load contracts
         DepositInterface casperDeposit = DepositInterface(getContractAddress("casperDeposit"));
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
         // Get launch amount
-        uint256 launchAmount = rocketDAOProtocolSettingsMinipool.getLaunchBalance();
+        uint256 launchAmount = poolseaDAOProtocolSettingsMinipool.getLaunchBalance();
         uint256 depositAmount;
         // Legacy minipools had a prestake equal to the bond amount
         if (depositType == MinipoolDeposit.Variable) {
@@ -276,24 +276,24 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Check minipool balance
         require(address(this).balance >= depositAmount, "Insufficient balance to begin staking");
         // Retrieve validator pubkey from storage
-        bytes memory validatorPubkey = rocketMinipoolManager.getMinipoolPubkey(address(this));
+        bytes memory validatorPubkey = poolseaMinipoolManager.getMinipoolPubkey(address(this));
         // Send staking deposit to casper
-        casperDeposit.deposit{value : depositAmount}(validatorPubkey, rocketMinipoolManager.getMinipoolWithdrawalCredentials(address(this)), _validatorSignature, _depositDataRoot);
+        casperDeposit.deposit{value : depositAmount}(validatorPubkey, poolseaMinipoolManager.getMinipoolWithdrawalCredentials(address(this)), _validatorSignature, _depositDataRoot);
         // Increment node's number of staking minipools
-        rocketMinipoolManager.incrementNodeStakingMinipoolCount(nodeAddress);
+        poolseaMinipoolManager.incrementNodeStakingMinipoolCount(nodeAddress);
     }
 
     /// @dev Sets the bond value and vacancy flag on this minipool
     /// @param _bondAmount The bond amount selected by the node operator
     /// @param _currentBalance The current balance of the validator on the beaconchain (will be checked by oDAO and scrubbed if not correct)
-    function prepareVacancy(uint256 _bondAmount, uint256 _currentBalance) override external onlyLatestContract("rocketMinipoolManager", msg.sender) onlyInitialised {
+    function prepareVacancy(uint256 _bondAmount, uint256 _currentBalance) override external onlyLatestContract("poolseaMinipoolManager", msg.sender) onlyInitialised {
         // Check status
         require(status == MinipoolStatus.Initialised, "Must be in initialised status");
         // Sanity check that refund balance is zero
         require(nodeRefundBalance == 0, "Refund balance not zero");
         // Check balance
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-        uint256 launchAmount = rocketDAOProtocolSettingsMinipool.getLaunchBalance();
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+        uint256 launchAmount = poolseaDAOProtocolSettingsMinipool.getLaunchBalance();
         require(_currentBalance >= launchAmount, "Balance is too low");
         // Store bond amount
         nodeDepositBalance = _bondAmount;
@@ -316,24 +316,24 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         require(status == MinipoolStatus.Prelaunch, "The minipool can only promote while in prelaunch");
         require(vacant, "Cannot promote a non-vacant minipool");
         // Get contracts
-        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
         // Clear vacant flag
         vacant = false;
         // Check scrub period
-        uint256 scrubPeriod = rocketDAONodeTrustedSettingsMinipool.getPromotionScrubPeriod();
+        uint256 scrubPeriod = poolseaDAONodeTrustedSettingsMinipool.getPromotionScrubPeriod();
         require(block.timestamp > statusTime + scrubPeriod, "Not enough time has passed to promote");
         // Progress to staking
         setStatus(MinipoolStatus.Staking);
         // Increment node's number of staking minipools
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
-        rocketMinipoolManager.incrementNodeStakingMinipoolCount(nodeAddress);
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
+        poolseaMinipoolManager.incrementNodeStakingMinipoolCount(nodeAddress);
         // Set deposit assigned time
         userDepositAssignedTime = block.timestamp;
         // Increase node operator's deposit credit
-        PoolseaNodeDepositInterface rocketNodeDepositInterface = PoolseaNodeDepositInterface(getContractAddress("rocketNodeDeposit"));
-        rocketNodeDepositInterface.increaseDepositCreditBalance(nodeAddress, userDepositBalance);
+        PoolseaNodeDepositInterface poolseaNodeDepositInterface = PoolseaNodeDepositInterface(getContractAddress("poolseaNodeDeposit"));
+        poolseaNodeDepositInterface.increaseDepositCreditBalance(nodeAddress, userDepositBalance);
         // Remove from vacant set
-        rocketMinipoolManager.removeVacantMinipool();
+        poolseaMinipoolManager.removeVacantMinipool();
         // Emit event
         emit MinipoolPromoted(block.timestamp);
     }
@@ -344,11 +344,11 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     function preStake(bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot) internal {
         // Load contracts
         DepositInterface casperDeposit = DepositInterface(getContractAddress("casperDeposit"));
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
         // Set minipool pubkey
-        rocketMinipoolManager.setMinipoolPubkey(_validatorPubkey);
+        poolseaMinipoolManager.setMinipoolPubkey(_validatorPubkey);
         // Get withdrawal credentials
-        bytes memory withdrawalCredentials = rocketMinipoolManager.getMinipoolWithdrawalCredentials(address(this));
+        bytes memory withdrawalCredentials = poolseaMinipoolManager.getMinipoolWithdrawalCredentials(address(this));
         // Send staking deposit to casper
         casperDeposit.deposit{value : preLaunchValue}(_validatorPubkey, withdrawalCredentials, _validatorSignature, _depositDataRoot);
         // Emit event
@@ -364,7 +364,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     /// @param _rewardsOnly If set to true, will revert if balance is not being treated as rewards
     function distributeBalance(bool _rewardsOnly) override external onlyInitialised {
         // Get node withdrawal address
-        address nodeWithdrawalAddress = rocketStorage.getNodeWithdrawalAddress(nodeAddress);
+        address nodeWithdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(nodeAddress);
         bool ownerCalling = msg.sender == nodeAddress || msg.sender == nodeWithdrawalAddress;
         // If dissolved, distribute everything to the owner
         if (status == MinipoolStatus.Dissolved) {
@@ -407,7 +407,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Get balance
         uint256 balance = address(this).balance;
         // Get node withdrawal address
-        address nodeWithdrawalAddress = rocketStorage.getNodeWithdrawalAddress(nodeAddress);
+        address nodeWithdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(nodeAddress);
         // Transfer balance
         (bool success,) = nodeWithdrawalAddress.call{value : balance}("");
         require(success, "Node ETH balance was not successfully transferred to node operator");
@@ -422,9 +422,9 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         uint256 totalBalance = address(this).balance.sub(nodeRefundBalance);
         require (totalBalance >= 8 ether, "Balance too low");
         // Prevent calls resetting distribute time before window has passed
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         uint256 timeElapsed = block.timestamp.sub(userDistributeTime);
-        require(rocketDAOProtocolSettingsMinipool.hasUserDistributeWindowPassed(timeElapsed), "User distribution already pending");
+        require(poolseaDAOProtocolSettingsMinipool.hasUserDistributeWindowPassed(timeElapsed), "User distribution already pending");
         // Store current time
         userDistributeTime = block.timestamp;
     }
@@ -432,10 +432,10 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     /// @notice Returns true if enough time has passed for a user to distribute
     function userDistributeAllowed() override public view returns (bool) {
         // Get contracts
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         // Calculate if time elapsed since call to `beginUserDistribute` is within the allowed window
         uint256 timeElapsed = block.timestamp.sub(userDistributeTime);
-        return(rocketDAOProtocolSettingsMinipool.isWithinUserDistributeWindow(timeElapsed));
+        return(poolseaDAOProtocolSettingsMinipool.isWithinUserDistributeWindow(timeElapsed));
     }
 
     /// @notice Allows the owner of this minipool to finalise it after a user has manually distributed the balance
@@ -447,7 +447,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     /// @dev Perform any slashings, refunds, and unlock NO's stake
     function _finalise() private {
         // Get contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
         // Can only finalise the pool once
         require(!finalised, "Minipool has already been finalised");
         // Set finalised flag
@@ -463,13 +463,13 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Send any left over ETH to rETH contract
         if (address(this).balance > 0) {
             // Send user amount to rETH contract
-            payable(rocketTokenRETH).transfer(address(this).balance);
+            payable(poolseaTokenRETH).transfer(address(this).balance);
         }
         // Trigger a deposit of excess collateral from rETH contract to deposit pool
-        PoolseaTokenRETHInterface(rocketTokenRETH).depositExcessCollateral();
+        PoolseaTokenRETHInterface(poolseaTokenRETH).depositExcessCollateral();
         // Unlock node operator's RPL
-        rocketMinipoolManager.incrementNodeFinalisedMinipoolCount(nodeAddress);
-        rocketMinipoolManager.decrementNodeStakingMinipoolCount(nodeAddress);
+        poolseaMinipoolManager.incrementNodeFinalisedMinipoolCount(nodeAddress);
+        poolseaMinipoolManager.decrementNodeStakingMinipoolCount(nodeAddress);
     }
 
     /// @dev Distributes balance to user and node operator
@@ -496,7 +496,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Pay user amount to rETH contract
         if (userAmount > 0) {
             // Send user amount to rETH contract
-            payable(rocketTokenRETH).transfer(userAmount);
+            payable(poolseaTokenRETH).transfer(userAmount);
         }
         // Save block to prevent multiple withdrawals within a few blocks
         withdrawalBlock = block.number;
@@ -543,7 +543,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
             nodeShare = _balance.sub(userCapital);
         }
         // Check if node has an ETH penalty
-        uint256 penaltyRate = PoolseaMinipoolPenaltyInterface(rocketMinipoolPenalty).getPenaltyRate(address(this));
+        uint256 penaltyRate = PoolseaMinipoolPenaltyInterface(poolseaMinipoolPenalty).getPenaltyRate(address(this));
         if (penaltyRate > 0) {
             uint256 penaltyAmount = nodeShare.mul(penaltyRate).div(calcBase);
             if (penaltyAmount > nodeShare) {
@@ -571,9 +571,9 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Check current status
         require(status == MinipoolStatus.Prelaunch, "The minipool can only be dissolved while in prelaunch");
         // Load contracts
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         // Check if minipool is timed out
-        require(block.timestamp.sub(statusTime) >= rocketDAOProtocolSettingsMinipool.getLaunchTimeout(), "The minipool can only be dissolved once it has timed out");
+        require(block.timestamp.sub(statusTime) >= poolseaDAOProtocolSettingsMinipool.getLaunchTimeout(), "The minipool can only be dissolved once it has timed out");
         // Perform the dissolution
         _dissolve();
     }
@@ -585,9 +585,9 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Distribute funds to owner
         distributeToOwner();
         // Destroy minipool
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
-        require(rocketMinipoolManager.getMinipoolExists(address(this)), "Minipool already closed");
-        rocketMinipoolManager.destroyMinipool();
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
+        require(poolseaMinipoolManager.getMinipoolExists(address(this)), "Minipool already closed");
+        poolseaMinipoolManager.destroyMinipool();
         // Clear state
         nodeDepositBalance = 0;
         nodeRefundBalance = 0;
@@ -601,30 +601,30 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Check current status
         require(status == MinipoolStatus.Prelaunch, "The minipool can only be scrubbed while in prelaunch");
         // Get contracts
-        PoolseaDAONodeTrustedInterface rocketDAONode = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAONodeTrustedInterface poolseaDAONode = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
         // Must be a trusted member
-        require(rocketDAONode.getMemberIsValid(msg.sender), "Not a trusted member");
+        require(poolseaDAONode.getMemberIsValid(msg.sender), "Not a trusted member");
         // Can only vote once
         require(!memberScrubVotes[msg.sender], "Member has already voted to scrub");
         memberScrubVotes[msg.sender] = true;
         // Emit event
         emit ScrubVoted(msg.sender, block.timestamp);
         // Check if required quorum has voted
-        uint256 quorum = rocketDAONode.getMemberCount().mul(rocketDAONodeTrustedSettingsMinipool.getScrubQuorum()).div(calcBase);
+        uint256 quorum = poolseaDAONode.getMemberCount().mul(poolseaDAONodeTrustedSettingsMinipool.getScrubQuorum()).div(calcBase);
         if (totalScrubVotes.add(1) > quorum) {
             // Slash RPL equal to minimum stake amount (if enabled)
-            if (!vacant && rocketDAONodeTrustedSettingsMinipool.getScrubPenaltyEnabled()){
-                PoolseaNodeStakingInterface rocketNodeStaking = PoolseaNodeStakingInterface(getContractAddress("rocketNodeStaking"));
-                PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
-                PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-                uint256 launchAmount = rocketDAOProtocolSettingsMinipool.getLaunchBalance();
+            if (!vacant && poolseaDAONodeTrustedSettingsMinipool.getScrubPenaltyEnabled()){
+                PoolseaNodeStakingInterface poolseaNodeStaking = PoolseaNodeStakingInterface(getContractAddress("poolseaNodeStaking"));
+                PoolseaDAOProtocolSettingsNodeInterface poolseaDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("poolseaDAOProtocolSettingsNode"));
+                PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+                uint256 launchAmount = poolseaDAOProtocolSettingsMinipool.getLaunchBalance();
                 // Slash amount is minRplStake * userCapital
                 // In prelaunch userDepositBalance hasn't been set so we calculate it as 32 MLN ETH - bond amount
-                rocketNodeStaking.slashRPL(
+                poolseaNodeStaking.slashRPL(
                     nodeAddress,
                         launchAmount.sub(nodeDepositBalance)
-                        .mul(rocketDAOProtocolSettingsNode.getMinimumPerMinipoolStake())
+                        .mul(poolseaDAOProtocolSettingsNode.getMinimumPerMinipoolStake())
                         .div(calcBase)
                 );
             }
@@ -647,20 +647,20 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Distribute any skimmed rewards
         distributeSkimmedRewards();
         // Approve reduction and handle external state changes
-        PoolseaMinipoolBondReducerInterface rocketBondReducer = PoolseaMinipoolBondReducerInterface(getContractAddress("rocketMinipoolBondReducer"));
+        PoolseaMinipoolBondReducerInterface poolseaBondReducer = PoolseaMinipoolBondReducerInterface(getContractAddress("poolseaMinipoolBondReducer"));
         uint256 previousBond = nodeDepositBalance;
-        uint256 newBond = rocketBondReducer.reduceBondAmount();
+        uint256 newBond = poolseaBondReducer.reduceBondAmount();
         // Update user/node balances
         userDepositBalance = getUserDepositBalance().add(previousBond.sub(newBond));
         nodeDepositBalance = newBond;
         // Reset node fee to current network rate
-        PoolseaNetworkFeesInterface rocketNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("rocketNetworkFees"));
+        PoolseaNetworkFeesInterface poolseaNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("poolseaNetworkFees"));
         uint256 prevFee = nodeFee;
-        uint256 newFee = rocketNetworkFees.getNodeFee();
+        uint256 newFee = poolseaNetworkFees.getNodeFee();
         nodeFee = newFee;
         // Update staking minipool counts and fee numerator
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
-        rocketMinipoolManager.updateNodeStakingMinipoolCount(previousBond, newBond, prevFee, newFee);
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
+        poolseaMinipoolManager.updateNodeStakingMinipoolCount(previousBond, newBond, prevFee, newFee);
         // Break state to prevent rollback exploit
         if (depositType != MinipoolDeposit.Variable) {
             userDepositBalanceLegacy = 2 ** 256 - 1;
@@ -677,7 +677,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         // Pay node operator via refund mechanism
         nodeRefundBalance = nodeRefundBalance.add(nodeShare);
         // Deposit user share into rETH contract
-        payable(rocketTokenRETH).transfer(rewards.sub(nodeShare));
+        payable(poolseaTokenRETH).transfer(rewards.sub(nodeShare));
     }
 
     /// @dev Set the minipool's current status
@@ -699,7 +699,7 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
         uint256 refundAmount = nodeRefundBalance;
         nodeRefundBalance = 0;
         // Get node withdrawal address
-        address nodeWithdrawalAddress = rocketStorage.getNodeWithdrawalAddress(nodeAddress);
+        address nodeWithdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(nodeAddress);
         // Transfer refund amount
         (bool success,) = nodeWithdrawalAddress.call{value : refundAmount}("");
         require(success, "ETH refund amount was not successfully transferred to node operator");
@@ -710,34 +710,34 @@ contract RocketMinipoolDelegate is RocketMinipoolStorageLayout, PoolseaMinipoolI
     /// @dev Slash node operator's RPL balance based on nodeSlashBalance
     function _slash() private {
         // Get contracts
-        PoolseaNodeStakingInterface rocketNodeStaking = PoolseaNodeStakingInterface(getContractAddress("rocketNodeStaking"));
+        PoolseaNodeStakingInterface poolseaNodeStaking = PoolseaNodeStakingInterface(getContractAddress("poolseaNodeStaking"));
         // Slash required amount and reset storage value
         uint256 slashAmount = nodeSlashBalance;
         nodeSlashBalance = 0;
-        rocketNodeStaking.slashRPL(nodeAddress, slashAmount);
+        poolseaNodeStaking.slashRPL(nodeAddress, slashAmount);
     }
 
     /// @dev Dissolve this minipool
     function _dissolve() private {
         // Get contracts
-        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
-        PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
+        PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
+        PoolseaMinipoolQueueInterface poolseaMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("poolseaMinipoolQueue"));
         // Progress to dissolved
         setStatus(MinipoolStatus.Dissolved);
         if (vacant) {
             // Vacant minipools waiting to be promoted need to be removed from the set maintained by the minipool manager
-            RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
-            rocketMinipoolManager.removeVacantMinipool();
+            PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
+            poolseaMinipoolManager.removeVacantMinipool();
         } else {
             if (depositType == MinipoolDeposit.Full) {
                 // Handle legacy Full type minipool
-                rocketMinipoolQueue.removeMinipool(MinipoolDeposit.Full);
+                poolseaMinipoolQueue.removeMinipool(MinipoolDeposit.Full);
             } else {
                 // Transfer user balance to deposit pool
                 uint256 userCapital = getUserDepositBalance();
-                rocketDepositPool.recycleDissolvedDeposit{value : userCapital}();
+                poolseaDepositPool.recycleDissolvedDeposit{value : userCapital}();
                 // Emit ether withdrawn event
-                emit EtherWithdrawn(address(rocketDepositPool), userCapital, block.timestamp);
+                emit EtherWithdrawn(address(poolseaDepositPool), userCapital, block.timestamp);
             }
         }
     }

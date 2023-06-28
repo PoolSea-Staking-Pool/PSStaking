@@ -2,14 +2,14 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../../minipool/RocketMinipoolStorageLayout.sol";
+import "../../minipool/PoolseaMinipoolStorageLayout.sol";
 import "../../../interface/PoolseaStorageInterface.sol";
 import "../../../types/MinipoolDeposit.sol";
 import "../../../types/MinipoolStatus.sol";
 
 // An individual minipool in the Rocket Pool network
 
-contract RocketMinipoolOld is RocketMinipoolStorageLayout {
+contract RocketMinipoolOld is PoolseaMinipoolStorageLayout {
 
     // Events
     event EtherReceived(address indexed from, uint256 amount, uint256 time);

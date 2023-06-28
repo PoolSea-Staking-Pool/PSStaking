@@ -7,7 +7,7 @@ import "../../types/MinipoolDeposit.sol";
 import "../../types/MinipoolDetails.sol";
 import "./PoolseaMinipoolInterface.sol";
 
-interface RocketMinipoolManagerInterface {
+interface PoolseaMinipoolManagerInterface {
     function getMinipoolCount() external view returns (uint256);
     function getStakingMinipoolCount() external view returns (uint256);
     function getFinalisedMinipoolCount() external view returns (uint256);

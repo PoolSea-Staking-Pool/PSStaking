@@ -217,7 +217,7 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _expectedMinipoolAddress The expected minipool address. Reverts if not correct
     function createMinipool(uint256 _salt, address _expectedMinipoolAddress) private returns (PoolseaMinipoolInterface) {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Check minipool doesn't exist or previously exist
         require(!rocketMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !rocketMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
         // Create minipool
@@ -236,7 +236,7 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _currentBalance The current balance of the validator on the beaconchain (will be checked by oDAO and scrubbed if not correct)
     function _createVacantMinipool(uint256 _salt, bytes calldata _validatorPubkey, uint256 _bondAmount, address _expectedMinipoolAddress, uint256 _currentBalance) private returns (PoolseaMinipoolInterface) {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         // Check minipool doesn't exist or previously exist
         require(!rocketMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !rocketMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
         // Create minipool

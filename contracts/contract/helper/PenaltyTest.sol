@@ -10,12 +10,12 @@ import "../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 // Helper contract used in unit tests that can set the penalty rate on a minipool (a feature that will be implemented at a later time)
 contract PenaltyTest is PoolseaBase {
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
     }
 
     // Sets the penalty rate for the given minipool
     function setPenaltyRate(address _minipoolAddress, uint256 _rate) external {
-        PoolseaMinipoolPenaltyInterface rocketMinipoolPenalty = PoolseaMinipoolPenaltyInterface(getContractAddress("rocketMinipoolPenalty"));
-        rocketMinipoolPenalty.setPenaltyRate(_minipoolAddress, _rate);
+        PoolseaMinipoolPenaltyInterface poolseaMinipoolPenalty = PoolseaMinipoolPenaltyInterface(getContractAddress("poolseaMinipoolPenalty"));
+        poolseaMinipoolPenalty.setPenaltyRate(_minipoolAddress, _rate);
     }
 }

@@ -73,7 +73,7 @@ contract RocketNodeStakingOld is PoolseaBase, PoolseaNodeStakingInterfaceOld {
     // Instead, it is intended to be called by oracle nodes to be submitted alongside price updates
     function calculateTotalEffectiveRPLStake(uint256 offset, uint256 limit, uint256 rplPrice) override external view returns (uint256) {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
         // Calculate current max RPL stake per minipool
@@ -102,7 +102,7 @@ contract RocketNodeStakingOld is PoolseaBase, PoolseaNodeStakingInterfaceOld {
     // Get a node's effective RPL stake amount
     function getNodeEffectiveRPLStake(address _nodeAddress) override external view returns (uint256) {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         PoolseaNetworkPricesInterfaceOld rocketNetworkPrices = PoolseaNetworkPricesInterfaceOld(getContractAddress("rocketNetworkPrices"));
         PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
@@ -121,7 +121,7 @@ contract RocketNodeStakingOld is PoolseaBase, PoolseaNodeStakingInterfaceOld {
     // Get a node's minimum RPL stake to collateralize their minipools
     function getNodeMinimumRPLStake(address _nodeAddress) override external view returns (uint256) {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         PoolseaNetworkPricesInterfaceOld rocketNetworkPrices = PoolseaNetworkPricesInterfaceOld(getContractAddress("rocketNetworkPrices"));
         PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
@@ -135,7 +135,7 @@ contract RocketNodeStakingOld is PoolseaBase, PoolseaNodeStakingInterfaceOld {
     // Get a node's maximum RPL stake to fully collateralize their minipools
     function getNodeMaximumRPLStake(address _nodeAddress) override public view returns (uint256) {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         PoolseaNetworkPricesInterfaceOld rocketNetworkPrices = PoolseaNetworkPricesInterfaceOld(getContractAddress("rocketNetworkPrices"));
         PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
@@ -220,7 +220,7 @@ contract RocketNodeStakingOld is PoolseaBase, PoolseaNodeStakingInterfaceOld {
     // Updates the stored total effective rate based on a node's changing staking balance
     function updateTotalEffectiveRPLStake(address _nodeAddress, uint256 _oldStake, uint256 _newStake) private {
         // Load contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         PoolseaNetworkPricesInterfaceOld rocketNetworkPrices = PoolseaNetworkPricesInterfaceOld(getContractAddress("rocketNetworkPrices"));
         PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));

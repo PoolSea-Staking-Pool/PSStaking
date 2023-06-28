@@ -5,7 +5,7 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../PoolseaBase.sol";
-import "./RocketMinipoolBase.sol";
+import "./PoolseaMinipoolBase.sol";
 import "../../types/MinipoolStatus.sol";
 import "../../types/MinipoolDeposit.sol";
 import "../../types/MinipoolDetails.sol";
@@ -25,10 +25,10 @@ import "../../interface/node/PoolseaNodeDistributorInterface.sol";
 import "../../interface/network/PoolseaNetworkPenaltiesInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 import "../../interface/node/PoolseaNodeDepositInterface.sol";
-import "./RocketMinipoolDelegate.sol";
+import "./PoolseaMinipoolDelegate.sol";
 
 /// @notice Minipool creation, removal and management
-contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
+contract PoolseaMinipoolManager is PoolseaBase, PoolseaMinipoolManagerInterface {
 
     // Libs
     using SafeMath for uint;
@@ -40,7 +40,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     event CancelReductionVoted(address indexed minipool, address indexed member, uint256 time);
     event ReductionCancelled(address indexed minipool, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 3;
     }
 
@@ -175,9 +175,9 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     /// @notice Get the number of minipools owned by a node that are in staking status
     /// @param _nodeAddress The node operator to query the count of staking minipools of
     function getNodeStakingMinipoolCount(address _nodeAddress) override public view returns (uint256) {
-        PoolseaNodeDepositInterface rocketNodeDeposit = PoolseaNodeDepositInterface(getContractAddress("rocketNodeDeposit"));
+        PoolseaNodeDepositInterface poolseaNodeDeposit = PoolseaNodeDepositInterface(getContractAddress("poolseaNodeDeposit"));
         // Get valid deposit amounts
-        uint256[] memory depositSizes = rocketNodeDeposit.getDepositAmounts();
+        uint256[] memory depositSizes = poolseaNodeDeposit.getDepositAmounts();
         uint256 total;
         for (uint256 i = 0; i < depositSizes.length; i++){
             total = total.add(getNodeStakingMinipoolCountBySize(_nodeAddress, depositSizes[i]));
@@ -257,7 +257,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     /// @param _newBond The minipool's new bond value
     /// @param _previousFee The fee of the minipool prior to the bond change
     /// @param _newFee The fee of the minipool after the bond change
-    function updateNodeStakingMinipoolCount(uint256 _previousBond, uint256 _newBond, uint256 _previousFee, uint256 _newFee) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function updateNodeStakingMinipoolCount(uint256 _previousBond, uint256 _newBond, uint256 _previousFee, uint256 _newFee) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         bytes32 nodeKey;
         bytes32 numeratorKey;
         // Get contracts
@@ -290,7 +290,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     /// @dev Increments a node operator's number of staking minipools and calculates updated average node fee.
     ///      Must be called from the minipool itself as msg.sender is used to query the minipool's node fee
     /// @param _nodeAddress The node address to increment the number of staking minipools of
-    function incrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function incrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Get contracts
         PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(msg.sender);
         // Try to distribute current fees at previous average commission rate
@@ -319,7 +319,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     /// @dev Decrements a node operator's number of minipools in staking status and calculates updated average node fee.
     ///      Must be called from the minipool itself as msg.sender is used to query the minipool's node fee
     /// @param _nodeAddress The node address to decrement the number of staking minipools of
-    function decrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function decrementNodeStakingMinipoolCount(address _nodeAddress) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Get contracts
         PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(msg.sender);
         // Try to distribute current fees at previous average commission rate
@@ -349,14 +349,14 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     /// @param _nodeAddress The node operator to try distribute rewards for
     function _tryDistribute(address _nodeAddress) internal {
         // Get contracts
-        PoolseaNodeDistributorFactoryInterface rocketNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("rocketNodeDistributorFactory"));
-        address distributorAddress = rocketNodeDistributorFactory.getProxyAddress(_nodeAddress);
+        PoolseaNodeDistributorFactoryInterface poolseaNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("poolseaNodeDistributorFactory"));
+        address distributorAddress = poolseaNodeDistributorFactory.getProxyAddress(_nodeAddress);
         // If there are funds to distribute than call distribute
         if (distributorAddress.balance > 0) {
             // Get contracts
-            PoolseaNodeManagerInterface rocketNodeManager = PoolseaNodeManagerInterface(getContractAddress("rocketNodeManager"));
+            PoolseaNodeManagerInterface poolseaNodeManager = PoolseaNodeManagerInterface(getContractAddress("poolseaNodeManager"));
             // Ensure distributor has been initialised
-            require(rocketNodeManager.getFeeDistributorInitialised(_nodeAddress), "Distributor not initialised");
+            require(poolseaNodeManager.getFeeDistributorInitialised(_nodeAddress), "Distributor not initialised");
             PoolseaNodeDistributorInterface distributor = PoolseaNodeDistributorInterface(distributorAddress);
             distributor.distribute();
         }
@@ -364,7 +364,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
 
     /// @dev Increments a node operator's number of minipools that have been finalised
     /// @param _nodeAddress The node operator to increment finalised minipool count for
-    function incrementNodeFinalisedMinipoolCount(address _nodeAddress) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function incrementNodeFinalisedMinipoolCount(address _nodeAddress) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Can only finalise a minipool once
         bytes32 finalisedKey = keccak256(abi.encodePacked("node.minipools.finalised", msg.sender));
         require(!getBool(finalisedKey), "Minipool has already been finalised");
@@ -384,18 +384,18 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
         setUint(keccak256(abi.encodePacked("eth.matched.node.amount", _nodeAddress)), ethMatched);
     }
 
-    /// @dev Create a minipool. Only accepts calls from the RocketNodeDeposit contract
+    /// @dev Create a minipool. Only accepts calls from the PoolseaNodeDeposit contract
     /// @param _nodeAddress The owning node operator's address
     /// @param _salt A salt used in determining the minipool's address
-    function createMinipool(address _nodeAddress, uint256 _salt) override public onlyLatestContract("rocketMinipoolManager", address(this)) onlyLatestContract("rocketNodeDeposit", msg.sender) returns (PoolseaMinipoolInterface) {
+    function createMinipool(address _nodeAddress, uint256 _salt) override public onlyLatestContract("poolseaMinipoolManager", address(this)) onlyLatestContract("poolseaNodeDeposit", msg.sender) returns (PoolseaMinipoolInterface) {
         // Load contracts
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         // Check node minipool limit based on RPL stake
         { // Local scope to prevent stack too deep error
-          PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+          PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
           // Check global minipool limit
           uint256 totalMinipoolCount = getActiveMinipoolCount();
-          require(totalMinipoolCount.add(1) <= rocketDAOProtocolSettingsMinipool.getMaximumCount(), "Global minipool limit reached");
+          require(totalMinipoolCount.add(1) <= poolseaDAOProtocolSettingsMinipool.getMaximumCount(), "Global minipool limit reached");
         }
         // Create minipool contract
         address contractAddress = deployContract(_nodeAddress, _salt);
@@ -416,7 +416,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     /// @param _validatorPubkey A validator pubkey that the node operator intends to migrate the withdrawal credentials of
     /// @param _bondAmount The bond amount selected by the node operator
     /// @param _currentBalance The current balance of the validator on the beaconchain (will be checked by oDAO and scrubbed if not correct)
-    function createVacantMinipool(address _nodeAddress, uint256 _salt, bytes calldata _validatorPubkey, uint256 _bondAmount, uint256 _currentBalance) override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyLatestContract("rocketNodeDeposit", msg.sender) returns (PoolseaMinipoolInterface) {
+    function createVacantMinipool(address _nodeAddress, uint256 _salt, bytes calldata _validatorPubkey, uint256 _bondAmount, uint256 _currentBalance) override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyLatestContract("poolseaNodeDeposit", msg.sender) returns (PoolseaMinipoolInterface) {
         // Get contracts
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         // Create the minipool
@@ -432,7 +432,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     }
 
     /// @dev Called by minipool to remove from vacant set on promotion or dissolution
-    function removeVacantMinipool() override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function removeVacantMinipool() override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Remove from vacant set
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         addressSetStorage.removeItem(keccak256(abi.encodePacked("minipools.vacant.index")), msg.sender);
@@ -455,7 +455,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     }
 
     /// @dev Destroy a minipool cleaning up all relevant state. Only accepts calls from registered minipools
-    function destroyMinipool() override external onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function destroyMinipool() override external onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Load contracts
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         // Initialize minipool & get properties
@@ -490,7 +490,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
 
     /// @dev Set a minipool's validator pubkey. Only accepts calls from registered minipools
     /// @param _pubkey The pubkey to set for the calling minipool
-    function setMinipoolPubkey(bytes calldata _pubkey) override public onlyLatestContract("rocketMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function setMinipoolPubkey(bytes calldata _pubkey) override public onlyLatestContract("poolseaMinipoolManager", address(this)) onlyRegisteredMinipool(msg.sender) {
         _setMinipoolPubkey(msg.sender, _pubkey);
     }
 
@@ -537,7 +537,7 @@ contract RocketMinipoolManager is PoolseaBase, RocketMinipoolManagerInterface {
     /// @param _nodeAddress The owning node operator's address
     /// @param _salt A salt used in determining the minipool's address
     function deployContract(address _nodeAddress, uint256 _salt) private returns (address) {
-        PoolseaMinipoolFactoryInterface rocketMinipoolFactory = PoolseaMinipoolFactoryInterface(getContractAddress("rocketMinipoolFactory"));
-        return rocketMinipoolFactory.deployContract(_nodeAddress, _salt);
+        PoolseaMinipoolFactoryInterface poolseaMinipoolFactory = PoolseaMinipoolFactoryInterface(getContractAddress("poolseaMinipoolFactory"));
+        return poolseaMinipoolFactory.deployContract(_nodeAddress, _salt);
     }
 }

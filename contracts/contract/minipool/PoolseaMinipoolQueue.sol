@@ -13,7 +13,7 @@ import "../../interface/util/AddressQueueStorageInterface.sol";
 import "../../types/MinipoolDeposit.sol";
 
 /// @notice Minipool queueing for deposit assignment
-contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
+contract PoolseaMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
 
     // Libs
     using SafeMath for uint;
@@ -29,7 +29,7 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
     event MinipoolDequeued(address indexed minipool, bytes32 indexed queueId, uint256 time);
     event MinipoolRemoved(address indexed minipool, bytes32 indexed queueId, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 2;
     }
 
@@ -72,11 +72,11 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
 
     /// @notice Get the total combined capacity of the queues
     function getTotalCapacity() override external view returns (uint256) {
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         return (
-            getLengthLegacy(queueKeyFull).mul(rocketDAOProtocolSettingsMinipool.getFullDepositUserAmount())
+            getLengthLegacy(queueKeyFull).mul(poolseaDAOProtocolSettingsMinipool.getFullDepositUserAmount())
         ).add(
-            getLengthLegacy(queueKeyHalf).mul(rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount())
+            getLengthLegacy(queueKeyHalf).mul(poolseaDAOProtocolSettingsMinipool.getHalfDepositUserAmount())
         ).add(
             getVariableCapacity()
         );
@@ -84,11 +84,11 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
 
     /// @notice Get the total effective capacity of the queues (used in node demand calculation)
     function getEffectiveCapacity() override external view returns (uint256) {
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         return (
-            getLengthLegacy(queueKeyFull).mul(rocketDAOProtocolSettingsMinipool.getFullDepositUserAmount())
+            getLengthLegacy(queueKeyFull).mul(poolseaDAOProtocolSettingsMinipool.getFullDepositUserAmount())
         ).add(
-            getLengthLegacy(queueKeyHalf).mul(rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount())
+            getLengthLegacy(queueKeyHalf).mul(poolseaDAOProtocolSettingsMinipool.getHalfDepositUserAmount())
         ).add(
             getVariableCapacity()
         );
@@ -96,15 +96,15 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
 
     /// @dev Get the ETH capacity of the variable queue
     function getVariableCapacity() internal view returns (uint256) {
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-        return getLength().mul(rocketDAOProtocolSettingsMinipool.getVariableDepositAmount());
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+        return getLength().mul(poolseaDAOProtocolSettingsMinipool.getVariableDepositAmount());
     }
 
     /// @notice Get the capacity of the next available minipool. Returns 0 if no minipools are available
     function getNextCapacityLegacy() override external view returns (uint256) {
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-        if (getLengthLegacy(queueKeyHalf) > 0) { return rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount(); }
-        if (getLengthLegacy(queueKeyFull) > 0) { return rocketDAOProtocolSettingsMinipool.getFullDepositUserAmount(); }
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+        if (getLengthLegacy(queueKeyHalf) > 0) { return poolseaDAOProtocolSettingsMinipool.getHalfDepositUserAmount(); }
+        if (getLengthLegacy(queueKeyFull) > 0) { return poolseaDAOProtocolSettingsMinipool.getFullDepositUserAmount(); }
         return 0;
     }
 
@@ -118,9 +118,9 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
         return (MinipoolDeposit.None, 0);
     }
 
-    /// @dev Add a minipool to the end of the appropriate queue. Only accepts calls from the RocketMinipoolManager contract
+    /// @dev Add a minipool to the end of the appropriate queue. Only accepts calls from the PoolseaMinipoolManager contract
     /// @param _minipool Address of the minipool to add to the queue
-    function enqueueMinipool(address _minipool) override external onlyLatestContract("rocketMinipoolQueue", address(this)) onlyLatestContract("rocketNodeDeposit", msg.sender) {
+    function enqueueMinipool(address _minipool) override external onlyLatestContract("poolseaMinipoolQueue", address(this)) onlyLatestContract("poolseaNodeDeposit", msg.sender) {
         // Enqueue
         AddressQueueStorageInterface addressQueueStorage = AddressQueueStorageInterface(getContractAddress("addressQueueStorage"));
         addressQueueStorage.enqueueItem(queueKeyVariable, _minipool);
@@ -130,7 +130,7 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
 
     /// @dev Dequeues a minipool from a legacy queue
     /// @param _depositType The queue to dequeue a minipool from
-    function dequeueMinipoolByDepositLegacy(MinipoolDeposit _depositType) override external onlyLatestContract("rocketMinipoolQueue", address(this)) onlyLatestContract("rocketDepositPool", msg.sender) returns (address minipoolAddress) {
+    function dequeueMinipoolByDepositLegacy(MinipoolDeposit _depositType) override external onlyLatestContract("poolseaMinipoolQueue", address(this)) onlyLatestContract("poolseaDepositPool", msg.sender) returns (address minipoolAddress) {
         if (_depositType == MinipoolDeposit.Half) { return dequeueMinipool(queueKeyHalf); }
         if (_depositType == MinipoolDeposit.Full) { return dequeueMinipool(queueKeyFull); }
         require(false, "No minipools are available");
@@ -138,7 +138,7 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
 
     /// @dev Dequeues multiple minipools from the variable queue and returns them all
     /// @param _maxToDequeue The maximum number of items to dequeue
-    function dequeueMinipools(uint256 _maxToDequeue) override external onlyLatestContract("rocketMinipoolQueue", address(this)) onlyLatestContract("rocketDepositPool", msg.sender) returns (address[] memory minipoolAddress) {
+    function dequeueMinipools(uint256 _maxToDequeue) override external onlyLatestContract("poolseaMinipoolQueue", address(this)) onlyLatestContract("poolseaDepositPool", msg.sender) returns (address[] memory minipoolAddress) {
         uint256 queueLength = getLength();
         uint256 count = _maxToDequeue;
         if (count > queueLength) {
@@ -165,7 +165,7 @@ contract RocketMinipoolQueue is PoolseaBase, PoolseaMinipoolQueueInterface {
     }
 
     /// @dev Remove a minipool from a queue. Only accepts calls from registered minipools
-    function removeMinipool(MinipoolDeposit _depositType) override external onlyLatestContract("rocketMinipoolQueue", address(this)) onlyRegisteredMinipool(msg.sender) {
+    function removeMinipool(MinipoolDeposit _depositType) override external onlyLatestContract("poolseaMinipoolQueue", address(this)) onlyRegisteredMinipool(msg.sender) {
         // Remove minipool from queue
         if (_depositType == MinipoolDeposit.Half) { return removeMinipool(queueKeyHalf, msg.sender); }
         if (_depositType == MinipoolDeposit.Full) { return removeMinipool(queueKeyFull, msg.sender); }

@@ -74,7 +74,7 @@ contract RocketNodeStaking is PoolseaBase, PoolseaNodeStakingInterface {
             return ethMatched;
         } else {
             // Fallback for backwards compatibility before ETH matched was recorded (all minipools matched 16 ETH from protocol)
-            RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+            PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
             return rocketMinipoolManager.getNodeActiveMinipoolCount(_nodeAddress).mul(16 ether);
         }
     }
@@ -83,7 +83,7 @@ contract RocketNodeStaking is PoolseaBase, PoolseaNodeStakingInterface {
     /// @param _nodeAddress The address of the node operator to query
     function getNodeETHProvided(address _nodeAddress) override public view returns (uint256) {
         // Get contracts
-        RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
         uint256 activeMinipoolCount = rocketMinipoolManager.getNodeActiveMinipoolCount(_nodeAddress);
         // Retrieve stored ETH matched value
         uint256 ethMatched = getUint(keccak256(abi.encodePacked("eth.matched.node.amount", _nodeAddress)));
@@ -110,7 +110,7 @@ contract RocketNodeStaking is PoolseaBase, PoolseaNodeStakingInterface {
         } else {
             PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
             uint256 launchAmount = rocketDAOProtocolSettingsMinipool.getLaunchBalance();
-            RocketMinipoolManagerInterface rocketMinipoolManager = RocketMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+            PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
             uint256 totalEthStaked = rocketMinipoolManager.getNodeActiveMinipoolCount(_nodeAddress).mul(launchAmount);
             return totalEthStaked.mul(calcBase).div(totalEthStaked.sub(ethMatched));
         }

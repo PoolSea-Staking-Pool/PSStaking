@@ -46,8 +46,8 @@ const contracts = {
     rocketMinipoolDelegate:                   artifacts.require('RocketMinipoolDelegateOld.sol'),
     rocketMinipoolManager:                    artifacts.require('RocketMinipoolManagerOld.sol'),
     rocketMinipoolQueue:                      artifacts.require('RocketMinipoolQueueOld.sol'),
-    rocketMinipoolStatus:                     artifacts.require('RocketMinipoolStatus.sol'),
-    rocketMinipoolPenalty:                    artifacts.require('RocketMinipoolPenalty.sol'),
+    rocketMinipoolStatus:                     artifacts.require('PoolseaMinipoolStatus.sol'),
+    rocketMinipoolPenalty:                    artifacts.require('PoolseaMinipoolPenalty.sol'),
     // Network
     rocketNetworkBalances:                    artifacts.require('RocketNetworkBalancesOld.sol'),
     rocketNetworkFees:                        artifacts.require('RocketNetworkFeesOld.sol'),
@@ -88,23 +88,23 @@ const contracts = {
     rocketMinipoolFactory:                    artifacts.require('RocketMinipoolFactoryOld.sol'),
     // v1.2
     rocketNodeDepositNew:                     artifacts.require('RocketNodeDeposit.sol'),
-    rocketMinipoolDelegateNew:                artifacts.require('RocketMinipoolDelegate.sol'),
+    rocketMinipoolDelegateNew:                artifacts.require('PoolseaMinipoolDelegate.sol'),
     rocketDAOProtocolSettingsMinipoolNew:     artifacts.require('PoolseaDAOProtocolSettingsMinipool.sol'),
-    rocketMinipoolQueueNew:                   artifacts.require('RocketMinipoolQueue.sol'),
-    rocketDepositPoolNew:                     artifacts.require('RocketDepositPool.sol'),
+    rocketMinipoolQueueNew:                   artifacts.require('PoolseaMinipoolQueue.sol'),
+    rocketDepositPoolNew:                     artifacts.require('PoolseaDepositPool.sol'),
     rocketDAOProtocolSettingsDepositNew:      artifacts.require('PoolseaDAOProtocolSettingsDeposit.sol'),
-    rocketMinipoolManagerNew:                 artifacts.require('RocketMinipoolManager.sol'),
+    rocketMinipoolManagerNew:                 artifacts.require('PoolseaMinipoolManager.sol'),
     rocketNodeStakingNew:                     artifacts.require('RocketNodeStaking.sol'),
     rocketNodeDistributorDelegateNew:         artifacts.require('RocketNodeDistributorDelegate.sol'),
-    rocketMinipoolFactoryNew:                 artifacts.require('RocketMinipoolFactory.sol'),
+    rocketMinipoolFactoryNew:                 artifacts.require('PoolseaMinipoolFactory.sol'),
     rocketNetworkFeesNew:                     artifacts.require('RocketNetworkFees.sol'),
     rocketNetworkPricesNew:                   artifacts.require('RocketNetworkPrices.sol'),
-    rocketMinipoolBase:                       artifacts.require('RocketMinipoolBase.sol'),
+    rocketMinipoolBase:                       artifacts.require('PoolseaMinipoolBase.sol'),
     rocketDAONodeTrustedSettingsMinipoolNew:  artifacts.require('PoolseaDAONodeTrustedSettingsMinipool.sol'),
     rocketNodeManagerNew:                     artifacts.require('RocketNodeManager.sol'),
     rocketDAOProtocolSettingsNodeNew:         artifacts.require('PoolseaDAOProtocolSettingsNode.sol'),
     rocketRewardsPoolNew:                     artifacts.require('RocketRewardsPool.sol'),
-    rocketMinipoolBondReducer:                artifacts.require('RocketMinipoolBondReducer.sol'),
+    rocketMinipoolBondReducer:                artifacts.require('PoolseaMinipoolBondReducer.sol'),
     rocketNetworkBalancesNew:                 artifacts.require('RocketNetworkBalances.sol'),
     rocketUpgradeOneDotTwo:                   artifacts.require('RocketUpgradeOneDotTwo.sol'),
     // Utils
@@ -114,7 +114,7 @@ const contracts = {
 
 // Development helper contracts
 const revertOnTransfer = artifacts.require('RevertOnTransfer.sol');
-const rocketNodeDepositLEB4 = artifacts.require('RocketNodeDepositLEB4.sol');
+const rocketNodeDepositLEB4 = artifacts.require('PoolseaNodeDepositLEB4.sol');
 
 // Instance contract ABIs
 const abis = {
@@ -124,8 +124,8 @@ const abis = {
 
 // Construct ABI for rocketMinipool
 const rocketMinipoolAbi = []
-    .concat(artifacts.require('RocketMinipoolDelegate.sol').abi)
-    .concat(artifacts.require('RocketMinipoolBase.sol').abi)
+    .concat(artifacts.require('PoolseaMinipoolDelegate.sol').abi)
+    .concat(artifacts.require('PoolseaMinipoolBase.sol').abi)
     .filter(i => i.type !== 'fallback' && i.type !== 'receive');
 
 rocketMinipoolAbi.push({ stateMutability: 'payable', type: 'fallback'});

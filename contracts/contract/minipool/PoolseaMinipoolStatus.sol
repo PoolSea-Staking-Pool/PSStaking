@@ -16,7 +16,7 @@ import "../../types/MinipoolStatus.sol";
 
 // Handles updates to minipool status by trusted (oracle) nodes
 
-contract RocketMinipoolStatus is PoolseaBase, PoolseaMinipoolStatusInterface {
+contract PoolseaMinipoolStatus is PoolseaBase, PoolseaMinipoolStatusInterface {
 
     // Libs
     using SafeMath for uint;
@@ -26,19 +26,19 @@ contract RocketMinipoolStatus is PoolseaBase, PoolseaMinipoolStatusInterface {
     event MinipoolSetWithdrawable(address indexed minipool, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 
     // Submit a minipool withdrawable event
     // Only accepts calls from trusted (oracle) nodes
     function submitMinipoolWithdrawable(address _minipoolAddress) override external
-    onlyLatestContract("rocketMinipoolStatus", address(this)) onlyTrustedNode(msg.sender) onlyRegisteredMinipool(_minipoolAddress) {
+    onlyLatestContract("poolseaMinipoolStatus", address(this)) onlyTrustedNode(msg.sender) onlyRegisteredMinipool(_minipoolAddress) {
         // Load contracts
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
         // Check settings
-        require(rocketDAOProtocolSettingsMinipool.getSubmitWithdrawableEnabled(), "Submitting withdrawable status is currently disabled");
+        require(poolseaDAOProtocolSettingsMinipool.getSubmitWithdrawableEnabled(), "Submitting withdrawable status is currently disabled");
         // Check minipool status
         PoolseaMinipoolInterfaceOld minipool = PoolseaMinipoolInterfaceOld(_minipoolAddress);
         require(minipool.getStatus() == MinipoolStatus.Staking, "Minipool can only be set as withdrawable while staking");
@@ -55,20 +55,20 @@ contract RocketMinipoolStatus is PoolseaBase, PoolseaMinipoolStatusInterface {
         // Emit minipool withdrawable status submitted event
         emit MinipoolWithdrawableSubmitted(msg.sender, _minipoolAddress, block.timestamp);
         // Check submission count & set minipool withdrawable
-        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        if (calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodeConsensusThreshold()) {
+        PoolseaDAONodeTrustedInterface poolseaDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+        if (calcBase.mul(submissionCount).div(poolseaDAONodeTrusted.getMemberCount()) >= poolseaDAOProtocolSettingsNetwork.getNodeConsensusThreshold()) {
             setMinipoolWithdrawable(_minipoolAddress);
         }
     }
 
     // Executes updateBalances if consensus threshold is reached
     function executeMinipoolWithdrawable(address _minipoolAddress) override external
-    onlyLatestContract("rocketMinipoolStatus", address(this)) {
+    onlyLatestContract("poolseaMinipoolStatus", address(this)) {
         // Load contracts
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
         // Check settings
-        require(rocketDAOProtocolSettingsMinipool.getSubmitWithdrawableEnabled(), "Submitting withdrawable status is currently disabled");
+        require(poolseaDAOProtocolSettingsMinipool.getSubmitWithdrawableEnabled(), "Submitting withdrawable status is currently disabled");
         // Check minipool status
         PoolseaMinipoolInterfaceOld minipool = PoolseaMinipoolInterfaceOld(_minipoolAddress);
         require(minipool.getStatus() == MinipoolStatus.Staking, "Minipool can only be set as withdrawable while staking");
@@ -77,8 +77,8 @@ contract RocketMinipoolStatus is PoolseaBase, PoolseaMinipoolStatusInterface {
         // Get submission count
         uint256 submissionCount = getUint(submissionCountKey);
         // Check submission count & set minipool withdrawable
-        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        require(calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodeConsensusThreshold(), "Consensus has not been reached");
+        PoolseaDAONodeTrustedInterface poolseaDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+        require(calcBase.mul(submissionCount).div(poolseaDAONodeTrusted.getMemberCount()) >= poolseaDAOProtocolSettingsNetwork.getNodeConsensusThreshold(), "Consensus has not been reached");
         setMinipoolWithdrawable(_minipoolAddress);
     }
 

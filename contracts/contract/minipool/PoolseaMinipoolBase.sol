@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.7.6;
 
-import "./RocketMinipoolStorageLayout.sol";
+import "./PoolseaMinipoolStorageLayout.sol";
 import "../../interface/PoolseaStorageInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolBaseInterface.sol";
 
 /// @notice Contains the initialisation and delegate upgrade logic for minipools
-contract RocketMinipoolBase is PoolseaMinipoolBaseInterface, RocketMinipoolStorageLayout {
+contract PoolseaMinipoolBase is PoolseaMinipoolBaseInterface, PoolseaMinipoolStorageLayout {
 
     // Events
     event EtherReceived(address indexed from, uint256 amount, uint256 time);
     event DelegateUpgraded(address oldDelegate, address newDelegate, uint256 time);
     event DelegateRolledBack(address oldDelegate, address newDelegate, uint256 time);
 
-    // Store a reference to the address of RocketMinipoolBase itself to prevent direct calls to this contract
+    // Store a reference to the address of PoolseaMinipoolBase itself to prevent direct calls to this contract
     address immutable self;
 
     constructor () {
@@ -29,23 +29,23 @@ contract RocketMinipoolBase is PoolseaMinipoolBaseInterface, RocketMinipoolStora
     /// @dev Only allow access from the owning node address
     modifier onlyMinipoolOwner() {
         // Only the node operator can upgrade
-        address withdrawalAddress = rocketStorage.getNodeWithdrawalAddress(nodeAddress);
+        address withdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(nodeAddress);
         require(msg.sender == nodeAddress || msg.sender == withdrawalAddress, "Only the node operator can access this method");
         _;
     }
 
     /// @notice Sets up starting delegate contract and then delegates initialisation to it
-    function initialise(address _rocketStorage, address _nodeAddress) external override notSelf {
+    function initialise(address _poolseaStorage, address _nodeAddress) external override notSelf {
         // Check input
         require(_nodeAddress != address(0), "Invalid node address");
         require(storageState == StorageState.Undefined, "Already initialised");
         // Set storage state to uninitialised
         storageState = StorageState.Uninitialised;
-        // Set rocketStorage
-        rocketStorage = PoolseaStorageInterface(_rocketStorage);
+        // Set poolseaStorage
+        poolseaStorage = PoolseaStorageInterface(_poolseaStorage);
         // Set the current delegate
-        address delegateAddress = getContractAddress("rocketMinipoolDelegate");
-        rocketMinipoolDelegate = delegateAddress;
+        address delegateAddress = getContractAddress("poolseaMinipoolDelegate");
+        poolseaMinipoolDelegate = delegateAddress;
         // Check for contract existence
         require(contractExists(delegateAddress), "Delegate contract does not exist");
         // Call initialise on delegate
@@ -62,26 +62,26 @@ contract RocketMinipoolBase is PoolseaMinipoolBaseInterface, RocketMinipoolStora
     /// @notice Upgrade this minipool to the latest network delegate contract
     function delegateUpgrade() external override onlyMinipoolOwner notSelf {
         // Set previous address
-        rocketMinipoolDelegatePrev = rocketMinipoolDelegate;
+        poolseaMinipoolDelegatePrev = poolseaMinipoolDelegate;
         // Set new delegate
-        rocketMinipoolDelegate = getContractAddress("rocketMinipoolDelegate");
+        poolseaMinipoolDelegate = getContractAddress("poolseaMinipoolDelegate");
         // Verify
-        require(rocketMinipoolDelegate != rocketMinipoolDelegatePrev, "New delegate is the same as the existing one");
+        require(poolseaMinipoolDelegate != poolseaMinipoolDelegatePrev, "New delegate is the same as the existing one");
         // Log event
-        emit DelegateUpgraded(rocketMinipoolDelegatePrev, rocketMinipoolDelegate, block.timestamp);
+        emit DelegateUpgraded(poolseaMinipoolDelegatePrev, poolseaMinipoolDelegate, block.timestamp);
     }
 
     /// @notice Rollback to previous delegate contract
     function delegateRollback() external override onlyMinipoolOwner notSelf {
         // Make sure they have upgraded before
-        require(rocketMinipoolDelegatePrev != address(0x0), "Previous delegate contract is not set");
+        require(poolseaMinipoolDelegatePrev != address(0x0), "Previous delegate contract is not set");
         // Store original
-        address originalDelegate = rocketMinipoolDelegate;
+        address originalDelegate = poolseaMinipoolDelegate;
         // Update delegate to previous and zero out previous
-        rocketMinipoolDelegate = rocketMinipoolDelegatePrev;
-        rocketMinipoolDelegatePrev = address(0x0);
+        poolseaMinipoolDelegate = poolseaMinipoolDelegatePrev;
+        poolseaMinipoolDelegatePrev = address(0x0);
         // Log event
-        emit DelegateRolledBack(originalDelegate, rocketMinipoolDelegate, block.timestamp);
+        emit DelegateRolledBack(originalDelegate, poolseaMinipoolDelegate, block.timestamp);
     }
 
     /// @notice Sets the flag to automatically use the latest delegate contract or not
@@ -97,23 +97,23 @@ contract RocketMinipoolBase is PoolseaMinipoolBaseInterface, RocketMinipoolStora
 
     /// @notice Returns the address of the minipool's stored delegate
     function getDelegate() external override view returns (address) {
-        return rocketMinipoolDelegate;
+        return poolseaMinipoolDelegate;
     }
 
     /// @notice Returns the address of the minipool's previous delegate (or address(0) if not set)
     function getPreviousDelegate() external override view returns (address) {
-        return rocketMinipoolDelegatePrev;
+        return poolseaMinipoolDelegatePrev;
     }
 
     /// @notice Returns the delegate which will be used when calling this minipool taking into account useLatestDelegate setting
     function getEffectiveDelegate() external override view returns (address) {
-        return useLatestDelegate ? getContractAddress("rocketMinipoolDelegate") : rocketMinipoolDelegate;
+        return useLatestDelegate ? getContractAddress("poolseaMinipoolDelegate") : poolseaMinipoolDelegate;
     }
 
     /// @notice Delegates all calls to minipool delegate contract (or latest if flag is set)
     fallback(bytes calldata _input) external payable notSelf returns (bytes memory) {
         // If useLatestDelegate is set, use the latest delegate contract
-        address delegateContract = useLatestDelegate ? getContractAddress("rocketMinipoolDelegate") : rocketMinipoolDelegate;
+        address delegateContract = useLatestDelegate ? getContractAddress("poolseaMinipoolDelegate") : poolseaMinipoolDelegate;
         // Check for contract existence
         require(contractExists(delegateContract), "Delegate contract does not exist");
         // Execute delegatecall
@@ -122,9 +122,9 @@ contract RocketMinipoolBase is PoolseaMinipoolBaseInterface, RocketMinipoolStora
         return data;
     }
 
-    /// @dev Get the address of a Rocket Pool network contract
+    /// @dev Get the address of a Poolsea Pool network contract
     function getContractAddress(string memory _contractName) private view returns (address) {
-        address contractAddress = rocketStorage.getAddress(keccak256(abi.encodePacked("contract.address", _contractName)));
+        address contractAddress = poolseaStorage.getAddress(keccak256(abi.encodePacked("contract.address", _contractName)));
         require(contractAddress != address(0x0), "Contract not found");
         return contractAddress;
     }

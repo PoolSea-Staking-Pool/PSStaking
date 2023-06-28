@@ -9,7 +9,7 @@ import "../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 
 // Non-upgradable contract which gives guardian control over maximum penalty rates
 
-contract RocketMinipoolPenalty is PoolseaBase, PoolseaMinipoolPenaltyInterface {
+contract PoolseaMinipoolPenalty is PoolseaBase, PoolseaMinipoolPenaltyInterface {
 
     // Events
     event MaxPenaltyRateUpdated(uint256 rate, uint256 time);
@@ -17,11 +17,11 @@ contract RocketMinipoolPenalty is PoolseaBase, PoolseaMinipoolPenaltyInterface {
     // Libs
     using SafeMath for uint;
 
-    // Storage (purposefully does not use RocketStorage to prevent oDAO from having power over this feature)
+    // Storage (purposefully does not use PoolseaStorage to prevent oDAO from having power over this feature)
     uint256 maxPenaltyRate = 0 ether;                     // The most the oDAO is allowed to penalty a minipool (as a percentage)
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
     }
 
     // Get/set the current max penalty rate
@@ -37,7 +37,7 @@ contract RocketMinipoolPenalty is PoolseaBase, PoolseaMinipoolPenaltyInterface {
 
     // Retrieves the amount to penalty a minipool
     function getPenaltyRate(address _minipoolAddress) external override view returns(uint256) {
-        // Quick out which avoids a call to RocketStorage
+        // Quick out which avoids a call to PoolseaStorage
         if (maxPenaltyRate == 0) {
              return 0;
         }

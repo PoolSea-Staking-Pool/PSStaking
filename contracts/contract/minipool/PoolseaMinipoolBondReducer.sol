@@ -15,7 +15,7 @@ import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipool
 import "../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
 
 /// @notice Handles bond reduction window and trusted node cancellation
-contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInterface {
+contract PoolseaMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInterface {
 
     // Libs
     using SafeMath for uint;
@@ -25,7 +25,7 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
     event CancelReductionVoted(address indexed minipool, address indexed member, uint256 time);
     event ReductionCancelled(address indexed minipool, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 
@@ -33,14 +33,14 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
     ///         period has elapsed
     /// @param _minipoolAddress Address of the minipool
     /// @param _newBondAmount The new bond amount
-    function beginReduceBondAmount(address _minipoolAddress, uint256 _newBondAmount) override external onlyLatestContract("rocketMinipoolBondReducer", address(this)) {
+    function beginReduceBondAmount(address _minipoolAddress, uint256 _newBondAmount) override external onlyLatestContract("poolseaMinipoolBondReducer", address(this)) {
         // Only minipool owner can call
         PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(_minipoolAddress);
         require(msg.sender == minipool.getNodeAddress(), "Only minipool owner");
         // Get contracts
-        PoolseaNodeDepositInterface rocketNodeDeposit = PoolseaNodeDepositInterface(getContractAddress("rocketNodeDeposit"));
-        PoolseaDAOProtocolSettingsRewardsInterface daoSettingsRewards = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("rocketDAOProtocolSettingsRewards"));
-        PoolseaDAOProtocolSettingsMinipoolInterface daoSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaNodeDepositInterface poolseaNodeDeposit = PoolseaNodeDepositInterface(getContractAddress("poolseaNodeDeposit"));
+        PoolseaDAOProtocolSettingsRewardsInterface daoSettingsRewards = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("poolseaDAOProtocolSettingsRewards"));
+        PoolseaDAOProtocolSettingsMinipoolInterface daoSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         // Check if enabled
         require(daoSettingsMinipool.getBondReductionEnabled(), "Bond reduction currently disabled");
         // Check if has been previously cancelled
@@ -48,7 +48,7 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
         require(!reductionCancelled, "This minipool is not allowed to reduce bond");
         require(minipool.getStatus() == MinipoolStatus.Staking, "Minipool must be staking");
         // Check if new bond amount is valid
-        require(rocketNodeDeposit.isValidDepositAmount(_newBondAmount), "Invalid bond amount");
+        require(poolseaNodeDeposit.isValidDepositAmount(_newBondAmount), "Invalid bond amount");
         uint256 existing = minipool.getNodeDepositBalance();
         require(_newBondAmount < existing, "Bond must be lower than current amount");
         // Check if enough time has elapsed since last reduction
@@ -82,18 +82,18 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
     /// @notice Returns whether owner of given minipool can reduce bond amount given the waiting period constraint
     /// @param _minipoolAddress Address of the minipool
     function canReduceBondAmount(address _minipoolAddress) override public view returns (bool) {
-        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
         uint256 reduceBondTime = getUint(keccak256(abi.encodePacked("minipool.bond.reduction.time", _minipoolAddress)));
-        return rocketDAONodeTrustedSettingsMinipool.isWithinBondReductionWindow(block.timestamp.sub(reduceBondTime));
+        return poolseaDAONodeTrustedSettingsMinipool.isWithinBondReductionWindow(block.timestamp.sub(reduceBondTime));
     }
 
     /// @notice Can be called by trusted nodes to cancel a reduction in bond if the validator has too low of a balance
     /// @param _minipoolAddress Address of the minipool
-    function voteCancelReduction(address _minipoolAddress) override external onlyTrustedNode(msg.sender) onlyLatestContract("rocketMinipoolBondReducer", address(this)) {
+    function voteCancelReduction(address _minipoolAddress) override external onlyTrustedNode(msg.sender) onlyLatestContract("poolseaMinipoolBondReducer", address(this)) {
         // Prevent calling if consensus has already been reached
         require(!getReduceBondCancelled(_minipoolAddress), "Already cancelled");
         // Get contracts
-        PoolseaDAONodeTrustedInterface rocketDAONode = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
+        PoolseaDAONodeTrustedInterface poolseaDAONode = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
         // Check for multiple votes
         bytes32 memberVotedKey = keccak256(abi.encodePacked("minipool.bond.reduction.member.voted", _minipoolAddress, msg.sender));
         bool memberVoted = getBool(memberVotedKey);
@@ -102,8 +102,8 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
         // Emit event
         emit CancelReductionVoted(_minipoolAddress, msg.sender, block.timestamp);
         // Check if required quorum has voted
-        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
-        uint256 quorum = rocketDAONode.getMemberCount().mul(rocketDAONodeTrustedSettingsMinipool.getCancelBondReductionQuorum()).div(calcBase);
+        PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
+        uint256 quorum = poolseaDAONode.getMemberCount().mul(poolseaDAONodeTrustedSettingsMinipool.getCancelBondReductionQuorum()).div(calcBase);
         bytes32 totalCancelVotesKey = keccak256(abi.encodePacked("minipool.bond.reduction.vote.count", _minipoolAddress));
         uint256 totalCancelVotes = getUint(totalCancelVotesKey).add(1);
         if (totalCancelVotes > quorum) {
@@ -119,11 +119,11 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
     }
 
     /// @notice Called by minipools when they are reducing bond to handle state changes outside the minipool
-    function reduceBondAmount() override external onlyRegisteredMinipool(msg.sender) onlyLatestContract("rocketMinipoolBondReducer", address(this)) returns (uint256) {
+    function reduceBondAmount() override external onlyRegisteredMinipool(msg.sender) onlyLatestContract("poolseaMinipoolBondReducer", address(this)) returns (uint256) {
         // Get contracts
-        PoolseaNodeDepositInterface rocketNodeDeposit = PoolseaNodeDepositInterface(getContractAddress("rocketNodeDeposit"));
+        PoolseaNodeDepositInterface poolseaNodeDeposit = PoolseaNodeDepositInterface(getContractAddress("poolseaNodeDeposit"));
         PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(msg.sender);
-        PoolseaDAOProtocolSettingsMinipoolInterface daoSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface daoSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         // Check if enabled
         require(daoSettingsMinipool.getBondReductionEnabled(), "Bond reduction currently disabled");
         // Check if has been cancelled
@@ -133,7 +133,7 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
         require(canReduceBondAmount(msg.sender), "Wait period not satisfied");
         // Get desired to amount
         uint256 newBondAmount = getUint(keccak256(abi.encodePacked("minipool.bond.reduction.value", msg.sender)));
-        require(rocketNodeDeposit.isValidDepositAmount(newBondAmount), "Invalid bond amount");
+        require(poolseaNodeDeposit.isValidDepositAmount(newBondAmount), "Invalid bond amount");
         // Calculate difference
         uint256 existingBondAmount = minipool.getNodeDepositBalance();
         uint256 existingNodeFee = minipool.getNodeFee();
@@ -141,9 +141,9 @@ contract RocketMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInt
         // Get node address
         address nodeAddress = minipool.getNodeAddress();
         // Increase ETH matched or revert if exceeds limit based on current RPL stake
-        rocketNodeDeposit.increaseEthMatched(nodeAddress, delta);
+        poolseaNodeDeposit.increaseEthMatched(nodeAddress, delta);
         // Increase node operator's deposit credit
-        rocketNodeDeposit.increaseDepositCreditBalance(nodeAddress, delta);
+        poolseaNodeDeposit.increaseDepositCreditBalance(nodeAddress, delta);
         // Clean up state
         deleteUint(keccak256(abi.encodePacked("minipool.bond.reduction.time", msg.sender)));
         deleteUint(keccak256(abi.encodePacked("minipool.bond.reduction.value", msg.sender)));
