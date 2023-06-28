@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "./RocketMinipoolOld.sol";
+import "./PoolseaMinipoolOld.sol";
 import "../../PoolseaBase.sol";
 import "../../../types/MinipoolStatus.sol";
 import "../../../types/MinipoolDeposit.sol";
@@ -22,23 +22,23 @@ import "../../../interface/old/PoolseaMinipoolFactoryInterfaceOld.sol";
 
 // Minipool creation, removal and management
 
-contract RocketMinipoolFactoryOld is PoolseaBase, PoolseaMinipoolFactoryInterfaceOld {
+contract PoolseaMinipoolFactoryOld is PoolseaBase, PoolseaMinipoolFactoryInterfaceOld {
 
     // Libs
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 
-    // Returns the bytecode for RocketMinipool
+    // Returns the bytecode for PoolseaMinipool
     function getMinipoolBytecode() override public pure returns (bytes memory) {
-        return type(RocketMinipoolOld).creationCode;
+        return type(PoolseaMinipoolOld).creationCode;
     }
 
     // Performs a CREATE2 deployment of a minipool contract with given salt
-    function deployContract(address _nodeAddress, MinipoolDeposit _depositType, uint256 _salt) override external onlyLatestContract("rocketMinipoolFactory", address(this)) onlyLatestContract("rocketMinipoolManager", msg.sender) returns (address) {
+    function deployContract(address _nodeAddress, MinipoolDeposit _depositType, uint256 _salt) override external onlyLatestContract("poolseaMinipoolFactory", address(this)) onlyLatestContract("poolseaMinipoolManager", msg.sender) returns (address) {
         // Construct deployment bytecode
         bytes memory creationCode = getMinipoolBytecode();
         bytes memory bytecode = abi.encodePacked(creationCode, abi.encode(poolseaStorage, _nodeAddress, _depositType));

@@ -6,7 +6,7 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../../PoolseaBase.sol";
-import "./RocketMinipoolOld.sol";
+import "./PoolseaMinipoolOld.sol";
 import "../../../types/MinipoolStatus.sol";
 import "../../../types/MinipoolDeposit.sol";
 import "../../../types/MinipoolDetails.sol";
@@ -400,7 +400,7 @@ contract RocketMinipoolManagerOld is PoolseaBase, PoolseaMinipoolManagerInterfac
     function getMinipoolDetails(address _minipoolAddress) override external view returns (MinipoolDetails memory) {
         // Get contracts
         PoolseaMinipoolInterface minipoolInterface = PoolseaMinipoolInterface(_minipoolAddress);
-        RocketMinipoolOld minipool = RocketMinipoolOld(payable(_minipoolAddress));
+        PoolseaMinipoolOld minipool = PoolseaMinipoolOld(payable(_minipoolAddress));
         PoolseaNetworkPenaltiesInterface rocketNetworkPenalties = PoolseaNetworkPenaltiesInterface(getContractAddress("rocketNetworkPenalties"));
         PoolseaMinipoolPenaltyInterface rocketMinipoolPenalty = PoolseaMinipoolPenaltyInterface(getContractAddress("rocketMinipoolPenalty"));
         // Minipool details

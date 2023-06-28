@@ -8,10 +8,10 @@ import "../../../../../interface/old/PoolseaDAOProtocolSettingsNodeInterfaceOld.
 
 // Network auction settings
 
-contract RocketDAOProtocolSettingsNodeOld is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsNodeInterfaceOld {
+contract PoolseaDAOProtocolSettingsNodeOld is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsNodeInterfaceOld {
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaDAOProtocolSettings(_rocketStorageAddress, "node") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAOProtocolSettings(_poolseaStorageAddress, "node") {
         // Set version
         version = 2;
         // Initialize settings on deployment

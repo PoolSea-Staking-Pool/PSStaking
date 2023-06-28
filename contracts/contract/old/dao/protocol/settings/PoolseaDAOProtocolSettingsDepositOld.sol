@@ -7,10 +7,10 @@ import "../../../../../interface/old/PoolseaDAOProtocolSettingsDepositInterfaceO
 
 // Network deposit settings
 
-contract RocketDAOProtocolSettingsDepositOld is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsDepositInterfaceOld {
+contract PoolseaDAOProtocolSettingsDepositOld is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsDepositInterfaceOld {
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaDAOProtocolSettings(_rocketStorageAddress, "deposit") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAOProtocolSettings(_poolseaStorageAddress, "deposit") {
         // Set version
         version = 2;
         // Initialize settings on deployment

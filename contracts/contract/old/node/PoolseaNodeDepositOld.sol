@@ -22,7 +22,7 @@ import "../../../interface/old/PoolseaMinipoolInterfaceOld.sol";
 
 // Handles node deposits and minipool creation
 
-contract RocketNodeDepositOld is PoolseaBase, PoolseaNodeDepositInterfaceOld {
+contract PoolseaNodeDepositOld is PoolseaBase, PoolseaNodeDepositInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -31,23 +31,23 @@ contract RocketNodeDepositOld is PoolseaBase, PoolseaNodeDepositInterfaceOld {
     event DepositReceived(address indexed from, uint256 amount, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 2;
     }
 
     // Accept a node deposit and create a new minipool under the node
     // Only accepts calls from registered nodes
-    function deposit(uint256 _minimumNodeFee, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot, uint256 _salt, address _expectedMinipoolAddress) override external payable onlyLatestContract("rocketNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
+    function deposit(uint256 _minimumNodeFee, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot, uint256 _salt, address _expectedMinipoolAddress) override external payable onlyLatestContract("poolseaNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
         // Load contracts
-        PoolseaMinipoolManagerInterfaceOld rocketMinipoolManager = PoolseaMinipoolManagerInterfaceOld(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterfaceOld poolseaMinipoolManager = PoolseaMinipoolManagerInterfaceOld(getContractAddress("poolseaMinipoolManager"));
         // Check deposits are enabled
         checkDepositsEnabled();
         // Check minipool doesn't exist or previously exist
-        require(!rocketMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !rocketMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
+        require(!poolseaMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !poolseaMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
         {
             // Check node has initialised their fee distributor
-            PoolseaNodeManagerInterface rocketNodeManager = PoolseaNodeManagerInterface(getContractAddress("rocketNodeManager"));
-            require(rocketNodeManager.getFeeDistributorInitialised(msg.sender), "Fee distributor not initialised");
+            PoolseaNodeManagerInterface poolseaNodeManager = PoolseaNodeManagerInterface(getContractAddress("poolseaNodeManager"));
+            require(poolseaNodeManager.getFeeDistributorInitialised(msg.sender), "Fee distributor not initialised");
         }
         // Check node fee
         checkNodeFee(_minimumNodeFee);
@@ -58,7 +58,7 @@ contract RocketNodeDepositOld is PoolseaBase, PoolseaNodeDepositInterfaceOld {
         // Emit deposit received event
         emit DepositReceived(msg.sender, msg.value, block.timestamp);
         // Create minipool
-        PoolseaMinipoolInterfaceOld minipool = PoolseaMinipoolInterfaceOld(address(rocketMinipoolManager.createMinipool(msg.sender, depositType, _salt)));
+        PoolseaMinipoolInterfaceOld minipool = PoolseaMinipoolInterfaceOld(address(poolseaMinipoolManager.createMinipool(msg.sender, depositType, _salt)));
         // Ensure minipool address matches expected
         require(address(minipool) == _expectedMinipoolAddress, "Unexpected minipool address");
         // Transfer deposit to minipool
@@ -70,34 +70,34 @@ contract RocketNodeDepositOld is PoolseaBase, PoolseaNodeDepositInterfaceOld {
     // Returns the minipool deposit enum value correseponding to the supplied deposit amount
     function getDepositType(uint256 _amount) public override view returns (MinipoolDeposit) {
         // Get contract
-        PoolseaDAOProtocolSettingsMinipoolInterfaceOld rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterfaceOld poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
         // Get deposit type by node deposit amount
-        if (_amount == rocketDAOProtocolSettingsMinipool.getFullDepositNodeAmount()) { return MinipoolDeposit.Full; }
-        else if (_amount == rocketDAOProtocolSettingsMinipool.getHalfDepositNodeAmount()) { return MinipoolDeposit.Half; }
+        if (_amount == poolseaDAOProtocolSettingsMinipool.getFullDepositNodeAmount()) { return MinipoolDeposit.Full; }
+        else if (_amount == poolseaDAOProtocolSettingsMinipool.getHalfDepositNodeAmount()) { return MinipoolDeposit.Half; }
         // Invalid deposit amount
         return MinipoolDeposit.None;
     }
 
     function checkNodeFee(uint256 _minimumNodeFee) private view {
         // Load contracts
-        PoolseaNetworkFeesInterface rocketNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("rocketNetworkFees"));
+        PoolseaNetworkFeesInterface poolseaNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("poolseaNetworkFees"));
         // Check current node fee
-        uint256 nodeFee = rocketNetworkFees.getNodeFee();
+        uint256 nodeFee = poolseaNetworkFees.getNodeFee();
         require(nodeFee >= _minimumNodeFee, "Minimum node fee exceeds current network node fee");
     }
 
     function checkDepositsEnabled() private view {
         // Get contracts
-        PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
+        PoolseaDAOProtocolSettingsNodeInterface poolseaDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("poolseaDAOProtocolSettingsNode"));
         // Check node settings
-        require(rocketDAOProtocolSettingsNode.getDepositEnabled(), "Node deposits are currently disabled");
+        require(poolseaDAOProtocolSettingsNode.getDepositEnabled(), "Node deposits are currently disabled");
     }
 
     function assignDeposits() private {
-        PoolseaDAOProtocolSettingsDepositInterface rocketDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("rocketDAOProtocolSettingsDeposit"));
-        if (rocketDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
-            PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
-            rocketDepositPool.assignDeposits();
+        PoolseaDAOProtocolSettingsDepositInterface poolseaDAOProtocolSettingsDeposit = PoolseaDAOProtocolSettingsDepositInterface(getContractAddress("poolseaDAOProtocolSettingsDeposit"));
+        if (poolseaDAOProtocolSettingsDeposit.getAssignDepositsEnabled()) {
+            PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
+            poolseaDepositPool.assignDeposits();
         }
     }
 }

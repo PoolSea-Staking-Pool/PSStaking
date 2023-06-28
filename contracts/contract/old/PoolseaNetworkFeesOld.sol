@@ -13,14 +13,14 @@ import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkI
 
 // Network node demand and commission rate
 
-contract RocketNetworkFeesOld is PoolseaBase, PoolseaNetworkFeesInterface {
+contract PoolseaNetworkFeesOld is PoolseaBase, PoolseaNetworkFeesInterface {
 
     // Libs
     using SafeMath for uint;
     using SafeCast for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 
@@ -28,11 +28,11 @@ contract RocketNetworkFeesOld is PoolseaBase, PoolseaNetworkFeesInterface {
     // Node demand is equal to deposit pool balance minus available minipool capacity
     function getNodeDemand() override public view returns (int256) {
         // Load contracts
-        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
-        PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
+        PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
+        PoolseaMinipoolQueueInterface poolseaMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("poolseaMinipoolQueue"));
         // Calculate & return
-        int256 depositPoolBalance = rocketDepositPool.getBalance().toInt256();
-        int256 minipoolCapacity = rocketMinipoolQueue.getEffectiveCapacity().toInt256();
+        int256 depositPoolBalance = poolseaDepositPool.getBalance().toInt256();
+        int256 minipoolCapacity = poolseaMinipoolQueue.getEffectiveCapacity().toInt256();
         int256 demand = depositPoolBalance - minipoolCapacity;
         require(demand <= depositPoolBalance);
         return demand;
@@ -48,11 +48,11 @@ contract RocketNetworkFeesOld is PoolseaBase, PoolseaNetworkFeesInterface {
         // Calculation base values
         uint256 demandDivisor = 1000000000000;
         // Get settings
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
-        uint256 minFee = rocketDAOProtocolSettingsNetwork.getMinimumNodeFee();
-        uint256 targetFee = rocketDAOProtocolSettingsNetwork.getTargetNodeFee();
-        uint256 maxFee = rocketDAOProtocolSettingsNetwork.getMaximumNodeFee();
-        uint256 demandRange = rocketDAOProtocolSettingsNetwork.getNodeFeeDemandRange();
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
+        uint256 minFee = poolseaDAOProtocolSettingsNetwork.getMinimumNodeFee();
+        uint256 targetFee = poolseaDAOProtocolSettingsNetwork.getTargetNodeFee();
+        uint256 maxFee = poolseaDAOProtocolSettingsNetwork.getMaximumNodeFee();
+        uint256 demandRange = poolseaDAOProtocolSettingsNetwork.getNodeFeeDemandRange();
         // Normalize node demand
         uint256 nNodeDemand;
         bool nNodeDemandSign;

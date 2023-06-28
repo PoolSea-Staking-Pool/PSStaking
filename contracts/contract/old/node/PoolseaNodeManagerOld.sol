@@ -22,7 +22,7 @@ import "../../../interface/old/PoolseaNodeStakingInterfaceOld.sol";
 
 
 // Node registration and management
-contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
+contract PoolseaNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
 
     // Libraries
     using SafeMath for uint256;
@@ -34,7 +34,7 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     event NodeSmoothingPoolStateChanged(address indexed node, bool state);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 2;
     }
 
@@ -111,13 +111,13 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
         return getString(keccak256(abi.encodePacked("node.timezone.location", _nodeAddress)));
     }
 
-    // Register a new node with Rocket Pool
-    function registerNode(string calldata _timezoneLocation) override external onlyLatestContract("rocketNodeManager", address(this)) {
+    // Register a new node with Poolsea Pool
+    function registerNode(string calldata _timezoneLocation) override external onlyLatestContract("poolseaNodeManager", address(this)) {
         // Load contracts
-        PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
+        PoolseaDAOProtocolSettingsNodeInterface poolseaDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("poolseaDAOProtocolSettingsNode"));
         AddressSetStorageInterface addressSetStorage = AddressSetStorageInterface(getContractAddress("addressSetStorage"));
         // Check node settings
-        require(rocketDAOProtocolSettingsNode.getRegistrationEnabled(), "Rocket Pool node registrations are currently disabled");
+        require(poolseaDAOProtocolSettingsNode.getRegistrationEnabled(), "Poolsea Pool node registrations are currently disabled");
         // Check timezone location
         require(bytes(_timezoneLocation).length >= 4, "The timezone location is invalid");
         // Initialise node data
@@ -128,19 +128,19 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
         // Initialise fee distributor for this node
         _initialiseFeeDistributor(msg.sender);
         // Set node registration time (uses old storage key name for backwards compatibility)
-        setUint(keccak256(abi.encodePacked("rewards.pool.claim.contract.registered.time", "rocketClaimNode", msg.sender)), block.timestamp);
+        setUint(keccak256(abi.encodePacked("rewards.pool.claim.contract.registered.time", "poolseaClaimNode", msg.sender)), block.timestamp);
         // Emit node registered event
         emit NodeRegistered(msg.sender, block.timestamp);
     }
 
     // Get's the timestamp of when a node was registered
     function getNodeRegistrationTime(address _nodeAddress) onlyRegisteredNode(_nodeAddress) override public view returns (uint256) {
-        return getUint(keccak256(abi.encodePacked("rewards.pool.claim.contract.registered.time", "rocketClaimNode", _nodeAddress)));
+        return getUint(keccak256(abi.encodePacked("rewards.pool.claim.contract.registered.time", "poolseaClaimNode", _nodeAddress)));
     }
 
     // Set a node's timezone location
     // Only accepts calls from registered nodes
-    function setTimezoneLocation(string calldata _timezoneLocation) override external onlyLatestContract("rocketNodeManager", address(this)) onlyRegisteredNode(msg.sender) {
+    function setTimezoneLocation(string calldata _timezoneLocation) override external onlyLatestContract("poolseaNodeManager", address(this)) onlyRegisteredNode(msg.sender) {
         // Check timezone location
         require(bytes(_timezoneLocation).length >= 4, "The timezone location is invalid");
         // Set timezone location
@@ -152,9 +152,9 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     // Returns true if node has initialised their fee distributor contract
     function getFeeDistributorInitialised(address _nodeAddress) override public view returns (bool) {
         // Load contracts
-        PoolseaNodeDistributorFactoryInterface rocketNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("rocketNodeDistributorFactory"));
+        PoolseaNodeDistributorFactoryInterface poolseaNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("poolseaNodeDistributorFactory"));
         // Get distributor address
-        address contractAddress = rocketNodeDistributorFactory.getProxyAddress(_nodeAddress);
+        address contractAddress = poolseaNodeDistributorFactory.getProxyAddress(_nodeAddress);
         // Check if contract exists at that address
         uint32 codeSize;
         assembly {
@@ -164,18 +164,18 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     }
 
     // Node operators created before the distributor was implemented must call this to setup their distributor contract
-    function initialiseFeeDistributor() override external onlyLatestContract("rocketNodeManager", address(this)) onlyRegisteredNode(msg.sender) {
+    function initialiseFeeDistributor() override external onlyLatestContract("poolseaNodeManager", address(this)) onlyRegisteredNode(msg.sender) {
         // Prevent multiple calls
         require(!getFeeDistributorInitialised(msg.sender), "Already initialised");
         // Load contracts
-        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
         // Calculate and set current average fee numerator
-        uint256 count = rocketMinipoolManager.getNodeMinipoolCount(msg.sender);
+        uint256 count = poolseaMinipoolManager.getNodeMinipoolCount(msg.sender);
         if (count > 0){
             uint256 numerator;
             // Note: this loop is safe as long as all current node operators at the time of upgrade have few enough minipools
             for (uint256 i = 0; i < count; i++) {
-                PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(rocketMinipoolManager.getMinipoolAt(i));
+                PoolseaMinipoolInterface minipool = PoolseaMinipoolInterface(poolseaMinipoolManager.getMinipoolAt(i));
                 if (minipool.getStatus() == MinipoolStatus.Staking){
                     numerator = numerator.add(minipool.getNodeFee());
                 }
@@ -189,17 +189,17 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     // Deploys the fee distributor contract for a given node
     function _initialiseFeeDistributor(address _nodeAddress) internal {
         // Load contracts
-        PoolseaNodeDistributorFactoryInterface rocketNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("rocketNodeDistributorFactory"));
+        PoolseaNodeDistributorFactoryInterface poolseaNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("poolseaNodeDistributorFactory"));
         // Create the distributor proxy
-        rocketNodeDistributorFactory.createProxy(_nodeAddress);
+        poolseaNodeDistributorFactory.createProxy(_nodeAddress);
     }
 
     // Calculates a nodes average node fee
     function getAverageNodeFee(address _nodeAddress) override external view returns (uint256) {
         // Load contracts
-        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
         // Calculate average
-        uint256 denominator = rocketMinipoolManager.getNodeStakingMinipoolCount(_nodeAddress);
+        uint256 denominator = poolseaMinipoolManager.getNodeStakingMinipoolCount(_nodeAddress);
         if (denominator == 0) {
             return 0;
         }
@@ -208,13 +208,13 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     }
 
     // Designates which network a node would like their rewards relayed to
-    function setRewardNetwork(address _nodeAddress, uint256 _network) override external onlyLatestContract("rocketNodeManager", address(this)) {
+    function setRewardNetwork(address _nodeAddress, uint256 _network) override external onlyLatestContract("poolseaNodeManager", address(this)) {
         // Confirm the transaction is from the node's current withdrawal address
         address withdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(_nodeAddress);
         require(withdrawalAddress == msg.sender, "Only a tx from a node's withdrawal address can change reward network");
         // Check network is enabled
-        PoolseaDAONodeTrustedSettingsRewardsInterface rocketDAONodeTrustedSettingsRewards = PoolseaDAONodeTrustedSettingsRewardsInterface(getContractAddress("rocketDAONodeTrustedSettingsRewards"));
-        require(rocketDAONodeTrustedSettingsRewards.getNetworkEnabled(_network), "Network is not enabled");
+        PoolseaDAONodeTrustedSettingsRewardsInterface poolseaDAONodeTrustedSettingsRewards = PoolseaDAONodeTrustedSettingsRewardsInterface(getContractAddress("poolseaDAONodeTrustedSettingsRewards"));
+        require(poolseaDAONodeTrustedSettingsRewards.getNetworkEnabled(_network), "Network is not enabled");
         // Set the network
         setUint(keccak256(abi.encodePacked("node.reward.network", _nodeAddress)), _network);
         // Emit event
@@ -222,20 +222,20 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     }
 
     // Returns which network a node has designated as their desired reward network
-    function getRewardNetwork(address _nodeAddress) override public view onlyLatestContract("rocketNodeManager", address(this)) returns (uint256) {
+    function getRewardNetwork(address _nodeAddress) override public view onlyLatestContract("poolseaNodeManager", address(this)) returns (uint256) {
         return getUint(keccak256(abi.encodePacked("node.reward.network", _nodeAddress)));
     }
 
     // Allows a node to register or deregister from the smoothing pool
-    function setSmoothingPoolRegistrationState(bool _state) override external onlyLatestContract("rocketNodeManager", address(this)) onlyRegisteredNode(msg.sender) {
+    function setSmoothingPoolRegistrationState(bool _state) override external onlyLatestContract("poolseaNodeManager", address(this)) onlyRegisteredNode(msg.sender) {
         // Ensure registration is enabled
-        PoolseaDAOProtocolSettingsNodeInterface daoSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
+        PoolseaDAOProtocolSettingsNodeInterface daoSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("poolseaDAOProtocolSettingsNode"));
         require(daoSettingsNode.getSmoothingPoolRegistrationEnabled(), "Smoothing pool registrations are not active");
         // Precompute storage keys
         bytes32 changeKey = keccak256(abi.encodePacked("node.smoothing.pool.changed.time", msg.sender));
         bytes32 stateKey = keccak256(abi.encodePacked("node.smoothing.pool.state", msg.sender));
         // Get from the DAO settings
-        PoolseaDAOProtocolSettingsRewardsInterface daoSettingsRewards = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("rocketDAOProtocolSettingsRewards"));
+        PoolseaDAOProtocolSettingsRewardsInterface daoSettingsRewards = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("poolseaDAOProtocolSettingsRewards"));
         uint256 rewardInterval = daoSettingsRewards.getRewardsClaimIntervalTime();
         // Ensure node operator has waited the required time
         uint256 lastChange = getUint(changeKey);
@@ -282,12 +282,12 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
     // Convenience function to return all on-chain details about a given node
     function getNodeDetails(address _nodeAddress) override external view returns (NodeDetailsOld memory nodeDetails) {
         // Get contracts
-        PoolseaNodeStakingInterfaceOld rocketNodeStaking = PoolseaNodeStakingInterfaceOld(getContractAddress("rocketNodeStaking"));
-        PoolseaNodeDistributorFactoryInterface rocketNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("rocketNodeDistributorFactory"));
-        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
-        IERC20 rocketTokenRETH = IERC20(getContractAddress("rocketTokenRETH"));
-        IERC20 rocketTokenRPL = IERC20(getContractAddress("rocketTokenRPL"));
-        IERC20 rocketTokenRPLFixedSupply = IERC20(getContractAddress("rocketTokenRPLFixedSupply"));
+        PoolseaNodeStakingInterfaceOld poolseaNodeStaking = PoolseaNodeStakingInterfaceOld(getContractAddress("poolseaNodeStaking"));
+        PoolseaNodeDistributorFactoryInterface poolseaNodeDistributorFactory = PoolseaNodeDistributorFactoryInterface(getContractAddress("poolseaNodeDistributorFactory"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
+        IERC20 poolseaTokenRETH = IERC20(getContractAddress("poolseaTokenRETH"));
+        IERC20 poolseaTokenRPL = IERC20(getContractAddress("poolseaTokenRPL"));
+        IERC20 poolseaTokenRPLFixedSupply = IERC20(getContractAddress("poolseaTokenRPLFixedSupply"));
         // Node details
         nodeDetails.withdrawalAddress = poolseaStorage.getNodeWithdrawalAddress(_nodeAddress);
         nodeDetails.pendingWithdrawalAddress = poolseaStorage.getNodePendingWithdrawalAddress(_nodeAddress);
@@ -297,20 +297,20 @@ contract RocketNodeManagerOld is PoolseaBase, PoolseaNodeManagerInterfaceOld {
         nodeDetails.feeDistributorInitialised = getFeeDistributorInitialised(_nodeAddress);
         nodeDetails.rewardNetwork = getRewardNetwork(_nodeAddress);
         // Staking details
-        nodeDetails.rplStake = rocketNodeStaking.getNodeRPLStake(_nodeAddress);
-        nodeDetails.effectiveRPLStake = rocketNodeStaking.getNodeEffectiveRPLStake(_nodeAddress);
-        nodeDetails.minimumRPLStake = rocketNodeStaking.getNodeMinimumRPLStake(_nodeAddress);
-        nodeDetails.maximumRPLStake = rocketNodeStaking.getNodeMaximumRPLStake(_nodeAddress);
-        nodeDetails.minipoolLimit = rocketNodeStaking.getNodeMinipoolLimit(_nodeAddress);
+        nodeDetails.rplStake = poolseaNodeStaking.getNodeRPLStake(_nodeAddress);
+        nodeDetails.effectiveRPLStake = poolseaNodeStaking.getNodeEffectiveRPLStake(_nodeAddress);
+        nodeDetails.minimumRPLStake = poolseaNodeStaking.getNodeMinimumRPLStake(_nodeAddress);
+        nodeDetails.maximumRPLStake = poolseaNodeStaking.getNodeMaximumRPLStake(_nodeAddress);
+        nodeDetails.minipoolLimit = poolseaNodeStaking.getNodeMinipoolLimit(_nodeAddress);
         // Distributor details
-        nodeDetails.feeDistributorAddress = rocketNodeDistributorFactory.getProxyAddress(_nodeAddress);
+        nodeDetails.feeDistributorAddress = poolseaNodeDistributorFactory.getProxyAddress(_nodeAddress);
         // Minipool details
-        nodeDetails.minipoolCount = rocketMinipoolManager.getNodeMinipoolCount(_nodeAddress);
+        nodeDetails.minipoolCount = poolseaMinipoolManager.getNodeMinipoolCount(_nodeAddress);
         // Balance details
         nodeDetails.balanceETH = _nodeAddress.balance;
-        nodeDetails.balanceRETH = rocketTokenRETH.balanceOf(_nodeAddress);
-        nodeDetails.balanceRPL = rocketTokenRPL.balanceOf(_nodeAddress);
-        nodeDetails.balanceOldRPL = rocketTokenRPLFixedSupply.balanceOf(_nodeAddress);
+        nodeDetails.balanceRETH = poolseaTokenRETH.balanceOf(_nodeAddress);
+        nodeDetails.balanceRPL = poolseaTokenRPL.balanceOf(_nodeAddress);
+        nodeDetails.balanceOldRPL = poolseaTokenRPLFixedSupply.balanceOf(_nodeAddress);
     }
 
     // Returns a slice of the node operator address set

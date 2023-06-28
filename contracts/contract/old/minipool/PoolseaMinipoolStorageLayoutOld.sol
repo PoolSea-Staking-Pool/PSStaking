@@ -6,15 +6,15 @@ import "../../../interface/PoolseaStorageInterface.sol";
 import "../../../types/MinipoolDeposit.sol";
 import "../../../types/MinipoolStatus.sol";
 
-// The RocketMinipool contract storage layout, shared by RocketMinipoolDelegate
+// The PoolseaMinipool contract storage layout, shared by PoolseaMinipoolDelegate
 
 // ******************************************************
 // Note: This contract MUST NOT BE UPDATED after launch.
 // All deployed minipool contracts must maintain a
-// Consistent storage layout with RocketMinipoolDelegate.
+// Consistent storage layout with PoolseaMinipoolDelegate.
 // ******************************************************
 
-abstract contract RocketMinipoolStorageLayoutOld {
+abstract contract PoolseaMinipoolStorageLayoutOld {
     // Storage state enum
     enum StorageState {
         Undefined,
@@ -22,8 +22,8 @@ abstract contract RocketMinipoolStorageLayoutOld {
         Initialised
     }
 
-	// Main Rocket Pool storage contract
-    PoolseaStorageInterface internal rocketStorage = PoolseaStorageInterface(0);
+	// Main Poolsea Pool storage contract
+    PoolseaStorageInterface internal poolseaStorage = PoolseaStorageInterface(0);
 
     // Status
     MinipoolStatus internal status;
@@ -48,14 +48,14 @@ abstract contract RocketMinipoolStorageLayoutOld {
 
     // Upgrade options
     bool internal useLatestDelegate = false;
-    address internal rocketMinipoolDelegate;
-    address internal rocketMinipoolDelegatePrev;
+    address internal poolseaMinipoolDelegate;
+    address internal poolseaMinipoolDelegatePrev;
 
     // Local copy of RETH address
-    address internal rocketTokenRETH;
+    address internal poolseaTokenRETH;
 
     // Local copy of penalty contract
-    address internal rocketMinipoolPenalty;
+    address internal poolseaMinipoolPenalty;
 
     // Used to prevent direct access to delegate and prevent calling initialise more than once
     StorageState internal storageState = StorageState.Undefined;

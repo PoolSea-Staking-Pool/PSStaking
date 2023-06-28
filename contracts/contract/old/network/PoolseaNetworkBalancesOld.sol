@@ -11,7 +11,7 @@ import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetwo
 
 // Network balances
 
-contract RocketNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterface {
+contract PoolseaNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterface {
 
     // Libs
     using SafeMath for uint;
@@ -21,7 +21,7 @@ contract RocketNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterfac
     event BalancesUpdated(uint256 block, uint256 totalEth, uint256 stakingEth, uint256 rethSupply, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 
@@ -68,10 +68,10 @@ contract RocketNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterfac
 
     // Submit network balances for a block
     // Only accepts calls from trusted (oracle) nodes
-    function submitBalances(uint256 _block, uint256 _totalEth, uint256 _stakingEth, uint256 _rethSupply) override external onlyLatestContract("rocketNetworkBalances", address(this)) onlyTrustedNode(msg.sender) {
+    function submitBalances(uint256 _block, uint256 _totalEth, uint256 _stakingEth, uint256 _rethSupply) override external onlyLatestContract("poolseaNetworkBalances", address(this)) onlyTrustedNode(msg.sender) {
         // Check settings
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
-        require(rocketDAOProtocolSettingsNetwork.getSubmitBalancesEnabled(), "Submitting balances is currently disabled");
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
+        require(poolseaDAOProtocolSettingsNetwork.getSubmitBalancesEnabled(), "Submitting balances is currently disabled");
         // Check block
         require(_block < block.number, "Balances can not be submitted for a future block");
         require(_block > getBalancesBlock(), "Network balances for an equal or higher block are set");
@@ -90,17 +90,17 @@ contract RocketNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterfac
         // Emit balances submitted event
         emit BalancesSubmitted(msg.sender, _block, _totalEth, _stakingEth, _rethSupply, block.timestamp);
         // Check submission count & update network balances
-        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        if (calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodeConsensusThreshold()) {
+        PoolseaDAONodeTrustedInterface poolseaDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+        if (calcBase.mul(submissionCount).div(poolseaDAONodeTrusted.getMemberCount()) >= poolseaDAOProtocolSettingsNetwork.getNodeConsensusThreshold()) {
             updateBalances(_block, _totalEth, _stakingEth, _rethSupply);
         }
     }
 
     // Executes updateBalances if consensus threshold is reached
-    function executeUpdateBalances(uint256 _block, uint256 _totalEth, uint256 _stakingEth, uint256 _rethSupply) override external onlyLatestContract("rocketNetworkBalances", address(this)) {
+    function executeUpdateBalances(uint256 _block, uint256 _totalEth, uint256 _stakingEth, uint256 _rethSupply) override external onlyLatestContract("poolseaNetworkBalances", address(this)) {
         // Check settings
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
-        require(rocketDAOProtocolSettingsNetwork.getSubmitBalancesEnabled(), "Submitting balances is currently disabled");
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
+        require(poolseaDAOProtocolSettingsNetwork.getSubmitBalancesEnabled(), "Submitting balances is currently disabled");
         // Check block
         require(_block < block.number, "Balances can not be submitted for a future block");
         require(_block > getBalancesBlock(), "Network balances for an equal or higher block are set");
@@ -111,8 +111,8 @@ contract RocketNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterfac
         // Get submission count
         uint256 submissionCount = getUint(submissionCountKey);
         // Check submission count & update network balances
-        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        require(calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodeConsensusThreshold(), "Consensus has not been reached");
+        PoolseaDAONodeTrustedInterface poolseaDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+        require(calcBase.mul(submissionCount).div(poolseaDAONodeTrusted.getMemberCount()) >= poolseaDAOProtocolSettingsNetwork.getNodeConsensusThreshold(), "Consensus has not been reached");
         updateBalances(_block, _totalEth, _stakingEth, _rethSupply);
     }
 
@@ -130,9 +130,9 @@ contract RocketNetworkBalancesOld is PoolseaBase, PoolseaNetworkBalancesInterfac
     // Returns the latest block number that oracles should be reporting balances for
     function getLatestReportableBlock() override external view returns (uint256) {
         // Load contracts
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
         // Get the block balances were lasted updated and the update frequency
-        uint256 updateFrequency = rocketDAOProtocolSettingsNetwork.getSubmitBalancesFrequency();
+        uint256 updateFrequency = poolseaDAOProtocolSettingsNetwork.getSubmitBalancesFrequency();
         // Calculate the last reportable block based on update frequency
         return block.number.div(updateFrequency).mul(updateFrequency);
     }

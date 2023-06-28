@@ -10,13 +10,13 @@ import "../../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettings
 import "../../../../../types/MinipoolDeposit.sol";
 
 // Network minipool settings
-contract RocketDAOProtocolSettingsMinipoolOld is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsMinipoolInterfaceOld {
+contract PoolseaDAOProtocolSettingsMinipoolOld is PoolseaDAOProtocolSettings, PoolseaDAOProtocolSettingsMinipoolInterfaceOld {
 
     // Libs
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaDAOProtocolSettings(_rocketStorageAddress, "minipool") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaDAOProtocolSettings(_poolseaStorageAddress, "minipool") {
         // Set version
         version = 1;
         // Initialize settings on deployment
@@ -35,8 +35,8 @@ contract RocketDAOProtocolSettingsMinipoolOld is PoolseaDAOProtocolSettings, Poo
         // Some safety guards for certain settings
         if(getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) {
             if(keccak256(abi.encodePacked(_settingPath)) == keccak256(abi.encodePacked("minipool.launch.timeout"))) {
-                PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
-                require(_value >= (rocketDAONodeTrustedSettingsMinipool.getScrubPeriod().add(1 hours)), "Launch timeout must be greater than scrub period");
+                PoolseaDAONodeTrustedSettingsMinipoolInterface poolseaDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("poolseaDAONodeTrustedSettingsMinipool"));
+                require(_value >= (poolseaDAONodeTrustedSettingsMinipool.getScrubPeriod().add(1 hours)), "Launch timeout must be greater than scrub period");
             }
         }
         // Update setting now
