@@ -7,14 +7,14 @@ import "../../interface/util/AddressSetStorageInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-// Address set storage helper for RocketStorage data (contains unique items; has reverse index lookups)
+// Address set storage helper for PoolseaStorage data (contains unique items; has reverse index lookups)
 
 contract AddressSetStorage is PoolseaBase, AddressSetStorageInterface {
 
     using SafeMath for uint;
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 

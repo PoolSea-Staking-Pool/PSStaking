@@ -13,7 +13,7 @@ import "../../interface/PoolseaVaultInterface.sol";
 // RPL Governance and utility token
 // Inlfationary with rate determined by DAO
 
-contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface {
+contract PoolseaTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface {
 
     // Libs
     using SafeMath for uint;
@@ -44,11 +44,11 @@ contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface 
 
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress, IERC20 _rocketTokenRPLFixedSupplyAddress) PoolseaBase(_rocketStorageAddress) ERC20("POOL", "POOL") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress, IERC20 _poolseaTokenRPLFixedSupplyAddress) PoolseaBase(_poolseaStorageAddress) ERC20("POOL", "POOL") {
         // Version
         version = 1;
         // Set the mainnet RPL fixed supply token address
-        rplFixedSupplyContract = IERC20(_rocketTokenRPLFixedSupplyAddress);
+        rplFixedSupplyContract = IERC20(_poolseaTokenRPLFixedSupplyAddress);
         // Mint the 18m tokens that currently exist and allow them to be sent to people burning existing fixed supply RPL
         _mint(address(this), totalInitialSupply);
     }
@@ -78,7 +78,7 @@ contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface 
     */
     function getInflationIntervalRate() override public view returns(uint256) {
         // Inflation rate controlled by the DAO
-        PoolseaDAOProtocolSettingsInflationInterface daoSettingsInflation = PoolseaDAOProtocolSettingsInflationInterface(getContractAddress("rocketDAOProtocolSettingsInflation"));
+        PoolseaDAOProtocolSettingsInflationInterface daoSettingsInflation = PoolseaDAOProtocolSettingsInflationInterface(getContractAddress("poolseaDAOProtocolSettingsInflation"));
         return daoSettingsInflation.getInflationIntervalRate();
     }
 
@@ -88,7 +88,7 @@ contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface 
     */
     function getInflationIntervalStartTime() override public view returns(uint256) {
         // Inflation rate start time controlled by the DAO
-        PoolseaDAOProtocolSettingsInflationInterface daoSettingsInflation = PoolseaDAOProtocolSettingsInflationInterface(getContractAddress("rocketDAOProtocolSettingsInflation"));
+        PoolseaDAOProtocolSettingsInflationInterface daoSettingsInflation = PoolseaDAOProtocolSettingsInflationInterface(getContractAddress("poolseaDAOProtocolSettingsInflation"));
         return daoSettingsInflation.getInflationIntervalStartTime();
     }
 
@@ -98,7 +98,7 @@ contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface 
     */
     function getInflationRewardsContractAddress() override external view returns(address) {
         // Inflation rate start block controlled by the DAO
-        return getContractAddress("rocketRewardsPool");
+        return getContractAddress("poolseaRewardsPool");
     }
 
 
@@ -167,10 +167,10 @@ contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface 
             return 0;
         }
         // Address of the vault where to send tokens
-        address rocketVaultAddress = getContractAddress("rocketVault");
-        require(rocketVaultAddress != address(0x0), "rocketVault address not set");
+        address poolseaVaultAddress = getContractAddress("poolseaVault");
+        require(poolseaVaultAddress != address(0x0), "poolseaVault address not set");
         // Only mint if we have new tokens to mint since last interval and an address is set to receive them
-        PoolseaVaultInterface rocketVaultContract = PoolseaVaultInterface(rocketVaultAddress);
+        PoolseaVaultInterface poolseaVaultContract = PoolseaVaultInterface(poolseaVaultAddress);
         // Calculate the amount of tokens now based on inflation rate
         uint256 newTokens = _inflationCalculate(intervalsSinceLastMint);
         // Update last inflation calculation timestamp even if inflation rate is 0
@@ -181,12 +181,12 @@ contract RocketTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface 
             _mint(address(this), newTokens);
             // Initialise itself and allow from it's own balance (cant just do an allow as it could be any user calling this so they are msg.sender)
             IERC20 rplInflationContract = IERC20(address(this));
-            // Get the current allowance for Rocket Vault
-            uint256 vaultAllowance = rplFixedSupplyContract.allowance(rocketVaultAddress, address(this));
-            // Now allow Rocket Vault to move those tokens, we also need to account of any other allowances for this token from other contracts in the same block
-            require(rplInflationContract.approve(rocketVaultAddress, vaultAllowance.add(newTokens)), "Allowance for Rocket Vault could not be approved");
+            // Get the current allowance for Poolsea Vault
+            uint256 vaultAllowance = rplFixedSupplyContract.allowance(poolseaVaultAddress, address(this));
+            // Now allow Poolsea Vault to move those tokens, we also need to account of any other allowances for this token from other contracts in the same block
+            require(rplInflationContract.approve(poolseaVaultAddress, vaultAllowance.add(newTokens)), "Allowance for Poolsea Vault could not be approved");
             // Let vault know it can move these tokens to itself now and credit the balance to the RPL rewards pool contract
-            rocketVaultContract.depositToken("rocketRewardsPool", IERC20(address(this)), newTokens);
+            poolseaVaultContract.depositToken("poolseaRewardsPool", IERC20(address(this)), newTokens);
         }
         // Log it
         emit RPLInflationLog(msg.sender, newTokens, inflationCalcTime);

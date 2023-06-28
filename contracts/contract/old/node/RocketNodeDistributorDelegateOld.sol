@@ -4,13 +4,13 @@ pragma solidity 0.7.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "../../node/RocketNodeDistributorStorageLayout.sol";
+import "../../node/PoolseaNodeDistributorStorageLayout.sol";
 import "../../../interface/PoolseaStorageInterface.sol";
 import "../../../interface/node/PoolseaNodeManagerInterface.sol";
 import "../../../interface/old/PoolseaNodeDistributorInterfaceOld.sol";
 import "../../../interface/node/PoolseaNodeStakingInterface.sol";
 
-contract RocketNodeDistributorDelegateOld is RocketNodeDistributorStorageLayout, PoolseaNodeDistributorInterfaceOld {
+contract RocketNodeDistributorDelegateOld is PoolseaNodeDistributorStorageLayout, PoolseaNodeDistributorInterfaceOld {
     // Import libraries
     using SafeMath for uint256;
 

@@ -9,7 +9,7 @@ import "../../interface/util/AddressQueueStorageInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-// Address queue storage helper for RocketStorage data (ring buffer implementation)
+// Address queue storage helper for PoolseaStorage data (ring buffer implementation)
 
 contract AddressQueueStorage is PoolseaBase, AddressQueueStorageInterface {
 
@@ -20,7 +20,7 @@ contract AddressQueueStorage is PoolseaBase, AddressQueueStorageInterface {
     uint256 constant public capacity = 2 ** 255; // max uint256 / 2
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 

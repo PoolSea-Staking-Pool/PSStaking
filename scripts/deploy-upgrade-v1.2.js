@@ -20,26 +20,26 @@ const rocketStorage = artifacts.require('PoolseaStorage.sol');
 // Network contracts
 const contracts = {
     // v1.2
-    rocketNodeDeposit: artifacts.require('RocketNodeDeposit.sol'),
+    rocketNodeDeposit: artifacts.require('PoolseaNodeDeposit.sol'),
     rocketMinipoolDelegate: artifacts.require('PoolseaMinipoolDelegate.sol'),
     rocketDAOProtocolSettingsMinipool: artifacts.require('PoolseaDAOProtocolSettingsMinipool.sol'),
     rocketMinipoolQueue: artifacts.require('PoolseaMinipoolQueue.sol'),
     rocketDepositPool: artifacts.require('PoolseaDepositPool.sol'),
     rocketDAOProtocolSettingsDeposit: artifacts.require('PoolseaDAOProtocolSettingsDeposit.sol'),
     rocketMinipoolManager: artifacts.require('PoolseaMinipoolManager.sol'),
-    rocketNodeStaking: artifacts.require('RocketNodeStaking.sol'),
-    rocketNodeDistributorDelegate: artifacts.require('RocketNodeDistributorDelegate.sol'),
+    rocketNodeStaking: artifacts.require('PoolseaNodeStaking.sol'),
+    rocketNodeDistributorDelegate: artifacts.require('PoolseaNodeDistributorDelegate.sol'),
     rocketMinipoolFactory: artifacts.require('PoolseaMinipoolFactory.sol'),
-    rocketNetworkFees: artifacts.require('RocketNetworkFees.sol'),
-    rocketNetworkPrices: artifacts.require('RocketNetworkPrices.sol'),
+    rocketNetworkFees: artifacts.require('PoolseaNetworkFees.sol'),
+    rocketNetworkPrices: artifacts.require('PoolseaNetworkPrices.sol'),
     rocketMinipoolBase: artifacts.require('PoolseaMinipoolBase.sol'),
-    rocketNodeManager: artifacts.require('RocketNodeManager.sol'),
+    rocketNodeManager: artifacts.require('PoolseaNodeManager.sol'),
     rocketDAONodeTrustedSettingsMinipool: artifacts.require('PoolseaDAONodeTrustedSettingsMinipool.sol'),
     rocketDAOProtocolSettingsNode: artifacts.require('PoolseaDAOProtocolSettingsNode.sol'),
-    rocketNetworkBalances: artifacts.require('RocketNetworkBalances.sol'),
-    rocketRewardsPool: artifacts.require('RocketRewardsPool.sol'),
+    rocketNetworkBalances: artifacts.require('PoolseaNetworkBalances.sol'),
+    rocketRewardsPool: artifacts.require('PoolseaRewardsPool.sol'),
     rocketMinipoolBondReducer: artifacts.require('PoolseaMinipoolBondReducer.sol'),
-    rocketUpgradeOneDotTwo: artifacts.require('RocketUpgradeOneDotTwo.sol'),
+    rocketUpgradeOneDotTwo: artifacts.require('PoolseaUpgradeOneDotTwo.sol'),
 };
 
 // Construct ABI for rocketMinipool

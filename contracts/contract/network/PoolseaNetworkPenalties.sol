@@ -12,7 +12,7 @@ import "../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
 
 // Minipool penalties
 
-contract RocketNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface {
+contract PoolseaNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface {
 
     // Libs
     using SafeMath for uint;
@@ -22,14 +22,14 @@ contract RocketNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface
     event PenaltyUpdated(address indexed minipoolAddress, uint256 penalty, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 1;
     }
 
     // Submit penalty for node operator non-compliance
-    function submitPenalty(address _minipoolAddress, uint256 _block) override external onlyLatestContract("rocketNetworkPenalties", address(this)) onlyTrustedNode(msg.sender) onlyRegisteredMinipool(_minipoolAddress) {
+    function submitPenalty(address _minipoolAddress, uint256 _block) override external onlyLatestContract("poolseaNetworkPenalties", address(this)) onlyTrustedNode(msg.sender) onlyRegisteredMinipool(_minipoolAddress) {
         // Get contracts
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
         // Get submission keys
         bytes32 nodeSubmissionKey = keccak256(abi.encodePacked("network.penalties.submitted.node", msg.sender, _minipoolAddress, _block));
         bytes32 submissionCountKey = keccak256(abi.encodePacked("network.penalties.submitted.count", _minipoolAddress, _block));
@@ -44,17 +44,17 @@ contract RocketNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface
         // Emit balances submitted event
         emit PenaltySubmitted(msg.sender, _minipoolAddress, _block, block.timestamp);
         // Check submission count & update network balances
-        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        if (calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodePenaltyThreshold()) {
+        PoolseaDAONodeTrustedInterface poolseaDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+        if (calcBase.mul(submissionCount).div(poolseaDAONodeTrusted.getMemberCount()) >= poolseaDAOProtocolSettingsNetwork.getNodePenaltyThreshold()) {
             setBool(executedKey, true);
             incrementMinipoolPenaltyCount(_minipoolAddress);
         }
     }
 
     // Executes incrementMinipoolPenaltyCount if consensus threshold is reached
-    function executeUpdatePenalty(address _minipoolAddress, uint256 _block) override external onlyLatestContract("rocketNetworkPenalties", address(this)) {
+    function executeUpdatePenalty(address _minipoolAddress, uint256 _block) override external onlyLatestContract("poolseaNetworkPenalties", address(this)) {
         // Get contracts
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
         // Get submission keys
         bytes32 submissionCountKey = keccak256(abi.encodePacked("network.penalties.submitted.count", _minipoolAddress, _block));
         bytes32 executedKey = keccak256(abi.encodePacked("network.penalties.executed", _minipoolAddress, _block));
@@ -63,8 +63,8 @@ contract RocketNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface
         // Get submission count
         uint256 submissionCount = getUint(submissionCountKey);
         // Check submission count & update network balances
-        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        require(calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodePenaltyThreshold(), "Consensus has not been reached");
+        PoolseaDAONodeTrustedInterface poolseaDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("poolseaDAONodeTrusted"));
+        require(calcBase.mul(submissionCount).div(poolseaDAONodeTrusted.getMemberCount()) >= poolseaDAOProtocolSettingsNetwork.getNodePenaltyThreshold(), "Consensus has not been reached");
         setBool(executedKey, true);
         incrementMinipoolPenaltyCount(_minipoolAddress);
     }
@@ -77,7 +77,7 @@ contract RocketNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface
     // Increments the number of penalties against given minipool and updates penalty rate appropriately
     function incrementMinipoolPenaltyCount(address _minipoolAddress) private {
         // Get contracts
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
         // Calculate penalty count key
         bytes32 key = keccak256(abi.encodePacked("network.penalties.penalty", _minipoolAddress));
         // Get the current penalty count
@@ -90,10 +90,10 @@ contract RocketNetworkPenalties is PoolseaBase, PoolseaNetworkPenaltiesInterface
         }
         newPenaltyCount = newPenaltyCount.sub(2);
         // Calculate the new penalty rate
-        uint256 penaltyRate = newPenaltyCount.mul(rocketDAOProtocolSettingsNetwork.getPerPenaltyRate());
+        uint256 penaltyRate = newPenaltyCount.mul(poolseaDAOProtocolSettingsNetwork.getPerPenaltyRate());
         // Set the penalty rate
-        PoolseaMinipoolPenaltyInterface rocketMinipoolPenalty = PoolseaMinipoolPenaltyInterface(getContractAddress("rocketMinipoolPenalty"));
-        rocketMinipoolPenalty.setPenaltyRate(_minipoolAddress, penaltyRate);
+        PoolseaMinipoolPenaltyInterface poolseaMinipoolPenalty = PoolseaMinipoolPenaltyInterface(getContractAddress("poolseaMinipoolPenalty"));
+        poolseaMinipoolPenalty.setPenaltyRate(_minipoolAddress, penaltyRate);
         // Emit penalty updated event
         emit PenaltyUpdated(_minipoolAddress, penaltyRate, block.timestamp);
     }

@@ -10,10 +10,10 @@ import "../../interface/network/PoolseaNetworkBalancesInterface.sol";
 import "../../interface/token/PoolseaTokenRETHInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
-// rETH is a tokenised stake in the Rocket Pool network
+// rETH is a tokenised stake in the Poolsea Pool network
 // rETH is backed by ETH (subject to liquidity) at a variable exchange rate
 
-contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
+contract PoolseaTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
 
     // Libs
     using SafeMath for uint;
@@ -24,7 +24,7 @@ contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
     event TokensBurned(address indexed from, uint256 amount, uint256 ethAmount, uint256 time);
 
     // Construct with our token details
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) ERC20("PoolSea PLS", "rPLS") {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) ERC20("PoolSea PLS", "rPLS") {
         // Version
         version = 1;
     }
@@ -38,9 +38,9 @@ contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
     // Calculate the amount of ETH backing an amount of rETH
     function getEthValue(uint256 _rethAmount) override public view returns (uint256) {
         // Get network balances
-        PoolseaNetworkBalancesInterface rocketNetworkBalances = PoolseaNetworkBalancesInterface(getContractAddress("rocketNetworkBalances"));
-        uint256 totalEthBalance = rocketNetworkBalances.getTotalETHBalance();
-        uint256 rethSupply = rocketNetworkBalances.getTotalRETHSupply();
+        PoolseaNetworkBalancesInterface poolseaNetworkBalances = PoolseaNetworkBalancesInterface(getContractAddress("poolseaNetworkBalances"));
+        uint256 totalEthBalance = poolseaNetworkBalances.getTotalETHBalance();
+        uint256 rethSupply = poolseaNetworkBalances.getTotalRETHSupply();
         // Use 1:1 ratio if no rETH is minted
         if (rethSupply == 0) { return _rethAmount; }
         // Calculate and return
@@ -50,9 +50,9 @@ contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
     // Calculate the amount of rETH backed by an amount of ETH
     function getRethValue(uint256 _ethAmount) override public view returns (uint256) {
         // Get network balances
-        PoolseaNetworkBalancesInterface rocketNetworkBalances = PoolseaNetworkBalancesInterface(getContractAddress("rocketNetworkBalances"));
-        uint256 totalEthBalance = rocketNetworkBalances.getTotalETHBalance();
-        uint256 rethSupply = rocketNetworkBalances.getTotalRETHSupply();
+        PoolseaNetworkBalancesInterface poolseaNetworkBalances = PoolseaNetworkBalancesInterface(getContractAddress("poolseaNetworkBalances"));
+        uint256 totalEthBalance = poolseaNetworkBalances.getTotalETHBalance();
+        uint256 rethSupply = poolseaNetworkBalances.getTotalRETHSupply();
         // Use 1:1 ratio if no rETH is minted
         if (rethSupply == 0) { return _ethAmount; }
         // Check network ETH balance
@@ -70,8 +70,8 @@ contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
     // Get the total amount of collateral available
     // Includes rETH contract balance & excess deposit pool balance
     function getTotalCollateral() override public view returns (uint256) {
-        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
-        return rocketDepositPool.getExcessBalance().add(address(this).balance);
+        PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
+        return poolseaDepositPool.getExcessBalance().add(address(this).balance);
     }
 
     // Get the current ETH collateral rate
@@ -83,15 +83,15 @@ contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
     }
 
     // Deposit excess ETH from deposit pool
-    // Only accepts calls from the RocketDepositPool contract
-    function depositExcess() override external payable onlyLatestContract("rocketDepositPool", msg.sender) {
+    // Only accepts calls from the PoolseaDepositPool contract
+    function depositExcess() override external payable onlyLatestContract("poolseaDepositPool", msg.sender) {
         // Emit ether deposited event
         emit EtherDeposited(msg.sender, msg.value, block.timestamp);
     }
 
     // Mint rETH
-    // Only accepts calls from the RocketDepositPool contract
-    function mint(uint256 _ethAmount, address _to) override external onlyLatestContract("rocketDepositPool", msg.sender) {
+    // Only accepts calls from the PoolseaDepositPool contract
+    function mint(uint256 _ethAmount, address _to) override external onlyLatestContract("poolseaDepositPool", msg.sender) {
         // Get rETH amount
         uint256 rethAmount = getRethValue(_ethAmount);
         // Check rETH amount
@@ -128,18 +128,18 @@ contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
         uint256 ethBalance = address(this).balance;
         if (ethBalance >= _ethRequired) { return; }
         // Withdraw
-        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
-        rocketDepositPool.withdrawExcessBalance(_ethRequired.sub(ethBalance));
+        PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
+        poolseaDepositPool.withdrawExcessBalance(_ethRequired.sub(ethBalance));
     }
 
     // Sends any excess ETH from this contract to the deposit pool (as determined by target collateral rate)
     function depositExcessCollateral() external override {
         // Load contracts
-        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
-        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
+        PoolseaDAOProtocolSettingsNetworkInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("poolseaDAOProtocolSettingsNetwork"));
+        PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
         // Get collateral and target collateral rate
         uint256 collateralRate = getCollateralRate();
-        uint256 targetCollateralRate = rocketDAOProtocolSettingsNetwork.getTargetRethCollateralRate();
+        uint256 targetCollateralRate = poolseaDAOProtocolSettingsNetwork.getTargetRethCollateralRate();
         // Check if we are in excess
         if (collateralRate > targetCollateralRate) {
             // Calculate our target collateral in ETH
@@ -148,7 +148,7 @@ contract RocketTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
             if (address(this).balance > targetCollateral) {
                 // Send that excess to deposit pool
                 uint256 excessCollateral = address(this).balance.sub(targetCollateral);
-                rocketDepositPool.recycleExcessCollateral{value: excessCollateral}();
+                poolseaDepositPool.recycleExcessCollateral{value: excessCollateral}();
             }
         }
     }

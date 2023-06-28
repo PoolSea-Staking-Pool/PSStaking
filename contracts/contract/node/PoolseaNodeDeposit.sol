@@ -22,7 +22,7 @@ import "../../interface/PoolseaVaultInterface.sol";
 import "../../interface/node/PoolseaNodeStakingInterface.sol";
 
 /// @notice Handles node deposits and minipool creation
-contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
+contract PoolseaNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
 
     // Libs
     using SafeMath for uint;
@@ -30,12 +30,12 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     // Events
     event DepositReceived(address indexed from, uint256 amount, uint256 time);
 
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         version = 3;
     }
 
     /// @dev Accept incoming ETH from the deposit pool
-    receive() external payable onlyLatestContract("rocketDepositPool", msg.sender) {}
+    receive() external payable onlyLatestContract("poolseaDepositPool", msg.sender) {}
 
     /// @notice Returns a node operator's credit balance in wei
     function getNodeDepositCredit(address _nodeOperator) override public view returns (uint256) {
@@ -43,7 +43,7 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     }
 
     /// @dev Increases a node operators deposit credit balance
-    function increaseDepositCreditBalance(address _nodeOperator, uint256 _amount) override external onlyLatestContract("rocketNodeDeposit", address(this)) {
+    function increaseDepositCreditBalance(address _nodeOperator, uint256 _amount) override external onlyLatestContract("poolseaNodeDeposit", address(this)) {
         // Accept calls from network contracts or registered minipools
         require(getBool(keccak256(abi.encodePacked("minipool.exists", msg.sender))) ||
             getBool(keccak256(abi.encodePacked("contract.exists", msg.sender))),
@@ -60,7 +60,7 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _depositDataRoot The hash tree root of the deposit data (passed onto the deposit contract on pre stake)
     /// @param _salt Salt used to deterministically construct the minipool's address
     /// @param _expectedMinipoolAddress The expected deterministic minipool address. Will revert if it doesn't match
-    function deposit(uint256 _bondAmount, uint256 _minimumNodeFee, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot, uint256 _salt, address _expectedMinipoolAddress) override external payable onlyLatestContract("rocketNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
+    function deposit(uint256 _bondAmount, uint256 _minimumNodeFee, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot, uint256 _salt, address _expectedMinipoolAddress) override external payable onlyLatestContract("poolseaNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
         // Check amount
         require(msg.value == _bondAmount, "Invalid value");
         // Process the deposit
@@ -75,7 +75,7 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _depositDataRoot The hash tree root of the deposit data (passed onto the deposit contract on pre stake)
     /// @param _salt Salt used to deterministically construct the minipool's address
     /// @param _expectedMinipoolAddress The expected deterministic minipool address. Will revert if it doesn't match
-    function depositWithCredit(uint256 _bondAmount, uint256 _minimumNodeFee, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot, uint256 _salt, address _expectedMinipoolAddress) override external payable onlyLatestContract("rocketNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
+    function depositWithCredit(uint256 _bondAmount, uint256 _minimumNodeFee, bytes calldata _validatorPubkey, bytes calldata _validatorSignature, bytes32 _depositDataRoot, uint256 _salt, address _expectedMinipoolAddress) override external payable onlyLatestContract("poolseaNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
         // Query node's deposit credit
         uint256 credit = getNodeDepositCredit(msg.sender);
         // Credit balance accounting
@@ -115,14 +115,14 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
         uint256 launchAmount;
         uint256 preLaunchValue;
         {
-            PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-            launchAmount = rocketDAOProtocolSettingsMinipool.getLaunchBalance();
-            preLaunchValue = rocketDAOProtocolSettingsMinipool.getPreLaunchValue();
+            PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+            launchAmount = poolseaDAOProtocolSettingsMinipool.getLaunchBalance();
+            preLaunchValue = poolseaDAOProtocolSettingsMinipool.getPreLaunchValue();
         }
         // Check that pre deposit won't fail
         if (msg.value < preLaunchValue) {
-            PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
-            require(preLaunchValue.sub(msg.value) <= rocketDepositPool.getBalance(), "Deposit pool balance is insufficient for pre deposit");
+            PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
+            require(preLaunchValue.sub(msg.value) <= poolseaDepositPool.getBalance(), "Deposit pool balance is insufficient for pre deposit");
         }
         // Emit deposit received event
         emit DepositReceived(msg.sender, msg.value, block.timestamp);
@@ -141,20 +141,20 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     }
 
     /// @dev Processes a node deposit with the deposit pool
-    /// @param _preLaunchValue The prelaunch value (result of call to `RocketDAOProtocolSettingsMinipool.getPreLaunchValue()`
+    /// @param _preLaunchValue The prelaunch value (result of call to `PoolseaDAOProtocolSettingsMinipool.getPreLaunchValue()`
     /// @param _bondAmount The bond amount for this deposit
     function _processNodeDeposit(uint256 _preLaunchValue, uint256 _bondAmount) private {
         // Get contracts
-        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
+        PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
         // Retrieve ETH from deposit pool if required
         uint256 shortFall = 0;
         if (msg.value < _preLaunchValue) {
             shortFall = _preLaunchValue.sub(msg.value);
-            rocketDepositPool.nodeCreditWithdrawal(shortFall);
+            poolseaDepositPool.nodeCreditWithdrawal(shortFall);
         }
         uint256 remaining = msg.value.add(shortFall).sub(_preLaunchValue);
         // Deposit the left over value into the deposit pool
-        rocketDepositPool.nodeDeposit{value: remaining}(_bondAmount.sub(_preLaunchValue));
+        poolseaDepositPool.nodeDeposit{value: remaining}(_bondAmount.sub(_preLaunchValue));
     }
 
     /// @notice Creates a "vacant" minipool which a node operator can use to migrate a validator with a BLS withdrawal credential
@@ -164,15 +164,15 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _salt Salt used to deterministically construct the minipool's address
     /// @param _expectedMinipoolAddress The expected deterministic minipool address. Will revert if it doesn't match
     /// @param _currentBalance The current balance of the validator on the beaconchain (will be checked by oDAO and scrubbed if not correct)
-    function createVacantMinipool(uint256 _bondAmount, uint256 _minimumNodeFee, bytes calldata _validatorPubkey, uint256 _salt, address _expectedMinipoolAddress, uint256 _currentBalance) override external onlyLatestContract("rocketNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
+    function createVacantMinipool(uint256 _bondAmount, uint256 _minimumNodeFee, bytes calldata _validatorPubkey, uint256 _salt, address _expectedMinipoolAddress, uint256 _currentBalance) override external onlyLatestContract("poolseaNodeDeposit", address(this)) onlyRegisteredNode(msg.sender) {
         // Check pre-conditions
         checkVacantMinipoolsEnabled();
         checkDistributorInitialised();
         checkNodeFee(_minimumNodeFee);
         require(isValidDepositAmount(_bondAmount), "Invalid deposit amount");
         // Increase ETH matched (used to calculate RPL collateral requirements)
-        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
-        uint256 launchAmount = rocketDAOProtocolSettingsMinipool.getLaunchBalance();
+        PoolseaDAOProtocolSettingsMinipoolInterface poolseaDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("poolseaDAOProtocolSettingsMinipool"));
+        uint256 launchAmount = poolseaDAOProtocolSettingsMinipool.getLaunchBalance();
         _increaseEthMatched(msg.sender, launchAmount.sub(_bondAmount));
         // Create the minipool
         _createVacantMinipool(_salt, _validatorPubkey, _bondAmount, _expectedMinipoolAddress, _currentBalance);
@@ -182,7 +182,7 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _nodeAddress The node operator's address to increase the ETH matched for
     /// @param _amount The amount to increase the ETH matched
     /// @dev Will revert if the new ETH matched amount exceeds the node operators limit
-    function increaseEthMatched(address _nodeAddress, uint256 _amount) override external onlyLatestContract("rocketNodeDeposit", address(this)) onlyLatestNetworkContract() {
+    function increaseEthMatched(address _nodeAddress, uint256 _amount) override external onlyLatestContract("poolseaNodeDeposit", address(this)) onlyLatestNetworkContract() {
         _increaseEthMatched(_nodeAddress, _amount);
     }
 
@@ -190,10 +190,10 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     ///      collateralisation requirements of the network
     function _increaseEthMatched(address _nodeAddress, uint256 _amount) private {
         // Check amount doesn't exceed limits
-        PoolseaNodeStakingInterface rocketNodeStaking = PoolseaNodeStakingInterface(getContractAddress("rocketNodeStaking"));
-        uint256 ethMatched = rocketNodeStaking.getNodeETHMatched(_nodeAddress).add(_amount);
+        PoolseaNodeStakingInterface poolseaNodeStaking = PoolseaNodeStakingInterface(getContractAddress("poolseaNodeStaking"));
+        uint256 ethMatched = poolseaNodeStaking.getNodeETHMatched(_nodeAddress).add(_amount);
         require(
-            ethMatched <= rocketNodeStaking.getNodeETHMatchedLimit(_nodeAddress),
+            ethMatched <= poolseaNodeStaking.getNodeETHMatchedLimit(_nodeAddress),
             "ETH matched after deposit exceeds limit based on node RPL stake"
         );
         setUint(keccak256(abi.encodePacked("eth.matched.node.amount", _nodeAddress)), ethMatched);
@@ -202,14 +202,14 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @dev Adds a minipool to the queue
     function enqueueMinipool(address _minipoolAddress) private {
         // Add minipool to queue
-        PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue")).enqueueMinipool(_minipoolAddress);
+        PoolseaMinipoolQueueInterface(getContractAddress("poolseaMinipoolQueue")).enqueueMinipool(_minipoolAddress);
     }
 
     /// @dev Reverts if node operator has not initialised their fee distributor
     function checkDistributorInitialised() private view {
         // Check node has initialised their fee distributor
-        PoolseaNodeManagerInterface rocketNodeManager = PoolseaNodeManagerInterface(getContractAddress("rocketNodeManager"));
-        require(rocketNodeManager.getFeeDistributorInitialised(msg.sender), "Fee distributor not initialised");
+        PoolseaNodeManagerInterface poolseaNodeManager = PoolseaNodeManagerInterface(getContractAddress("poolseaNodeManager"));
+        require(poolseaNodeManager.getFeeDistributorInitialised(msg.sender), "Fee distributor not initialised");
     }
 
     /// @dev Creates a minipool and returns an instance of it
@@ -217,11 +217,11 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _expectedMinipoolAddress The expected minipool address. Reverts if not correct
     function createMinipool(uint256 _salt, address _expectedMinipoolAddress) private returns (PoolseaMinipoolInterface) {
         // Load contracts
-        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
         // Check minipool doesn't exist or previously exist
-        require(!rocketMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !rocketMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
+        require(!poolseaMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !poolseaMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
         // Create minipool
-        PoolseaMinipoolInterface minipool = rocketMinipoolManager.createMinipool(msg.sender, _salt);
+        PoolseaMinipoolInterface minipool = poolseaMinipoolManager.createMinipool(msg.sender, _salt);
         // Ensure minipool address matches expected
         require(address(minipool) == _expectedMinipoolAddress, "Unexpected minipool address");
         // Return
@@ -236,11 +236,11 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _currentBalance The current balance of the validator on the beaconchain (will be checked by oDAO and scrubbed if not correct)
     function _createVacantMinipool(uint256 _salt, bytes calldata _validatorPubkey, uint256 _bondAmount, address _expectedMinipoolAddress, uint256 _currentBalance) private returns (PoolseaMinipoolInterface) {
         // Load contracts
-        PoolseaMinipoolManagerInterface rocketMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("rocketMinipoolManager"));
+        PoolseaMinipoolManagerInterface poolseaMinipoolManager = PoolseaMinipoolManagerInterface(getContractAddress("poolseaMinipoolManager"));
         // Check minipool doesn't exist or previously exist
-        require(!rocketMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !rocketMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
+        require(!poolseaMinipoolManager.getMinipoolExists(_expectedMinipoolAddress) && !poolseaMinipoolManager.getMinipoolDestroyed(_expectedMinipoolAddress), "Minipool already exists or was previously destroyed");
         // Create minipool
-        PoolseaMinipoolInterface minipool = rocketMinipoolManager.createVacantMinipool(msg.sender, _salt, _validatorPubkey, _bondAmount, _currentBalance);
+        PoolseaMinipoolInterface minipool = poolseaMinipoolManager.createVacantMinipool(msg.sender, _salt, _validatorPubkey, _bondAmount, _currentBalance);
         // Ensure minipool address matches expected
         require(address(minipool) == _expectedMinipoolAddress, "Unexpected minipool address");
         // Return
@@ -251,31 +251,31 @@ contract RocketNodeDeposit is PoolseaBase, PoolseaNodeDepositInterface {
     /// @param _minimumNodeFee The minimum node fee required to not revert
     function checkNodeFee(uint256 _minimumNodeFee) private view {
         // Load contracts
-        PoolseaNetworkFeesInterface rocketNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("rocketNetworkFees"));
+        PoolseaNetworkFeesInterface poolseaNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("poolseaNetworkFees"));
         // Check current node fee
-        uint256 nodeFee = rocketNetworkFees.getNodeFee();
+        uint256 nodeFee = poolseaNetworkFees.getNodeFee();
         require(nodeFee >= _minimumNodeFee, "Minimum node fee exceeds current network node fee");
     }
 
     /// @dev Reverts if deposits are not enabled
     function checkDepositsEnabled() private view {
         // Get contracts
-        PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
+        PoolseaDAOProtocolSettingsNodeInterface poolseaDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("poolseaDAOProtocolSettingsNode"));
         // Check node settings
-        require(rocketDAOProtocolSettingsNode.getDepositEnabled(), "Node deposits are currently disabled");
+        require(poolseaDAOProtocolSettingsNode.getDepositEnabled(), "Node deposits are currently disabled");
     }
 
     /// @dev Reverts if vacant minipools are not enabled
     function checkVacantMinipoolsEnabled() private view {
         // Get contracts
-        PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
+        PoolseaDAOProtocolSettingsNodeInterface poolseaDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("poolseaDAOProtocolSettingsNode"));
         // Check node settings
-        require(rocketDAOProtocolSettingsNode.getVacantMinipoolsEnabled(), "Vacant minipools are currently disabled");
+        require(poolseaDAOProtocolSettingsNode.getVacantMinipoolsEnabled(), "Vacant minipools are currently disabled");
     }
 
     /// @dev Executes an assignDeposits call on the deposit pool
     function assignDeposits() private {
-        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
-        rocketDepositPool.maybeAssignDeposits();
+        PoolseaDepositPoolInterface poolseaDepositPool = PoolseaDepositPoolInterface(getContractAddress("poolseaDepositPool"));
+        poolseaDepositPool.maybeAssignDeposits();
     }
 }

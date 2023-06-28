@@ -9,27 +9,27 @@ import "../../interface/rewards/claims/PoolseaClaimDAOInterface.sol";
 
 
 // RPL Rewards claiming by the DAO
-contract RocketClaimDAO is PoolseaBase, PoolseaClaimDAOInterface {
+contract PoolseaClaimDAO is PoolseaBase, PoolseaClaimDAOInterface {
 
     // Events
     event RPLTokensSentByDAOProtocol(string invoiceID, address indexed from, address indexed to, uint256 amount, uint256 time);
 
     // Construct
-    constructor(PoolseaStorageInterface _rocketStorageAddress) PoolseaBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _poolseaStorageAddress) PoolseaBase(_poolseaStorageAddress) {
         // Version
         version = 2;
     }
 
     // Spend the network DAOs RPL rewards
-    function spend(string memory _invoiceID, address _recipientAddress, uint256 _amount) override external onlyLatestContract("rocketDAOProtocolProposals", msg.sender) {
+    function spend(string memory _invoiceID, address _recipientAddress, uint256 _amount) override external onlyLatestContract("poolseaDAOProtocolProposals", msg.sender) {
         // Load contracts
-        PoolseaVaultInterface rocketVault = PoolseaVaultInterface(getContractAddress("rocketVault"));
+        PoolseaVaultInterface poolseaVault = PoolseaVaultInterface(getContractAddress("poolseaVault"));
         // Addresses
-        IERC20 rplToken = IERC20(getContractAddress("rocketTokenRPL"));
+        IERC20 rplToken = IERC20(getContractAddress("poolseaTokenRPL"));
         // Some initial checks
-        require(_amount > 0 && _amount <= rocketVault.balanceOfToken("rocketClaimDAO", rplToken), "You cannot send 0 RPL or more than the DAO has in its account");
+        require(_amount > 0 && _amount <= poolseaVault.balanceOfToken("poolseaClaimDAO", rplToken), "You cannot send 0 RPL or more than the DAO has in its account");
         // Send now
-        rocketVault.withdrawToken(_recipientAddress, rplToken, _amount);
+        poolseaVault.withdrawToken(_recipientAddress, rplToken, _amount);
         // Log it
         emit RPLTokensSentByDAOProtocol(_invoiceID, address(this), _recipientAddress, _amount, block.timestamp);
     }

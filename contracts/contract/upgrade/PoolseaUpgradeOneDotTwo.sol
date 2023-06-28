@@ -5,13 +5,13 @@ pragma abicoder v2;
 import "../PoolseaBase.sol";
 
 import "../minipool/PoolseaMinipoolManager.sol";
-import "../node/RocketNodeManager.sol";
-import "../node/RocketNodeDistributorFactory.sol";
-import "../node/RocketNodeDistributorDelegate.sol";
+import "../node/PoolseaNodeManager.sol";
+import "../node/PoolseaNodeDistributorFactory.sol";
+import "../node/PoolseaNodeDistributorDelegate.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
-/// @notice Transient contract to upgrade Rocket Pool with the Atlas set of contract upgrades
-contract RocketUpgradeOneDotTwo is PoolseaBase {
+/// @notice Transient contract to upgrade Poolsea Pool with the Atlas set of contract upgrades
+contract PoolseaUpgradeOneDotTwo is PoolseaBase {
 
     struct ClaimInterval {
         uint256 interval;
@@ -25,49 +25,49 @@ contract RocketUpgradeOneDotTwo is PoolseaBase {
     bool public locked;
 
     // Upgrade contracts
-    address public newRocketNodeDeposit;
-    address public newRocketMinipoolDelegate;
-    address public newRocketDAOProtocolSettingsMinipool;
-    address public newRocketMinipoolQueue;
-    address public newRocketDepositPool;
-    address public newRocketDAOProtocolSettingsDeposit;
-    address public newRocketMinipoolManager;
-    address public newRocketNodeStaking;
-    address public newRocketNodeDistributorDelegate;
-    address public newRocketMinipoolFactory;
-    address public newRocketNetworkFees;
-    address public newRocketNetworkPrices;
-    address public newRocketDAONodeTrustedSettingsMinipool;
-    address public newRocketNodeManager;
-    address public newRocketDAOProtocolSettingsNode;
-    address public newRocketNetworkBalances;
-    address public newRocketRewardsPool;
-    address public rocketMinipoolBase;
-    address public rocketMinipoolBondReducer;
+    address public newPoolseaNodeDeposit;
+    address public newPoolseaMinipoolDelegate;
+    address public newPoolseaDAOProtocolSettingsMinipool;
+    address public newPoolseaMinipoolQueue;
+    address public newPoolseaDepositPool;
+    address public newPoolseaDAOProtocolSettingsDeposit;
+    address public newPoolseaMinipoolManager;
+    address public newPoolseaNodeStaking;
+    address public newPoolseaNodeDistributorDelegate;
+    address public newPoolseaMinipoolFactory;
+    address public newPoolseaNetworkFees;
+    address public newPoolseaNetworkPrices;
+    address public newPoolseaDAONodeTrustedSettingsMinipool;
+    address public newPoolseaNodeManager;
+    address public newPoolseaDAOProtocolSettingsNode;
+    address public newPoolseaNetworkBalances;
+    address public newPoolseaRewardsPool;
+    address public poolseaMinipoolBase;
+    address public poolseaMinipoolBondReducer;
 
     // Upgrade ABIs
-    string public newRocketNodeDepositAbi;
-    string public newRocketMinipoolDelegateAbi;
-    string public newRocketDAOProtocolSettingsMinipoolAbi;
-    string public newRocketMinipoolQueueAbi;
-    string public newRocketDepositPoolAbi;
-    string public newRocketDAOProtocolSettingsDepositAbi;
-    string public newRocketMinipoolManagerAbi;
-    string public newRocketNodeStakingAbi;
-    string public newRocketNodeDistributorDelegateAbi;
-    string public newRocketMinipoolFactoryAbi;
-    string public newRocketNetworkFeesAbi;
-    string public newRocketNetworkPricesAbi;
-    string public newRocketDAONodeTrustedSettingsMinipoolAbi;
-    string public newRocketNodeManagerAbi;
-    string public newRocketDAOProtocolSettingsNodeAbi;
-    string public newRocketNetworkBalancesAbi;
-    string public newRocketRewardsPoolAbi;
-    string public rocketMinipoolBaseAbi;
-    string public rocketMinipoolBondReducerAbi;
-    string public rocketNetworkBalancesAbi;
+    string public newPoolseaNodeDepositAbi;
+    string public newPoolseaMinipoolDelegateAbi;
+    string public newPoolseaDAOProtocolSettingsMinipoolAbi;
+    string public newPoolseaMinipoolQueueAbi;
+    string public newPoolseaDepositPoolAbi;
+    string public newPoolseaDAOProtocolSettingsDepositAbi;
+    string public newPoolseaMinipoolManagerAbi;
+    string public newPoolseaNodeStakingAbi;
+    string public newPoolseaNodeDistributorDelegateAbi;
+    string public newPoolseaMinipoolFactoryAbi;
+    string public newPoolseaNetworkFeesAbi;
+    string public newPoolseaNetworkPricesAbi;
+    string public newPoolseaDAONodeTrustedSettingsMinipoolAbi;
+    string public newPoolseaNodeManagerAbi;
+    string public newPoolseaDAOProtocolSettingsNodeAbi;
+    string public newPoolseaNetworkBalancesAbi;
+    string public newPoolseaRewardsPoolAbi;
+    string public poolseaMinipoolBaseAbi;
+    string public poolseaMinipoolBondReducerAbi;
+    string public poolseaNetworkBalancesAbi;
 
-    string public newRocketMinipoolAbi;
+    string public newPoolseaMinipoolAbi;
 
     // Save deployer to limit access to set functions
     address immutable deployer;
@@ -77,15 +77,15 @@ contract RocketUpgradeOneDotTwo is PoolseaBase {
 
     // Construct
     constructor(
-        PoolseaStorageInterface _rocketStorageAddress
-    ) PoolseaBase(_rocketStorageAddress) {
+        PoolseaStorageInterface _poolseaStorageAddress
+    ) PoolseaBase(_poolseaStorageAddress) {
         // Version
         version = 1;
         deployer = msg.sender;
     }
 
-    /// @notice Returns the address of the RocketStorage contract
-    function getRocketStorageAddress() external view returns (address) {
+    /// @notice Returns the address of the PoolseaStorage contract
+    function getPoolseaStorageAddress() external view returns (address) {
         return address(poolseaStorage);
     }
 
@@ -94,48 +94,48 @@ contract RocketUpgradeOneDotTwo is PoolseaBase {
         require(!locked, "Contract locked");
 
         // Set contract addresses
-        newRocketNodeDeposit = _addresses[0];
-        newRocketMinipoolDelegate = _addresses[1];
-        newRocketDAOProtocolSettingsMinipool = _addresses[2];
-        newRocketMinipoolQueue = _addresses[3];
-        newRocketDepositPool = _addresses[4];
-        newRocketDAOProtocolSettingsDeposit = _addresses[5];
-        newRocketMinipoolManager = _addresses[6];
-        newRocketNodeStaking = _addresses[7];
-        newRocketNodeDistributorDelegate = _addresses[8];
-        newRocketMinipoolFactory = _addresses[9];
-        newRocketNetworkFees = _addresses[10];
-        newRocketNetworkPrices = _addresses[11];
-        newRocketDAONodeTrustedSettingsMinipool = _addresses[12];
-        newRocketNodeManager = _addresses[13];
-        newRocketDAOProtocolSettingsNode = _addresses[14];
-        newRocketNetworkBalances = _addresses[15];
-        newRocketRewardsPool = _addresses[16];
-        rocketMinipoolBase = _addresses[17];
-        rocketMinipoolBondReducer = _addresses[18];
+        newPoolseaNodeDeposit = _addresses[0];
+        newPoolseaMinipoolDelegate = _addresses[1];
+        newPoolseaDAOProtocolSettingsMinipool = _addresses[2];
+        newPoolseaMinipoolQueue = _addresses[3];
+        newPoolseaDepositPool = _addresses[4];
+        newPoolseaDAOProtocolSettingsDeposit = _addresses[5];
+        newPoolseaMinipoolManager = _addresses[6];
+        newPoolseaNodeStaking = _addresses[7];
+        newPoolseaNodeDistributorDelegate = _addresses[8];
+        newPoolseaMinipoolFactory = _addresses[9];
+        newPoolseaNetworkFees = _addresses[10];
+        newPoolseaNetworkPrices = _addresses[11];
+        newPoolseaDAONodeTrustedSettingsMinipool = _addresses[12];
+        newPoolseaNodeManager = _addresses[13];
+        newPoolseaDAOProtocolSettingsNode = _addresses[14];
+        newPoolseaNetworkBalances = _addresses[15];
+        newPoolseaRewardsPool = _addresses[16];
+        poolseaMinipoolBase = _addresses[17];
+        poolseaMinipoolBondReducer = _addresses[18];
 
         // Set ABIs
-        newRocketNodeDepositAbi = _abis[0];
-        newRocketMinipoolDelegateAbi = _abis[1];
-        newRocketDAOProtocolSettingsMinipoolAbi = _abis[2];
-        newRocketMinipoolQueueAbi = _abis[3];
-        newRocketDepositPoolAbi = _abis[4];
-        newRocketDAOProtocolSettingsDepositAbi = _abis[5];
-        newRocketMinipoolManagerAbi = _abis[6];
-        newRocketNodeStakingAbi = _abis[7];
-        newRocketNodeDistributorDelegateAbi = _abis[8];
-        newRocketMinipoolFactoryAbi = _abis[9];
-        newRocketNetworkFeesAbi = _abis[10];
-        newRocketNetworkPricesAbi = _abis[11];
-        newRocketDAONodeTrustedSettingsMinipoolAbi = _abis[12];
-        newRocketNodeManagerAbi = _abis[13];
-        newRocketDAOProtocolSettingsNodeAbi = _abis[14];
-        newRocketNetworkBalancesAbi = _abis[15];
-        newRocketRewardsPoolAbi = _abis[16];
-        rocketMinipoolBaseAbi = _abis[17];
-        rocketMinipoolBondReducerAbi = _abis[18];
+        newPoolseaNodeDepositAbi = _abis[0];
+        newPoolseaMinipoolDelegateAbi = _abis[1];
+        newPoolseaDAOProtocolSettingsMinipoolAbi = _abis[2];
+        newPoolseaMinipoolQueueAbi = _abis[3];
+        newPoolseaDepositPoolAbi = _abis[4];
+        newPoolseaDAOProtocolSettingsDepositAbi = _abis[5];
+        newPoolseaMinipoolManagerAbi = _abis[6];
+        newPoolseaNodeStakingAbi = _abis[7];
+        newPoolseaNodeDistributorDelegateAbi = _abis[8];
+        newPoolseaMinipoolFactoryAbi = _abis[9];
+        newPoolseaNetworkFeesAbi = _abis[10];
+        newPoolseaNetworkPricesAbi = _abis[11];
+        newPoolseaDAONodeTrustedSettingsMinipoolAbi = _abis[12];
+        newPoolseaNodeManagerAbi = _abis[13];
+        newPoolseaDAOProtocolSettingsNodeAbi = _abis[14];
+        newPoolseaNetworkBalancesAbi = _abis[15];
+        newPoolseaRewardsPoolAbi = _abis[16];
+        poolseaMinipoolBaseAbi = _abis[17];
+        poolseaMinipoolBondReducerAbi = _abis[18];
 
-        newRocketMinipoolAbi = _abis[19];
+        newPoolseaMinipoolAbi = _abis[19];
     }
 
     function setInterval(uint256 _interval, uint256 _block) external {
@@ -160,30 +160,30 @@ contract RocketUpgradeOneDotTwo is PoolseaBase {
         executed = true;
 
         // Upgrade contracts
-        _upgradeContract("rocketNodeDeposit", newRocketNodeDeposit, newRocketNodeDepositAbi);
-        _upgradeContract("rocketMinipoolDelegate", newRocketMinipoolDelegate, newRocketMinipoolDelegateAbi);
-        _upgradeContract("rocketDAOProtocolSettingsMinipool", newRocketDAOProtocolSettingsMinipool, newRocketDAOProtocolSettingsMinipoolAbi);
-        _upgradeContract("rocketMinipoolQueue", newRocketMinipoolQueue, newRocketMinipoolQueueAbi);
-        _upgradeContract("rocketDepositPool", newRocketDepositPool, newRocketDepositPoolAbi);
-        _upgradeContract("rocketDAOProtocolSettingsDeposit", newRocketDAOProtocolSettingsDeposit, newRocketDAOProtocolSettingsDepositAbi);
-        _upgradeContract("rocketMinipoolManager", newRocketMinipoolManager, newRocketMinipoolManagerAbi);
-        _upgradeContract("rocketNodeStaking", newRocketNodeStaking, newRocketNodeStakingAbi);
-        _upgradeContract("rocketNodeDistributorDelegate", newRocketNodeDistributorDelegate, newRocketNodeDistributorDelegateAbi);
-        _upgradeContract("rocketMinipoolFactory", newRocketMinipoolFactory, newRocketMinipoolFactoryAbi);
-        _upgradeContract("rocketNetworkFees", newRocketNetworkFees, newRocketNetworkFeesAbi);
-        _upgradeContract("rocketNetworkPrices", newRocketNetworkPrices, newRocketNetworkPricesAbi);
-        _upgradeContract("rocketDAONodeTrustedSettingsMinipool", newRocketDAONodeTrustedSettingsMinipool, newRocketDAONodeTrustedSettingsMinipoolAbi);
-        _upgradeContract("rocketNodeManager", newRocketNodeManager, newRocketNodeManagerAbi);
-        _upgradeContract("rocketDAOProtocolSettingsNode", newRocketDAOProtocolSettingsNode, newRocketDAOProtocolSettingsNodeAbi);
-        _upgradeContract("rocketNetworkBalances", newRocketNetworkBalances, newRocketNetworkBalancesAbi);
-        _upgradeContract("rocketRewardsPool", newRocketRewardsPool, newRocketRewardsPoolAbi);
+        _upgradeContract("poolseaNodeDeposit", newPoolseaNodeDeposit, newPoolseaNodeDepositAbi);
+        _upgradeContract("poolseaMinipoolDelegate", newPoolseaMinipoolDelegate, newPoolseaMinipoolDelegateAbi);
+        _upgradeContract("poolseaDAOProtocolSettingsMinipool", newPoolseaDAOProtocolSettingsMinipool, newPoolseaDAOProtocolSettingsMinipoolAbi);
+        _upgradeContract("poolseaMinipoolQueue", newPoolseaMinipoolQueue, newPoolseaMinipoolQueueAbi);
+        _upgradeContract("poolseaDepositPool", newPoolseaDepositPool, newPoolseaDepositPoolAbi);
+        _upgradeContract("poolseaDAOProtocolSettingsDeposit", newPoolseaDAOProtocolSettingsDeposit, newPoolseaDAOProtocolSettingsDepositAbi);
+        _upgradeContract("poolseaMinipoolManager", newPoolseaMinipoolManager, newPoolseaMinipoolManagerAbi);
+        _upgradeContract("poolseaNodeStaking", newPoolseaNodeStaking, newPoolseaNodeStakingAbi);
+        _upgradeContract("poolseaNodeDistributorDelegate", newPoolseaNodeDistributorDelegate, newPoolseaNodeDistributorDelegateAbi);
+        _upgradeContract("poolseaMinipoolFactory", newPoolseaMinipoolFactory, newPoolseaMinipoolFactoryAbi);
+        _upgradeContract("poolseaNetworkFees", newPoolseaNetworkFees, newPoolseaNetworkFeesAbi);
+        _upgradeContract("poolseaNetworkPrices", newPoolseaNetworkPrices, newPoolseaNetworkPricesAbi);
+        _upgradeContract("poolseaDAONodeTrustedSettingsMinipool", newPoolseaDAONodeTrustedSettingsMinipool, newPoolseaDAONodeTrustedSettingsMinipoolAbi);
+        _upgradeContract("poolseaNodeManager", newPoolseaNodeManager, newPoolseaNodeManagerAbi);
+        _upgradeContract("poolseaDAOProtocolSettingsNode", newPoolseaDAOProtocolSettingsNode, newPoolseaDAOProtocolSettingsNodeAbi);
+        _upgradeContract("poolseaNetworkBalances", newPoolseaNetworkBalances, newPoolseaNetworkBalancesAbi);
+        _upgradeContract("poolseaRewardsPool", newPoolseaRewardsPool, newPoolseaRewardsPoolAbi);
 
         // Add new contracts
-        _addContract("rocketMinipoolBase", rocketMinipoolBase, rocketMinipoolBaseAbi);
-        _addContract("rocketMinipoolBondReducer", rocketMinipoolBondReducer, rocketMinipoolBondReducerAbi);
+        _addContract("poolseaMinipoolBase", poolseaMinipoolBase, poolseaMinipoolBaseAbi);
+        _addContract("poolseaMinipoolBondReducer", poolseaMinipoolBondReducer, poolseaMinipoolBondReducerAbi);
 
         // Upgrade ABIs
-        _upgradeABI("rocketMinipool", newRocketMinipoolAbi);
+        _upgradeABI("poolseaMinipool", newPoolseaMinipoolAbi);
 
         // Migrate settings
         bytes32 settingNameSpace = keccak256(abi.encodePacked("dao.protocol.setting.", "deposit"));
