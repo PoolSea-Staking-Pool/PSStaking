@@ -2,13 +2,13 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../interface/RocketStorageInterface.sol";
+import "../interface/PoolseaStorageInterface.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 /// @title The primary persistent storage for Rocket Pool
 /// @author David Rugendyke
 
-contract RocketStorage is RocketStorageInterface {
+contract RocketStorage is PoolseaStorageInterface {
 
     // Events
     event NodeWithdrawalAddressSet(address indexed node, address indexed withdrawalAddress, uint256 time);

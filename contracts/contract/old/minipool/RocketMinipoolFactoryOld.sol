@@ -8,27 +8,27 @@ import "./RocketMinipoolOld.sol";
 import "../../RocketBase.sol";
 import "../../../types/MinipoolStatus.sol";
 import "../../../types/MinipoolDeposit.sol";
-import "../../../interface/dao/node/RocketDAONodeTrustedInterface.sol";
-import "../../../interface/minipool/RocketMinipoolInterface.sol";
-import "../../../interface/minipool/RocketMinipoolManagerInterface.sol";
-import "../../../interface/minipool/RocketMinipoolQueueInterface.sol";
-import "../../../interface/node/RocketNodeStakingInterface.sol";
+import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
+import "../../../interface/minipool/PoolseaMinipoolInterface.sol";
+import "../../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
+import "../../../interface/minipool/PoolseaMinipoolQueueInterface.sol";
+import "../../../interface/node/PoolseaNodeStakingInterface.sol";
 import "../../../interface/util/AddressSetStorageInterface.sol";
-import "../../../interface/node/RocketNodeManagerInterface.sol";
-import "../../../interface/network/RocketNetworkPricesInterface.sol";
-import "../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsMinipoolInterface.sol";
-import "../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsNodeInterface.sol";
-import "../../../interface/old/RocketMinipoolFactoryInterfaceOld.sol";
+import "../../../interface/node/PoolseaNodeManagerInterface.sol";
+import "../../../interface/network/PoolseaNetworkPricesInterface.sol";
+import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
+import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNodeInterface.sol";
+import "../../../interface/old/PoolseaMinipoolFactoryInterfaceOld.sol";
 
 // Minipool creation, removal and management
 
-contract RocketMinipoolFactoryOld is RocketBase, RocketMinipoolFactoryInterfaceOld {
+contract RocketMinipoolFactoryOld is RocketBase, PoolseaMinipoolFactoryInterfaceOld {
 
     // Libs
     using SafeMath for uint;
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 

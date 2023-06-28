@@ -8,7 +8,7 @@ import "../minipool/RocketMinipoolManager.sol";
 import "../node/RocketNodeManager.sol";
 import "../node/RocketNodeDistributorFactory.sol";
 import "../node/RocketNodeDistributorDelegate.sol";
-import "../../interface/dao/protocol/settings/RocketDAOProtocolSettingsNetworkInterface.sol";
+import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 /// @notice Transient contract to upgrade Rocket Pool with the Atlas set of contract upgrades
 contract RocketUpgradeOneDotTwo is RocketBase {
@@ -77,7 +77,7 @@ contract RocketUpgradeOneDotTwo is RocketBase {
 
     // Construct
     constructor(
-        RocketStorageInterface _rocketStorageAddress
+        PoolseaStorageInterface _rocketStorageAddress
     ) RocketBase(_rocketStorageAddress) {
         // Version
         version = 1;

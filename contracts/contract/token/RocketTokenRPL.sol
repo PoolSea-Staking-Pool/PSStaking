@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../RocketBase.sol";
-import "../../interface/dao/protocol/settings/RocketDAOProtocolSettingsInflationInterface.sol";
-import "../../interface/token/RocketTokenRPLInterface.sol";
-import "../../interface/RocketVaultInterface.sol";
+import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInflationInterface.sol";
+import "../../interface/token/PoolseaTokenRPLInterface.sol";
+import "../../interface/PoolseaVaultInterface.sol";
 
 // RPL Governance and utility token
 // Inlfationary with rate determined by DAO
 
-contract RocketTokenRPL is RocketBase, ERC20Burnable, RocketTokenRPLInterface {
+contract RocketTokenRPL is RocketBase, ERC20Burnable, PoolseaTokenRPLInterface {
 
     // Libs
     using SafeMath for uint;
@@ -44,7 +44,7 @@ contract RocketTokenRPL is RocketBase, ERC20Burnable, RocketTokenRPLInterface {
 
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress, IERC20 _rocketTokenRPLFixedSupplyAddress) RocketBase(_rocketStorageAddress) ERC20("POOL", "POOL") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress, IERC20 _rocketTokenRPLFixedSupplyAddress) RocketBase(_rocketStorageAddress) ERC20("POOL", "POOL") {
         // Version
         version = 1;
         // Set the mainnet RPL fixed supply token address
@@ -78,7 +78,7 @@ contract RocketTokenRPL is RocketBase, ERC20Burnable, RocketTokenRPLInterface {
     */
     function getInflationIntervalRate() override public view returns(uint256) {
         // Inflation rate controlled by the DAO
-        RocketDAOProtocolSettingsInflationInterface daoSettingsInflation = RocketDAOProtocolSettingsInflationInterface(getContractAddress("rocketDAOProtocolSettingsInflation"));
+        PoolseaDAOProtocolSettingsInflationInterface daoSettingsInflation = PoolseaDAOProtocolSettingsInflationInterface(getContractAddress("rocketDAOProtocolSettingsInflation"));
         return daoSettingsInflation.getInflationIntervalRate();
     }
 
@@ -88,7 +88,7 @@ contract RocketTokenRPL is RocketBase, ERC20Burnable, RocketTokenRPLInterface {
     */
     function getInflationIntervalStartTime() override public view returns(uint256) {
         // Inflation rate start time controlled by the DAO
-        RocketDAOProtocolSettingsInflationInterface daoSettingsInflation = RocketDAOProtocolSettingsInflationInterface(getContractAddress("rocketDAOProtocolSettingsInflation"));
+        PoolseaDAOProtocolSettingsInflationInterface daoSettingsInflation = PoolseaDAOProtocolSettingsInflationInterface(getContractAddress("rocketDAOProtocolSettingsInflation"));
         return daoSettingsInflation.getInflationIntervalStartTime();
     }
 
@@ -170,7 +170,7 @@ contract RocketTokenRPL is RocketBase, ERC20Burnable, RocketTokenRPLInterface {
         address rocketVaultAddress = getContractAddress("rocketVault");
         require(rocketVaultAddress != address(0x0), "rocketVault address not set");
         // Only mint if we have new tokens to mint since last interval and an address is set to receive them
-        RocketVaultInterface rocketVaultContract = RocketVaultInterface(rocketVaultAddress);
+        PoolseaVaultInterface rocketVaultContract = PoolseaVaultInterface(rocketVaultAddress);
         // Calculate the amount of tokens now based on inflation rate
         uint256 newTokens = _inflationCalculate(intervalsSinceLastMint);
         // Update last inflation calculation timestamp even if inflation rate is 0
@@ -192,7 +192,7 @@ contract RocketTokenRPL is RocketBase, ERC20Burnable, RocketTokenRPLInterface {
         emit RPLInflationLog(msg.sender, newTokens, inflationCalcTime);
         // return number minted
         return newTokens;
-    }   
+    }
 
    /**
    * @dev Swap current RPL fixed supply tokens for new RPL 1:1 to the same address from the user calling it

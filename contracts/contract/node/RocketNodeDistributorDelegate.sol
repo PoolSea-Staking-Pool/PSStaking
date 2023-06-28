@@ -4,13 +4,13 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./RocketNodeDistributorStorageLayout.sol";
-import "../../interface/RocketStorageInterface.sol";
-import "../../interface/node/RocketNodeManagerInterface.sol";
-import "../../interface/node/RocketNodeDistributorInterface.sol";
-import "../../interface/node/RocketNodeStakingInterface.sol";
+import "../../interface/PoolseaStorageInterface.sol";
+import "../../interface/node/PoolseaNodeManagerInterface.sol";
+import "../../interface/node/PoolseaNodeDistributorInterface.sol";
+import "../../interface/node/PoolseaNodeStakingInterface.sol";
 
 /// @dev Contains the logic for RocketNodeDistributors
-contract RocketNodeDistributorDelegate is RocketNodeDistributorStorageLayout, RocketNodeDistributorInterface {
+contract RocketNodeDistributorDelegate is RocketNodeDistributorStorageLayout, PoolseaNodeDistributorInterface {
     // Import libraries
     using SafeMath for uint256;
 
@@ -42,7 +42,7 @@ contract RocketNodeDistributorDelegate is RocketNodeDistributorStorageLayout, Ro
         rocketNodeStakingKey = keccak256(abi.encodePacked("contract.address", "rocketNodeStaking"));
         rocketTokenRETHKey = keccak256(abi.encodePacked("contract.address", "rocketTokenRETH"));
         // These values must be set by proxy contract as this contract should only be delegatecalled
-        rocketStorage = RocketStorageInterface(address(0));
+        rocketStorage = PoolseaStorageInterface(address(0));
         nodeAddress = address(0);
         lock = NOT_ENTERED;
     }
@@ -50,8 +50,8 @@ contract RocketNodeDistributorDelegate is RocketNodeDistributorStorageLayout, Ro
     /// @notice Returns the portion of the contract's balance that belongs to the node operator
     function getNodeShare() override public view returns (uint256) {
         // Get contracts
-        RocketNodeManagerInterface rocketNodeManager = RocketNodeManagerInterface(rocketStorage.getAddress(rocketNodeManagerKey));
-        RocketNodeStakingInterface rocketNodeStaking = RocketNodeStakingInterface(rocketStorage.getAddress(rocketNodeStakingKey));
+        PoolseaNodeManagerInterface rocketNodeManager = PoolseaNodeManagerInterface(rocketStorage.getAddress(rocketNodeManagerKey));
+        PoolseaNodeStakingInterface rocketNodeStaking = PoolseaNodeStakingInterface(rocketStorage.getAddress(rocketNodeStakingKey));
         // Get withdrawal address and the node's average node fee
         uint256 averageNodeFee = rocketNodeManager.getAverageNodeFee(nodeAddress);
         // Get node ETH collateral ratio

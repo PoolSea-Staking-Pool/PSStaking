@@ -2,7 +2,7 @@ pragma solidity 0.7.6;
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-import "../interface/RocketStorageInterface.sol";
+import "../interface/PoolseaStorageInterface.sol";
 
 /// @title Base settings / modifiers for each contract in Rocket Pool
 /// @author David Rugendyke
@@ -16,7 +16,7 @@ abstract contract RocketBase {
     uint8 public version;
 
     // The main storage contract where primary persistant storage is maintained
-    RocketStorageInterface rocketStorage = RocketStorageInterface(0);
+    PoolseaStorageInterface rocketStorage = PoolseaStorageInterface(0);
 
 
     /*** Modifiers **********************************************************/
@@ -60,7 +60,7 @@ abstract contract RocketBase {
         require(getBool(keccak256(abi.encodePacked("minipool.exists", _minipoolAddress))), "Invalid minipool");
         _;
     }
-    
+
 
     /**
     * @dev Throws if called by any account other than a guardian account (temporary account allowed access to settings before DAO is fully enabled)
@@ -76,9 +76,9 @@ abstract contract RocketBase {
     /*** Methods **********************************************************/
 
     /// @dev Set the main Rocket Storage address
-    constructor(RocketStorageInterface _rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) {
         // Update the contract address
-        rocketStorage = RocketStorageInterface(_rocketStorageAddress);
+        rocketStorage = PoolseaStorageInterface(_rocketStorageAddress);
     }
 
 

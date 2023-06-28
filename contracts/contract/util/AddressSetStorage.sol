@@ -14,7 +14,7 @@ contract AddressSetStorage is RocketBase, AddressSetStorageInterface {
     using SafeMath for uint;
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 

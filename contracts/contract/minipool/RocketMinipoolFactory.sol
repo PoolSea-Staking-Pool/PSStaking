@@ -5,17 +5,17 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
 import "../RocketBase.sol";
-import "../../interface/minipool/RocketMinipoolBaseInterface.sol";
-import "../../interface/minipool/RocketMinipoolFactoryInterface.sol";
+import "../../interface/minipool/PoolseaMinipoolBaseInterface.sol";
+import "../../interface/minipool/PoolseaMinipoolFactoryInterface.sol";
 
 /// @notice Performs CREATE2 deployment of minipool contracts
-contract RocketMinipoolFactory is RocketBase, RocketMinipoolFactoryInterface {
+contract RocketMinipoolFactory is RocketBase, PoolseaMinipoolFactoryInterface {
 
     // Libs
     using SafeMath for uint;
     using Clones for address;
 
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 2;
     }
 
@@ -42,7 +42,7 @@ contract RocketMinipoolFactory is RocketBase, RocketMinipoolFactoryInterface {
         // Deploy the minipool
         address proxy = rocketMinipoolBase.cloneDeterministic(salt);
         // Initialise the minipool storage
-        RocketMinipoolBaseInterface(proxy).initialise(address(rocketStorage), _nodeAddress);
+        PoolseaMinipoolBaseInterface(proxy).initialise(address(rocketStorage), _nodeAddress);
         // Return address
         return proxy;
     }

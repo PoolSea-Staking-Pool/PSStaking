@@ -5,15 +5,15 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../RocketBase.sol";
-import "../../interface/auction/RocketAuctionManagerInterface.sol";
-import "../../interface/deposit/RocketDepositPoolInterface.sol";
-import "../../interface/network/RocketNetworkPricesInterface.sol";
-import "../../interface/dao/protocol/settings/RocketDAOProtocolSettingsAuctionInterface.sol";
-import "../../interface/RocketVaultInterface.sol";
+import "../../interface/auction/PoolseaAuctionManagerInterface.sol";
+import "../../interface/deposit/PoolseaDepositPoolInterface.sol";
+import "../../interface/network/PoolseaNetworkPricesInterface.sol";
+import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsAuctionInterface.sol";
+import "../../interface/PoolseaVaultInterface.sol";
 
 // Facilitates RPL liquidation auctions
 
-contract RocketAuctionManager is RocketBase, RocketAuctionManagerInterface {
+contract RocketAuctionManager is RocketBase, PoolseaAuctionManagerInterface {
 
     // Libs
     using SafeMath for uint;
@@ -25,13 +25,13 @@ contract RocketAuctionManager is RocketBase, RocketAuctionManagerInterface {
     event RPLRecovered(uint256 indexed lotIndex, address indexed by, uint256 rplAmount, uint256 time);
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 
     // Get the total RPL balance of the contract
     function getTotalRPLBalance() override public view returns (uint256) {
-        RocketVaultInterface rocketVault = RocketVaultInterface(getContractAddress("rocketVault"));
+        PoolseaVaultInterface rocketVault = PoolseaVaultInterface(getContractAddress("rocketVault"));
         return rocketVault.balanceOfToken("rocketAuctionManager", IERC20(getContractAddress("rocketTokenRPL")));
     }
 
@@ -166,8 +166,8 @@ contract RocketAuctionManager is RocketBase, RocketAuctionManagerInterface {
     // Create a new lot for auction
     function createLot() override external onlyLatestContract("rocketAuctionManager", address(this)) {
         // Load contracts
-        RocketDAOProtocolSettingsAuctionInterface rocketAuctionSettings = RocketDAOProtocolSettingsAuctionInterface(getContractAddress("rocketDAOProtocolSettingsAuction"));
-        RocketNetworkPricesInterface rocketNetworkPrices = RocketNetworkPricesInterface(getContractAddress("rocketNetworkPrices"));
+        PoolseaDAOProtocolSettingsAuctionInterface rocketAuctionSettings = PoolseaDAOProtocolSettingsAuctionInterface(getContractAddress("rocketDAOProtocolSettingsAuction"));
+        PoolseaNetworkPricesInterface rocketNetworkPrices = PoolseaNetworkPricesInterface(getContractAddress("rocketNetworkPrices"));
         // Get remaining RPL balance & RPL price
         uint256 remainingRplBalance = getRemainingRPLBalance();
         uint256 rplPrice = rocketNetworkPrices.getRPLPrice();
@@ -196,8 +196,8 @@ contract RocketAuctionManager is RocketBase, RocketAuctionManagerInterface {
     // Bid on a lot
     function placeBid(uint256 _lotIndex) override external payable onlyLatestContract("rocketAuctionManager", address(this)) {
         // Load contracts
-        RocketDAOProtocolSettingsAuctionInterface rocketAuctionSettings = RocketDAOProtocolSettingsAuctionInterface(getContractAddress("rocketDAOProtocolSettingsAuction"));
-        RocketDepositPoolInterface rocketDepositPool = RocketDepositPoolInterface(getContractAddress("rocketDepositPool"));
+        PoolseaDAOProtocolSettingsAuctionInterface rocketAuctionSettings = PoolseaDAOProtocolSettingsAuctionInterface(getContractAddress("rocketDAOProtocolSettingsAuction"));
+        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
         // Check bid amount
         require(msg.value > 0, "Invalid bid amount");
         // Check lot exists
@@ -247,7 +247,7 @@ contract RocketAuctionManager is RocketBase, RocketAuctionManagerInterface {
             rplAmount = allottedAmount;
         }
         // Transfer RPL to bidder
-        RocketVaultInterface rocketVault = RocketVaultInterface(getContractAddress("rocketVault"));
+        PoolseaVaultInterface rocketVault = PoolseaVaultInterface(getContractAddress("rocketVault"));
         rocketVault.withdrawToken(msg.sender, IERC20(getContractAddress("rocketTokenRPL")), rplAmount);
         // Decrease allotted RPL balance & update address bid amount
         decreaseAllottedRPLBalance(rplAmount);

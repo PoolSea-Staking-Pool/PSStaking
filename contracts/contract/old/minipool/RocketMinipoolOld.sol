@@ -3,7 +3,7 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../../minipool/RocketMinipoolStorageLayout.sol";
-import "../../../interface/RocketStorageInterface.sol";
+import "../../../interface/PoolseaStorageInterface.sol";
 import "../../../types/MinipoolDeposit.sol";
 import "../../../types/MinipoolStatus.sol";
 
@@ -27,10 +27,10 @@ contract RocketMinipoolOld is RocketMinipoolStorageLayout {
     }
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress, address _nodeAddress, MinipoolDeposit _depositType) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress, address _nodeAddress, MinipoolDeposit _depositType) {
         // Initialise RocketStorage
         require(address(_rocketStorageAddress) != address(0x0), "Invalid storage address");
-        rocketStorage = RocketStorageInterface(_rocketStorageAddress);
+        rocketStorage = PoolseaStorageInterface(_rocketStorageAddress);
         // Set storage state to uninitialised
         storageState = StorageState.Uninitialised;
         // Set the current delegate

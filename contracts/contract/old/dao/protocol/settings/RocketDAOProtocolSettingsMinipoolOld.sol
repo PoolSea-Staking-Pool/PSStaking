@@ -5,18 +5,18 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../../../../dao/protocol/settings/RocketDAOProtocolSettings.sol";
-import "../../../../../interface/old/RocketDAOProtocolSettingsMinipoolInterfaceOld.sol";
-import "../../../../../interface/dao/node/settings/RocketDAONodeTrustedSettingsMinipoolInterface.sol";
+import "../../../../../interface/old/PoolseaDAOProtocolSettingsMinipoolInterfaceOld.sol";
+import "../../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsMinipoolInterface.sol";
 import "../../../../../types/MinipoolDeposit.sol";
 
 // Network minipool settings
-contract RocketDAOProtocolSettingsMinipoolOld is RocketDAOProtocolSettings, RocketDAOProtocolSettingsMinipoolInterfaceOld {
+contract RocketDAOProtocolSettingsMinipoolOld is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsMinipoolInterfaceOld {
 
     // Libs
     using SafeMath for uint;
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "minipool") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "minipool") {
         // Set version
         version = 1;
         // Initialize settings on deployment
@@ -35,7 +35,7 @@ contract RocketDAOProtocolSettingsMinipoolOld is RocketDAOProtocolSettings, Rock
         // Some safety guards for certain settings
         if(getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) {
             if(keccak256(abi.encodePacked(_settingPath)) == keccak256(abi.encodePacked("minipool.launch.timeout"))) {
-                RocketDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = RocketDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+                PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
                 require(_value >= (rocketDAONodeTrustedSettingsMinipool.getScrubPeriod().add(1 hours)), "Launch timeout must be greater than scrub period");
             }
         }

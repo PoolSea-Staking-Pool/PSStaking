@@ -3,17 +3,17 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "./RocketDAOProtocolSettings.sol";
-import "../../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsInflationInterface.sol";
-import "../../../../interface/token/RocketTokenRPLInterface.sol";
+import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInflationInterface.sol";
+import "../../../../interface/token/PoolseaTokenRPLInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 // RPL Inflation settings in RP which the DAO will have full control over
-contract RocketDAOProtocolSettingsInflation is RocketDAOProtocolSettings, RocketDAOProtocolSettingsInflationInterface {
+contract RocketDAOProtocolSettingsInflation is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsInflationInterface {
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "inflation") {
-        // Set version 
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "inflation") {
+        // Set version
         version = 1;
          // Set some initial settings on first deployment
         if(!getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) {
@@ -24,8 +24,8 @@ contract RocketDAOProtocolSettingsInflation is RocketDAOProtocolSettings, Rocket
             setBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")), true);                           // Flag that this contract has been deployed, so default settings don't get reapplied on a contract upgrade
         }
     }
-    
-    
+
+
 
     /*** Set Uint *****************************************/
 
@@ -46,7 +46,7 @@ contract RocketDAOProtocolSettingsInflation is RocketDAOProtocolSettings, Rocket
             address rplContractAddress = getContractAddressUnsafe("rocketTokenRPL");
             if(rplContractAddress != address(0x0)) {
                 // Force inflation at old rate before updating inflation rate
-                RocketTokenRPLInterface rplContract = RocketTokenRPLInterface(rplContractAddress);
+                PoolseaTokenRPLInterface rplContract = PoolseaTokenRPLInterface(rplContractAddress);
                 // Mint any new tokens from the RPL inflation
                 rplContract.inflationMintTokens();
             }
@@ -61,10 +61,10 @@ contract RocketDAOProtocolSettingsInflation is RocketDAOProtocolSettings, Rocket
     function getInflationIntervalRate() override external view returns (uint256) {
         return getSettingUint("rpl.inflation.interval.rate");
     }
-    
+
     // The block to start inflation at
     function getInflationIntervalStartTime() override public view returns (uint256) {
-        return getSettingUint("rpl.inflation.interval.start"); 
+        return getSettingUint("rpl.inflation.interval.start");
     }
 
 }

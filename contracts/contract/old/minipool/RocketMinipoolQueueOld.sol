@@ -5,15 +5,15 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../../RocketBase.sol";
-import "../../../interface/minipool/RocketMinipoolInterface.sol";
-import "../../../interface/old/RocketMinipoolQueueInterfaceOld.sol";
-import "../../../interface/old/RocketDAOProtocolSettingsMinipoolInterfaceOld.sol";
+import "../../../interface/minipool/PoolseaMinipoolInterface.sol";
+import "../../../interface/old/PoolseaMinipoolQueueInterfaceOld.sol";
+import "../../../interface/old/PoolseaDAOProtocolSettingsMinipoolInterfaceOld.sol";
 import "../../../interface/util/AddressQueueStorageInterface.sol";
 import "../../../types/MinipoolDeposit.sol";
 
 // Minipool queueing for deposit assignment
 
-contract RocketMinipoolQueueOld is RocketBase, RocketMinipoolQueueInterfaceOld {
+contract RocketMinipoolQueueOld is RocketBase, PoolseaMinipoolQueueInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -29,7 +29,7 @@ contract RocketMinipoolQueueOld is RocketBase, RocketMinipoolQueueInterfaceOld {
     event MinipoolRemoved(address indexed minipool, bytes32 indexed queueId, uint256 time);
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 
@@ -59,7 +59,7 @@ contract RocketMinipoolQueueOld is RocketBase, RocketMinipoolQueueInterfaceOld {
 
     // Get the total combined capacity of the queues
     function getTotalCapacity() override external view returns (uint256) {
-        RocketDAOProtocolSettingsMinipoolInterfaceOld rocketDAOProtocolSettingsMinipool = RocketDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterfaceOld rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         return (
         getLength(queueKeyFull).mul(rocketDAOProtocolSettingsMinipool.getFullDepositUserAmount())
         ).add(
@@ -71,7 +71,7 @@ contract RocketMinipoolQueueOld is RocketBase, RocketMinipoolQueueInterfaceOld {
 
     // Get the total effective capacity of the queues (used in node demand calculation)
     function getEffectiveCapacity() override external view returns (uint256) {
-        RocketDAOProtocolSettingsMinipoolInterfaceOld rocketDAOProtocolSettingsMinipool = RocketDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterfaceOld rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         return (
         getLength(queueKeyFull).mul(rocketDAOProtocolSettingsMinipool.getFullDepositUserAmount())
         ).add(
@@ -82,7 +82,7 @@ contract RocketMinipoolQueueOld is RocketBase, RocketMinipoolQueueInterfaceOld {
     // Get the capacity of the next available minipool
     // Returns 0 if no minipools are available
     function getNextCapacity() override external view returns (uint256) {
-        RocketDAOProtocolSettingsMinipoolInterfaceOld rocketDAOProtocolSettingsMinipool = RocketDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterfaceOld rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterfaceOld(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         if (getLength(queueKeyHalf) > 0) { return rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount(); }
         if (getLength(queueKeyFull) > 0) { return rocketDAOProtocolSettingsMinipool.getFullDepositUserAmount(); }
         if (getLength(queueKeyEmpty) > 0) { return rocketDAOProtocolSettingsMinipool.getEmptyDepositUserAmount(); }

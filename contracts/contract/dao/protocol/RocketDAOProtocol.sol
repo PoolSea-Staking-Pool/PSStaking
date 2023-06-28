@@ -4,13 +4,13 @@ pragma abicoder v2;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../../RocketBase.sol";
-import "../../../interface/dao/protocol/RocketDAOProtocolInterface.sol";
-import "../../../interface/dao/protocol/RocketDAOProtocolProposalsInterface.sol";
+import "../../../interface/dao/protocol/PoolseaDAOProtocolInterface.sol";
+import "../../../interface/dao/protocol/PoolseaDAOProtocolProposalsInterface.sol";
 import "../../../types/SettingType.sol";
 
 
 // The Rocket Pool Network DAO - This is a placeholder for the network DAO to come
-contract RocketDAOProtocol is RocketBase, RocketDAOProtocolInterface {
+contract RocketDAOProtocol is RocketBase, PoolseaDAOProtocolInterface {
 
     // The namespace for any data stored in the network DAO (do not change)
     string constant daoNameSpace = "dao.protocol.";
@@ -22,7 +22,7 @@ contract RocketDAOProtocol is RocketBase, RocketDAOProtocolInterface {
     }
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         // Version
         version = 1;
     }
@@ -42,36 +42,36 @@ contract RocketDAOProtocol is RocketBase, RocketDAOProtocolInterface {
     // Bootstrap mode - multi Setting
     function bootstrapSettingMulti(string[] memory _settingContractNames, string[] memory _settingPaths, SettingType[] memory _types, bytes[] memory _values) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAOProtocol", address(this)) {
       // Ok good to go, lets update the settings
-      RocketDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingMulti(_settingContractNames, _settingPaths, _types, _values);
+      PoolseaDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingMulti(_settingContractNames, _settingPaths, _types, _values);
     }
 
     // Bootstrap mode - Uint Setting
     function bootstrapSettingUint(string memory _settingContractName, string memory _settingPath, uint256 _value) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAOProtocol", address(this)) {
         // Ok good to go, lets update the settings
-        RocketDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingUint(_settingContractName, _settingPath, _value);
+        PoolseaDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingUint(_settingContractName, _settingPath, _value);
     }
 
     // Bootstrap mode - Bool Setting
     function bootstrapSettingBool(string memory _settingContractName, string memory _settingPath, bool _value) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAOProtocol", address(this)) {
-        // Ok good to go, lets update the settings 
-        RocketDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingBool(_settingContractName, _settingPath, _value);
+        // Ok good to go, lets update the settings
+        PoolseaDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingBool(_settingContractName, _settingPath, _value);
     }
 
     // Bootstrap mode - Address Setting
     function bootstrapSettingAddress(string memory _settingContractName, string memory _settingPath, address _value) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAOProtocol", address(this)) {
-        // Ok good to go, lets update the settings 
-        RocketDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingAddress(_settingContractName, _settingPath, _value);
+        // Ok good to go, lets update the settings
+        PoolseaDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingAddress(_settingContractName, _settingPath, _value);
     }
 
     // Bootstrap mode - Set a claiming contract to receive a % of RPL inflation rewards
     function bootstrapSettingClaimer(string memory _contractName, uint256 _perc) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAOProtocol", address(this)) {
-        // Ok good to go, lets update the rewards claiming contract amount 
-        RocketDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingRewardsClaimer(_contractName, _perc);
+        // Ok good to go, lets update the rewards claiming contract amount
+        PoolseaDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSettingRewardsClaimer(_contractName, _perc);
     }
 
     // Bootstrap mode -Spend DAO treasury
     function bootstrapSpendTreasury(string memory _invoiceID, address _recipientAddress, uint256 _amount) override external onlyGuardian onlyBootstrapMode onlyLatestContract("rocketDAOProtocol", address(this)) {
-        RocketDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSpendTreasury(_invoiceID, _recipientAddress, _amount);
+        PoolseaDAOProtocolProposalsInterface(getContractAddress("rocketDAOProtocolProposals")).proposalSpendTreasury(_invoiceID, _recipientAddress, _amount);
     }
 
     // Bootstrap mode - Disable RP Access (only RP can call this to hand over full control to the DAO)

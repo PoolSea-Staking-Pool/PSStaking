@@ -3,19 +3,19 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../RocketBase.sol";
-import "../../interface/RocketVaultInterface.sol";
-import "../../interface/rewards/RocketRewardsPoolInterface.sol";
-import "../../interface/rewards/claims/RocketClaimDAOInterface.sol";
+import "../../interface/PoolseaVaultInterface.sol";
+import "../../interface/rewards/PoolseaRewardsPoolInterface.sol";
+import "../../interface/rewards/claims/PoolseaClaimDAOInterface.sol";
 
 
 // RPL Rewards claiming by the DAO
-contract RocketClaimDAO is RocketBase, RocketClaimDAOInterface {
+contract RocketClaimDAO is RocketBase, PoolseaClaimDAOInterface {
 
     // Events
     event RPLTokensSentByDAOProtocol(string invoiceID, address indexed from, address indexed to, uint256 amount, uint256 time);
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         // Version
         version = 2;
     }
@@ -23,7 +23,7 @@ contract RocketClaimDAO is RocketBase, RocketClaimDAOInterface {
     // Spend the network DAOs RPL rewards
     function spend(string memory _invoiceID, address _recipientAddress, uint256 _amount) override external onlyLatestContract("rocketDAOProtocolProposals", msg.sender) {
         // Load contracts
-        RocketVaultInterface rocketVault = RocketVaultInterface(getContractAddress("rocketVault"));
+        PoolseaVaultInterface rocketVault = PoolseaVaultInterface(getContractAddress("rocketVault"));
         // Addresses
         IERC20 rplToken = IERC20(getContractAddress("rocketTokenRPL"));
         // Some initial checks
@@ -33,6 +33,6 @@ contract RocketClaimDAO is RocketBase, RocketClaimDAOInterface {
         // Log it
         emit RPLTokensSentByDAOProtocol(_invoiceID, address(this), _recipientAddress, _amount, block.timestamp);
     }
-  
+
 
 }

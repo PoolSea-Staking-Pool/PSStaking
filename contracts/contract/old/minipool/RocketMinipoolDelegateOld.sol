@@ -6,26 +6,26 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./RocketMinipoolStorageLayoutOld.sol";
 import "../../../interface/casper/DepositInterface.sol";
-import "../../../interface/deposit/RocketDepositPoolInterface.sol";
-import "../../../interface/minipool/RocketMinipoolManagerInterface.sol";
-import "../../../interface/minipool/RocketMinipoolQueueInterface.sol";
-import "../../../interface/minipool/RocketMinipoolPenaltyInterface.sol";
-import "../../../interface/network/RocketNetworkPricesInterface.sol";
-import "../../../interface/node/RocketNodeManagerInterface.sol";
-import "../../../interface/node/RocketNodeStakingInterface.sol";
-import "../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsMinipoolInterface.sol";
-import "../../../interface/dao/node/settings/RocketDAONodeTrustedSettingsMinipoolInterface.sol";
-import "../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsNodeInterface.sol";
-import "../../../interface/dao/node/RocketDAONodeTrustedInterface.sol";
-import "../../../interface/network/RocketNetworkFeesInterface.sol";
-import "../../../interface/token/RocketTokenRETHInterface.sol";
+import "../../../interface/deposit/PoolseaDepositPoolInterface.sol";
+import "../../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
+import "../../../interface/minipool/PoolseaMinipoolQueueInterface.sol";
+import "../../../interface/minipool/PoolseaMinipoolPenaltyInterface.sol";
+import "../../../interface/network/PoolseaNetworkPricesInterface.sol";
+import "../../../interface/node/PoolseaNodeManagerInterface.sol";
+import "../../../interface/node/PoolseaNodeStakingInterface.sol";
+import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
+import "../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsMinipoolInterface.sol";
+import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNodeInterface.sol";
+import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
+import "../../../interface/network/PoolseaNetworkFeesInterface.sol";
+import "../../../interface/token/PoolseaTokenRETHInterface.sol";
 import "../../../types/MinipoolDeposit.sol";
 import "../../../types/MinipoolStatus.sol";
-import "../../../interface/old/RocketMinipoolInterfaceOld.sol";
+import "../../../interface/old/PoolseaMinipoolInterfaceOld.sol";
 
 // An individual minipool in the Rocket Pool network
 
-contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMinipoolInterfaceOld {
+contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, PoolseaMinipoolInterfaceOld {
 
     // Constants
     uint8 public constant version = 2;                            // Used to identify which delegate contract each minipool is using
@@ -109,7 +109,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
         require(_nodeAddress != address(0x0), "Invalid node address");
         require(_depositType != MinipoolDeposit.None, "Invalid deposit type");
         // Load contracts
-        RocketNetworkFeesInterface rocketNetworkFees = RocketNetworkFeesInterface(getContractAddress("rocketNetworkFees"));
+        PoolseaNetworkFeesInterface rocketNetworkFees = PoolseaNetworkFeesInterface(getContractAddress("rocketNetworkFees"));
         // Set initial status
         status = MinipoolStatus.Initialised;
         statusBlock = block.number;
@@ -197,7 +197,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
             return false;
         }
         // Get contracts
-        RocketDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = RocketDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
         // Get scrub period
         uint256 scrubPeriod = rocketDAONodeTrustedSettingsMinipool.getScrubPeriod();
         // Check if we have been in prelaunch status for long enough
@@ -208,8 +208,8 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
     // Only accepts calls from the minipool owner (node) while in prelaunch and once scrub period has ended
     function stake(bytes calldata _validatorSignature, bytes32 _depositDataRoot) override external onlyMinipoolOwner(msg.sender) onlyInitialised {
         // Get scrub period
-        RocketDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = RocketDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
-        RocketDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = RocketDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         uint256 scrubPeriod = rocketDAONodeTrustedSettingsMinipool.getScrubPeriod();
         // Check current status
         require(status == MinipoolStatus.Prelaunch, "The minipool can only begin staking while in prelaunch");
@@ -262,7 +262,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
         // Remove minipool from queue
         if (userDepositAssignedTime == 0) {
             // User deposit was never assigned so it still exists in queue, remove it
-            RocketMinipoolQueueInterface rocketMinipoolQueue = RocketMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
+            PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
             rocketMinipoolQueue.removeMinipool(depositType);
         }
         // Decrement the node operator's staking minipool count
@@ -328,12 +328,12 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
             payable(rocketTokenRETH).transfer(address(this).balance);
         }
         // Trigger a deposit of excess collateral from rETH contract to deposit pool
-        RocketTokenRETHInterface(rocketTokenRETH).depositExcessCollateral();
+        PoolseaTokenRETHInterface(rocketTokenRETH).depositExcessCollateral();
         // Unlock node operator's RPL
         rocketMinipoolManager.incrementNodeFinalisedMinipoolCount(nodeAddress);
         // Update unbonded validator count if minipool is unbonded
         if (depositType == MinipoolDeposit.Empty) {
-            RocketDAONodeTrustedInterface rocketDAONodeTrusted = RocketDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
+            PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
             rocketDAONodeTrusted.decrementMemberUnbondedValidatorCount(nodeAddress);
         }
         // Set finalised flag
@@ -401,7 +401,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
         // Calculate node amount as what's left over after user amount
         uint256 nodeAmount = _balance.sub(userAmount);
         // Check if node has an ETH penalty
-        uint256 penaltyRate = RocketMinipoolPenaltyInterface(rocketMinipoolPenalty).getPenaltyRate(address(this));
+        uint256 penaltyRate = PoolseaMinipoolPenaltyInterface(rocketMinipoolPenalty).getPenaltyRate(address(this));
         if (penaltyRate > 0) {
             uint256 penaltyAmount = nodeAmount.mul(penaltyRate).div(calcBase);
             if (penaltyAmount > nodeAmount) {
@@ -425,7 +425,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
         // Check current status
         require(status == MinipoolStatus.Initialised || status == MinipoolStatus.Prelaunch, "The minipool can only be dissolved while initialised or in prelaunch");
         // Load contracts
-        RocketDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = RocketDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+        PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
         // Check if being dissolved by minipool owner or minipool is timed out
         require(
             (status == MinipoolStatus.Prelaunch && block.timestamp.sub(statusTime) >= rocketDAOProtocolSettingsMinipool.getLaunchTimeout()),
@@ -456,7 +456,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
         }
         // Update unbonded validator count if minipool is unbonded
         if (depositType == MinipoolDeposit.Empty) {
-            RocketDAONodeTrustedInterface rocketDAONodeTrusted = RocketDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
+            PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
             rocketDAONodeTrusted.decrementMemberUnbondedValidatorCount(nodeAddress);
         }
         // Destroy minipool
@@ -471,8 +471,8 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
         // Check current status
         require(status == MinipoolStatus.Prelaunch, "The minipool can only be scrubbed while in prelaunch");
         // Get contracts
-        RocketDAONodeTrustedInterface rocketDAONode = RocketDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
-        RocketDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = RocketDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
+        PoolseaDAONodeTrustedInterface rocketDAONode = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
+        PoolseaDAONodeTrustedSettingsMinipoolInterface rocketDAONodeTrustedSettingsMinipool = PoolseaDAONodeTrustedSettingsMinipoolInterface(getContractAddress("rocketDAONodeTrustedSettingsMinipool"));
         // Must be a trusted member
         require(rocketDAONode.getMemberIsValid(msg.sender), "Not a trusted member");
         // Can only vote once
@@ -487,9 +487,9 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
             _dissolve();
             // Slash RPL equal to minimum stake amount (if enabled)
             if (rocketDAONodeTrustedSettingsMinipool.getScrubPenaltyEnabled()){
-                RocketNodeStakingInterface rocketNodeStaking = RocketNodeStakingInterface(getContractAddress("rocketNodeStaking"));
-                RocketDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = RocketDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
-                RocketDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = RocketDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+                PoolseaNodeStakingInterface rocketNodeStaking = PoolseaNodeStakingInterface(getContractAddress("rocketNodeStaking"));
+                PoolseaDAOProtocolSettingsNodeInterface rocketDAOProtocolSettingsNode = PoolseaDAOProtocolSettingsNodeInterface(getContractAddress("rocketDAOProtocolSettingsNode"));
+                PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
                 rocketNodeStaking.slashRPL(nodeAddress, rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount()
                 .mul(rocketDAOProtocolSettingsNode.getMinimumPerMinipoolStake())
                 .div(calcBase)
@@ -530,7 +530,7 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
     // Slash node operator's RPL balance based on nodeSlashBalance
     function _slash() private {
         // Get contracts
-        RocketNodeStakingInterface rocketNodeStaking = RocketNodeStakingInterface(getContractAddress("rocketNodeStaking"));
+        PoolseaNodeStakingInterface rocketNodeStaking = PoolseaNodeStakingInterface(getContractAddress("rocketNodeStaking"));
         // Slash required amount and reset storage value
         uint256 slashAmount = nodeSlashBalance;
         nodeSlashBalance = 0;
@@ -540,8 +540,8 @@ contract RocketMinipoolDelegateOld is RocketMinipoolStorageLayoutOld, RocketMini
     // Dissolve this minipool
     function _dissolve() private {
         // Get contracts
-        RocketDepositPoolInterface rocketDepositPool = RocketDepositPoolInterface(getContractAddress("rocketDepositPool"));
-        RocketMinipoolQueueInterface rocketMinipoolQueue = RocketMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
+        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
+        PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
         // Progress to dissolved
         setStatus(MinipoolStatus.Dissolved);
         // Transfer user balance to deposit pool

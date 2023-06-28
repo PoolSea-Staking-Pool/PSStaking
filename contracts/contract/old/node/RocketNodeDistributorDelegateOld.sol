@@ -5,12 +5,12 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../../node/RocketNodeDistributorStorageLayout.sol";
-import "../../../interface/RocketStorageInterface.sol";
-import "../../../interface/node/RocketNodeManagerInterface.sol";
-import "../../../interface/old/RocketNodeDistributorInterfaceOld.sol";
-import "../../../interface/node/RocketNodeStakingInterface.sol";
+import "../../../interface/PoolseaStorageInterface.sol";
+import "../../../interface/node/PoolseaNodeManagerInterface.sol";
+import "../../../interface/old/PoolseaNodeDistributorInterfaceOld.sol";
+import "../../../interface/node/PoolseaNodeStakingInterface.sol";
 
-contract RocketNodeDistributorDelegateOld is RocketNodeDistributorStorageLayout, RocketNodeDistributorInterfaceOld {
+contract RocketNodeDistributorDelegateOld is RocketNodeDistributorStorageLayout, PoolseaNodeDistributorInterfaceOld {
     // Import libraries
     using SafeMath for uint256;
 
@@ -30,13 +30,13 @@ contract RocketNodeDistributorDelegateOld is RocketNodeDistributorStorageLayout,
         rocketNodeManagerKey = keccak256(abi.encodePacked("contract.address", "rocketNodeManager"));
         rocketTokenRETHKey = keccak256(abi.encodePacked("contract.address", "rocketTokenRETH"));
         // These values must be set by proxy contract as this contract should only be delegatecalled
-        rocketStorage = RocketStorageInterface(address(0));
+        rocketStorage = PoolseaStorageInterface(address(0));
         nodeAddress = address(0);
     }
 
     function distribute() override external {
         // Get contracts
-        RocketNodeManagerInterface rocketNodeManager = RocketNodeManagerInterface(rocketStorage.getAddress(rocketNodeManagerKey));
+        PoolseaNodeManagerInterface rocketNodeManager = PoolseaNodeManagerInterface(rocketStorage.getAddress(rocketNodeManagerKey));
         address rocketTokenRETH = rocketStorage.getAddress(rocketTokenRETHKey);
         // Get withdrawal address and the node's average node fee
         address withdrawalAddress = rocketStorage.getNodeWithdrawalAddress(nodeAddress);

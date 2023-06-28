@@ -3,8 +3,8 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "./RocketBase.sol";
-import "../interface/RocketVaultInterface.sol";
-import "../interface/RocketVaultWithdrawerInterface.sol";
+import "../interface/PoolseaVaultInterface.sol";
+import "../interface/PoolseaVaultWithdrawerInterface.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
 // ETH and rETH are stored here to prevent contract upgrades from affecting balances
 // The RocketVault contract must not be upgraded
 
-contract RocketVault is RocketBase, RocketVaultInterface {
+contract RocketVault is RocketBase, PoolseaVaultInterface {
 
     // Libs
     using SafeMath for uint;
@@ -31,7 +31,7 @@ contract RocketVault is RocketBase, RocketVaultInterface {
     event TokenTransfer(bytes32 indexed by, bytes32 indexed to, address indexed tokenAddress, uint256 amount, uint256 time);
 
 	// Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 
@@ -71,7 +71,7 @@ contract RocketVault is RocketBase, RocketVaultInterface {
         require(etherBalances[contractName] >= _amount, "Insufficient contract ETH balance");
         etherBalances[contractName] = etherBalances[contractName].sub(_amount);
         // Withdraw
-        RocketVaultWithdrawerInterface withdrawer = RocketVaultWithdrawerInterface(msg.sender);
+        PoolseaVaultWithdrawerInterface withdrawer = PoolseaVaultWithdrawerInterface(msg.sender);
         withdrawer.receiveVaultWithdrawalETH{value: _amount}();
         // Emit ether withdrawn event
         emit EtherWithdrawn(contractName, _amount, block.timestamp);

@@ -6,21 +6,21 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/SafeCast.sol";
 
 import "../RocketBase.sol";
-import "../../interface/deposit/RocketDepositPoolInterface.sol";
-import "../../interface/minipool/RocketMinipoolQueueInterface.sol";
-import "../../interface/network/RocketNetworkFeesInterface.sol";
-import "../../interface/dao/protocol/settings/RocketDAOProtocolSettingsNetworkInterface.sol";
+import "../../interface/deposit/PoolseaDepositPoolInterface.sol";
+import "../../interface/minipool/PoolseaMinipoolQueueInterface.sol";
+import "../../interface/network/PoolseaNetworkFeesInterface.sol";
+import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 // Network node demand and commission rate
 
-contract RocketNetworkFeesOld is RocketBase, RocketNetworkFeesInterface {
+contract RocketNetworkFeesOld is RocketBase, PoolseaNetworkFeesInterface {
 
     // Libs
     using SafeMath for uint;
     using SafeCast for uint;
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 
@@ -28,8 +28,8 @@ contract RocketNetworkFeesOld is RocketBase, RocketNetworkFeesInterface {
     // Node demand is equal to deposit pool balance minus available minipool capacity
     function getNodeDemand() override public view returns (int256) {
         // Load contracts
-        RocketDepositPoolInterface rocketDepositPool = RocketDepositPoolInterface(getContractAddress("rocketDepositPool"));
-        RocketMinipoolQueueInterface rocketMinipoolQueue = RocketMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
+        PoolseaDepositPoolInterface rocketDepositPool = PoolseaDepositPoolInterface(getContractAddress("rocketDepositPool"));
+        PoolseaMinipoolQueueInterface rocketMinipoolQueue = PoolseaMinipoolQueueInterface(getContractAddress("rocketMinipoolQueue"));
         // Calculate & return
         int256 depositPoolBalance = rocketDepositPool.getBalance().toInt256();
         int256 minipoolCapacity = rocketMinipoolQueue.getEffectiveCapacity().toInt256();
@@ -48,7 +48,7 @@ contract RocketNetworkFeesOld is RocketBase, RocketNetworkFeesInterface {
         // Calculation base values
         uint256 demandDivisor = 1000000000000;
         // Get settings
-        RocketDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = RocketDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
         uint256 minFee = rocketDAOProtocolSettingsNetwork.getMinimumNodeFee();
         uint256 targetFee = rocketDAOProtocolSettingsNetwork.getTargetNodeFee();
         uint256 maxFee = rocketDAOProtocolSettingsNetwork.getMaximumNodeFee();

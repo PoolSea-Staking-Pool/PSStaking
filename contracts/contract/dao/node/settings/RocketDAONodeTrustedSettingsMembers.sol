@@ -3,14 +3,14 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "./RocketDAONodeTrustedSettings.sol";
-import "../../../../interface/dao/node/settings/RocketDAONodeTrustedSettingsMembersInterface.sol";
+import "../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsMembersInterface.sol";
 
 
-// The Trusted Node DAO Members 
-contract RocketDAONodeTrustedSettingsMembers is RocketDAONodeTrustedSettings, RocketDAONodeTrustedSettingsMembersInterface { 
+// The Trusted Node DAO Members
+contract RocketDAONodeTrustedSettingsMembers is RocketDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsMembersInterface {
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "members") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "members") {
         // Set version
         version = 1;
         // Initialize settings on deployment
@@ -37,8 +37,8 @@ contract RocketDAONodeTrustedSettingsMembers is RocketDAONodeTrustedSettings, Ro
         if(keccak256(abi.encodePacked(_settingPath)) == keccak256(abi.encodePacked("members.quorum"))) require(_value > 0 ether && _value <= 0.9 ether, "Quorum setting must be > 0 & <= 90%");
         // Update setting now
         setUint(keccak256(abi.encodePacked(settingNameSpace, _settingPath)), _value);
-    } 
-  
+    }
+
     // Getters
 
     // The member proposal quorum threshold for this DAO

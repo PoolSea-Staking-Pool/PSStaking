@@ -5,17 +5,17 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../../../../dao/node/settings/RocketDAONodeTrustedSettings.sol";
-import "../../../../../interface/old/RocketDAONodeTrustedSettingsMinipoolInterfaceOld.sol";
-import "../../../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsMinipoolInterface.sol";
+import "../../../../../interface/old/PoolseaDAONodeTrustedSettingsMinipoolInterfaceOld.sol";
+import "../../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
 
 
 // The Trusted Node DAO Minipool settings
-contract RocketDAONodeTrustedSettingsMinipoolOld is RocketDAONodeTrustedSettings, RocketDAONodeTrustedSettingsMinipoolInterfaceOld {
+contract RocketDAONodeTrustedSettingsMinipoolOld is RocketDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsMinipoolInterfaceOld {
 
     using SafeMath for uint;
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "minipool") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "minipool") {
         // Set version
         version = 2;
 
@@ -44,7 +44,7 @@ contract RocketDAONodeTrustedSettingsMinipoolOld is RocketDAONodeTrustedSettings
         // Some safety guards for certain settings
         if(getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) {
             if(keccak256(abi.encodePacked(_settingPath)) == keccak256(abi.encodePacked("minipool.scrub.period"))) {
-                RocketDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = RocketDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
+                PoolseaDAOProtocolSettingsMinipoolInterface rocketDAOProtocolSettingsMinipool = PoolseaDAOProtocolSettingsMinipoolInterface(getContractAddress("rocketDAOProtocolSettingsMinipool"));
                 require(_value <= (rocketDAOProtocolSettingsMinipool.getLaunchTimeout().sub(1 hours)), "Scrub period must be less than launch timeout");
             }
         }

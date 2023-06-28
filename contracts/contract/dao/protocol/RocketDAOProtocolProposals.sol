@@ -4,19 +4,19 @@ pragma abicoder v2;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../../RocketBase.sol";
-import "../../../interface/dao/protocol/RocketDAOProtocolInterface.sol";
-import "../../../interface/dao/protocol/RocketDAOProtocolProposalsInterface.sol";
-import "../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsInterface.sol";
-import "../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsRewardsInterface.sol";
-import "../../../interface/rewards/claims/RocketClaimDAOInterface.sol";
-import "../../../interface/dao/RocketDAOProposalInterface.sol";
+import "../../../interface/dao/protocol/PoolseaDAOProtocolInterface.sol";
+import "../../../interface/dao/protocol/PoolseaDAOProtocolProposalsInterface.sol";
+import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInterface.sol";
+import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsRewardsInterface.sol";
+import "../../../interface/rewards/claims/PoolseaClaimDAOInterface.sol";
+import "../../../interface/dao/PoolseaDAOProposalInterface.sol";
 import "../../../types/SettingType.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 
 // The protocol DAO Proposals - Placeholder contracts until DAO is implemented
-contract RocketDAOProtocolProposals is RocketBase, RocketDAOProtocolProposalsInterface {
+contract RocketDAOProtocolProposals is RocketBase, PoolseaDAOProtocolProposalsInterface {
 
     using SafeMath for uint;
 
@@ -31,7 +31,7 @@ contract RocketDAOProtocolProposals is RocketBase, RocketDAOProtocolProposalsInt
     }
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         // Version
         version = 1;
     }
@@ -63,7 +63,7 @@ contract RocketDAOProtocolProposals is RocketBase, RocketDAOProtocolProposalsInt
     // Change one of the current uint256 settings of the protocol DAO
     function proposalSettingUint(string memory _settingContractName, string memory _settingPath, uint256 _value) override public onlyExecutingContracts() {
         // Load contracts
-        RocketDAOProtocolSettingsInterface rocketDAOProtocolSettings = RocketDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
+        PoolseaDAOProtocolSettingsInterface rocketDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
         // Lets update
         rocketDAOProtocolSettings.setSettingUint(_settingPath, _value);
     }
@@ -71,7 +71,7 @@ contract RocketDAOProtocolProposals is RocketBase, RocketDAOProtocolProposalsInt
     // Change one of the current bool settings of the protocol DAO
     function proposalSettingBool(string memory _settingContractName, string memory _settingPath, bool _value) override public onlyExecutingContracts() {
         // Load contracts
-        RocketDAOProtocolSettingsInterface rocketDAOProtocolSettings = RocketDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
+        PoolseaDAOProtocolSettingsInterface rocketDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
         // Lets update
         rocketDAOProtocolSettings.setSettingBool(_settingPath, _value);
     }
@@ -79,7 +79,7 @@ contract RocketDAOProtocolProposals is RocketBase, RocketDAOProtocolProposalsInt
     // Change one of the current address settings of the protocol DAO
     function proposalSettingAddress(string memory _settingContractName, string memory _settingPath, address _value) override public onlyExecutingContracts() {
         // Load contracts
-        RocketDAOProtocolSettingsInterface rocketDAOProtocolSettings = RocketDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
+        PoolseaDAOProtocolSettingsInterface rocketDAOProtocolSettings = PoolseaDAOProtocolSettingsInterface(getContractAddress(_settingContractName));
         // Lets update
         rocketDAOProtocolSettings.setSettingAddress(_settingPath, _value);
     }
@@ -87,7 +87,7 @@ contract RocketDAOProtocolProposals is RocketBase, RocketDAOProtocolProposalsInt
     // Update a claimer for the rpl rewards, must specify a unique contract name that will be claiming from and a percentage of the rewards
     function proposalSettingRewardsClaimer(string memory _contractName, uint256 _perc) override external onlyExecutingContracts() {
         // Load contracts
-        RocketDAOProtocolSettingsRewardsInterface rocketDAOProtocolSettingsRewards = RocketDAOProtocolSettingsRewardsInterface(getContractAddress("rocketDAOProtocolSettingsRewards"));
+        PoolseaDAOProtocolSettingsRewardsInterface rocketDAOProtocolSettingsRewards = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("rocketDAOProtocolSettingsRewards"));
         // Update now
         rocketDAOProtocolSettingsRewards.setSettingRewardsClaimer(_contractName, _perc);
     }
@@ -95,7 +95,7 @@ contract RocketDAOProtocolProposals is RocketBase, RocketDAOProtocolProposalsInt
     // Spend RPL from the DAO's treasury
     function proposalSpendTreasury(string memory _invoiceID, address _recipientAddress, uint256 _amount) override external onlyExecutingContracts() {
         // Load contracts
-        RocketClaimDAOInterface rocketDAOTreasury = RocketClaimDAOInterface(getContractAddress("rocketClaimDAO"));
+        PoolseaClaimDAOInterface rocketDAOTreasury = PoolseaClaimDAOInterface(getContractAddress("rocketClaimDAO"));
         // Update now
         rocketDAOTreasury.spend(_invoiceID, _recipientAddress, _amount);
     }

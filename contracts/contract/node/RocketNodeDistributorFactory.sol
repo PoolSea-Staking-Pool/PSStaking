@@ -5,14 +5,14 @@ pragma solidity 0.7.6;
 import "../RocketBase.sol";
 import "./RocketNodeDistributor.sol";
 import "./RocketNodeDistributorStorageLayout.sol";
-import "../../interface/node/RocketNodeDistributorFactoryInterface.sol";
+import "../../interface/node/PoolseaNodeDistributorFactoryInterface.sol";
 
-contract RocketNodeDistributorFactory is RocketBase, RocketNodeDistributorFactoryInterface {
+contract RocketNodeDistributorFactory is RocketBase, PoolseaNodeDistributorFactoryInterface {
     // Events
     event ProxyCreated(address _address);
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 

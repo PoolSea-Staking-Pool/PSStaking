@@ -2,11 +2,11 @@
 pragma solidity 0.7.6;
 
 import "./RocketMinipoolStorageLayout.sol";
-import "../../interface/RocketStorageInterface.sol";
-import "../../interface/minipool/RocketMinipoolBaseInterface.sol";
+import "../../interface/PoolseaStorageInterface.sol";
+import "../../interface/minipool/PoolseaMinipoolBaseInterface.sol";
 
 /// @notice Contains the initialisation and delegate upgrade logic for minipools
-contract RocketMinipoolBase is RocketMinipoolBaseInterface, RocketMinipoolStorageLayout {
+contract RocketMinipoolBase is PoolseaMinipoolBaseInterface, RocketMinipoolStorageLayout {
 
     // Events
     event EtherReceived(address indexed from, uint256 amount, uint256 time);
@@ -42,7 +42,7 @@ contract RocketMinipoolBase is RocketMinipoolBaseInterface, RocketMinipoolStorag
         // Set storage state to uninitialised
         storageState = StorageState.Uninitialised;
         // Set rocketStorage
-        rocketStorage = RocketStorageInterface(_rocketStorage);
+        rocketStorage = PoolseaStorageInterface(_rocketStorage);
         // Set the current delegate
         address delegateAddress = getContractAddress("rocketMinipoolDelegate");
         rocketMinipoolDelegate = delegateAddress;

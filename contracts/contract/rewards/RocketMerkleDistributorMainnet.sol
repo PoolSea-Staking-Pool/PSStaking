@@ -4,12 +4,12 @@ pragma abicoder v2;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../RocketBase.sol";
-import "../../interface/token/RocketTokenRPLInterface.sol";
-import "../../interface/RocketVaultInterface.sol";
-import "../../interface/node/RocketNodeStakingInterface.sol";
-import "../../interface/rewards/RocketRewardsRelayInterface.sol";
-import "../../interface/rewards/RocketSmoothingPoolInterface.sol";
-import "../../interface/RocketVaultWithdrawerInterface.sol";
+import "../../interface/token/PoolseaTokenRPLInterface.sol";
+import "../../interface/PoolseaVaultInterface.sol";
+import "../../interface/node/PoolseaNodeStakingInterface.sol";
+import "../../interface/rewards/PoolseaRewardsRelayInterface.sol";
+import "../../interface/rewards/PoolseaSmoothingPoolInterface.sol";
+import "../../interface/PoolseaVaultWithdrawerInterface.sol";
 
 import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
 
@@ -18,7 +18,7 @@ import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
 * handle cross-chain messaging.
 */
 
-contract RocketMerkleDistributorMainnet is RocketBase, RocketRewardsRelayInterface, RocketVaultWithdrawerInterface {
+contract RocketMerkleDistributorMainnet is RocketBase, PoolseaRewardsRelayInterface, PoolseaVaultWithdrawerInterface {
 
     // Libs
     using SafeMath for uint;
@@ -37,7 +37,7 @@ contract RocketMerkleDistributorMainnet is RocketBase, RocketRewardsRelayInterfa
     receive() payable external {}
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         // Version
         version = 1;
         // Precompute keys
@@ -53,7 +53,7 @@ contract RocketMerkleDistributorMainnet is RocketBase, RocketRewardsRelayInterfa
         require(getBytes32(key) == bytes32(0));
         setBytes32(key, _root);
         // Send the ETH and RPL to the vault
-        RocketVaultInterface rocketVault = RocketVaultInterface(getAddress(rocketVaultKey));
+        PoolseaVaultInterface rocketVault = PoolseaVaultInterface(getAddress(rocketVaultKey));
         if (_rewardsETH > 0) {
             rocketVault.depositEther{value: _rewardsETH}();
         }
@@ -72,7 +72,7 @@ contract RocketMerkleDistributorMainnet is RocketBase, RocketRewardsRelayInterfa
     // Node operators can call this method to claim rewards for one or more reward intervals and specify an amount of RPL to stake at the same time
     function claimAndStake(address _nodeAddress, uint256[] calldata _rewardIndex, uint256[] calldata _amountRPL, uint256[] calldata _amountETH, bytes32[][] calldata _merkleProof, uint256 _stakeAmount) public override {
         // Get contracts
-        RocketVaultInterface rocketVault = RocketVaultInterface(getAddress(rocketVaultKey));
+        PoolseaVaultInterface rocketVault = PoolseaVaultInterface(getAddress(rocketVaultKey));
         address rocketTokenRPLAddress = getAddress(rocketTokenRPLKey);
         // Verify claims
         _claim(_rewardIndex, _nodeAddress, _amountRPL, _amountETH, _merkleProof);
@@ -103,8 +103,8 @@ contract RocketMerkleDistributorMainnet is RocketBase, RocketRewardsRelayInterfa
         }
         // Restake requested amount
         if (_stakeAmount > 0) {
-            RocketTokenRPLInterface rocketTokenRPL = RocketTokenRPLInterface(rocketTokenRPLAddress);
-            RocketNodeStakingInterface rocketNodeStaking = RocketNodeStakingInterface(getContractAddress("rocketNodeStaking"));
+            PoolseaTokenRPLInterface rocketTokenRPL = PoolseaTokenRPLInterface(rocketTokenRPLAddress);
+            PoolseaNodeStakingInterface rocketNodeStaking = PoolseaNodeStakingInterface(getContractAddress("rocketNodeStaking"));
             rocketVault.withdrawToken(address(this), IERC20(rocketTokenRPLAddress), _stakeAmount);
             rocketTokenRPL.approve(address(rocketNodeStaking), _stakeAmount);
             rocketNodeStaking.stakeRPLFor(_nodeAddress, _stakeAmount);

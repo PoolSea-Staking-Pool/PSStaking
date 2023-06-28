@@ -5,13 +5,13 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "../../RocketBase.sol";
-import "../../../interface/dao/node/RocketDAONodeTrustedInterface.sol";
-import "../../../interface/old/RocketNetworkPricesInterfaceOld.sol";
-import "../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsNetworkInterface.sol";
+import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
+import "../../../interface/old/PoolseaNetworkPricesInterfaceOld.sol";
+import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 // Network token price data
 
-contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
+contract RocketNetworkPricesOld is RocketBase, PoolseaNetworkPricesInterfaceOld {
 
     // Libs
     using SafeMath for uint;
@@ -21,7 +21,7 @@ contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
     event PricesUpdated(uint256 block, uint256 rplPrice, uint256 effectiveRplStake, uint256 time);
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         // Set contract version
         version = 1;
         // Set initial RPL price
@@ -69,7 +69,7 @@ contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
     // Only accepts calls from trusted (oracle) nodes
     function submitPrices(uint256 _block, uint256 _rplPrice, uint256 _effectiveRplStake) override external onlyLatestContract("rocketNetworkPrices", address(this)) onlyTrustedNode(msg.sender) {
         // Check settings
-        RocketDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = RocketDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
         require(rocketDAOProtocolSettingsNetwork.getSubmitPricesEnabled(), "Submitting prices is currently disabled");
         // Check block
         require(_block < block.number, "Prices can not be submitted for a future block");
@@ -87,7 +87,7 @@ contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
         // Emit prices submitted event
         emit PricesSubmitted(msg.sender, _block, _rplPrice, _effectiveRplStake, block.timestamp);
         // Check submission count & update network prices
-        RocketDAONodeTrustedInterface rocketDAONodeTrusted = RocketDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
+        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
         if (calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodeConsensusThreshold()) {
             // Update the price
             updatePrices(_block, _rplPrice, _effectiveRplStake);
@@ -97,7 +97,7 @@ contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
     // Executes updatePrices if consensus threshold is reached
     function executeUpdatePrices(uint256 _block, uint256 _rplPrice, uint256 _effectiveRplStake) override external onlyLatestContract("rocketNetworkPrices", address(this)) {
         // Check settings
-        RocketDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = RocketDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
         require(rocketDAOProtocolSettingsNetwork.getSubmitPricesEnabled(), "Submitting prices is currently disabled");
         // Check block
         require(_block < block.number, "Prices can not be submitted for a future block");
@@ -107,7 +107,7 @@ contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
         // Get submission count
         uint256 submissionCount = getUint(submissionCountKey);
         // Check submission count & update network prices
-        RocketDAONodeTrustedInterface rocketDAONodeTrusted = RocketDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
+        PoolseaDAONodeTrustedInterface rocketDAONodeTrusted = PoolseaDAONodeTrustedInterface(getContractAddress("rocketDAONodeTrusted"));
         require(calcBase.mul(submissionCount).div(rocketDAONodeTrusted.getMemberCount()) >= rocketDAOProtocolSettingsNetwork.getNodeConsensusThreshold(), "Consensus has not been reached");
         // Update the price
         updatePrices(_block, _rplPrice, _effectiveRplStake);
@@ -128,7 +128,7 @@ contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
     // Returns true if consensus has been reached for the last price reportable block
     function inConsensus() override public view returns (bool) {
         // Load contracts
-        RocketDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = RocketDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
         // Get the block prices were lasted updated and the update frequency
         uint256 pricesBlock = getPricesBlock();
         uint256 updateFrequency = rocketDAOProtocolSettingsNetwork.getSubmitPricesFrequency();
@@ -141,7 +141,7 @@ contract RocketNetworkPricesOld is RocketBase, RocketNetworkPricesInterfaceOld {
     // Returns the latest block number that oracles should be reporting prices for
     function getLatestReportableBlock() override external view returns (uint256) {
         // Load contracts
-        RocketDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = RocketDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
+        PoolseaDAOProtocolSettingsNetworkInterface rocketDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsNetworkInterface(getContractAddress("rocketDAOProtocolSettingsNetwork"));
         // Get the block prices were lasted updated and the update frequency
         uint256 pricesBlock = getPricesBlock();
         uint256 updateFrequency = rocketDAOProtocolSettingsNetwork.getSubmitPricesFrequency();

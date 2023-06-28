@@ -3,18 +3,18 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "./RocketDAOProtocolSettings.sol";
-import "../../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsRewardsInterface.sol";
+import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsRewardsInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 // Settings in RP which the DAO will have full control over
-contract RocketDAOProtocolSettingsRewards is RocketDAOProtocolSettings, RocketDAOProtocolSettingsRewardsInterface {
+contract RocketDAOProtocolSettingsRewards is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsRewardsInterface {
 
     using SafeMath for uint;
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "rewards") {
-        // Set version 
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "rewards") {
+        // Set version
         version = 1;
          // Set some initial settings on first deployment
         if(!getBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")))) {
@@ -58,12 +58,12 @@ contract RocketDAOProtocolSettingsRewards is RocketDAOProtocolSettings, RocketDA
     // Get the perc amount that this rewards contract get claim
     function getRewardsClaimerPerc(string memory _contractName) override public view returns (uint256) {
         return getUint(keccak256(abi.encodePacked(settingNameSpace, "rewards.claims", "group.amount", _contractName)));
-    } 
+    }
 
     // Get the time of when the claim perc was last updated
     function getRewardsClaimerPercTimeUpdated(string memory _contractName) override external view returns (uint256) {
         return getUint(keccak256(abi.encodePacked(settingNameSpace, "rewards.claims", "group.amount.updated.time", _contractName)));
-    } 
+    }
 
     // Get the perc amount total for all claimers (remaining goes to DAO)
     function getRewardsClaimersPercTotal() override public view returns (uint256) {

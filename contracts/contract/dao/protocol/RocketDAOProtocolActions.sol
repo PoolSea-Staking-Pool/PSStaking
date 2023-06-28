@@ -3,8 +3,8 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../../RocketBase.sol";
-import "../../../interface/RocketVaultInterface.sol";
-import "../../../interface/dao/protocol/RocketDAOProtocolActionsInterface.sol";
+import "../../../interface/PoolseaVaultInterface.sol";
+import "../../../interface/dao/protocol/PoolseaDAOProtocolActionsInterface.sol";
 
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 // The Rocket Pool Network DAO Actions - This is a placeholder for the network DAO to come
-contract RocketDAOProtocolActions is RocketBase, RocketDAOProtocolActionsInterface { 
+contract RocketDAOProtocolActions is RocketBase, PoolseaDAOProtocolActionsInterface {
 
     using SafeMath for uint;
 
@@ -21,7 +21,7 @@ contract RocketDAOProtocolActions is RocketBase, RocketDAOProtocolActionsInterfa
 
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         // Version
         version = 1;
     }
@@ -29,5 +29,5 @@ contract RocketDAOProtocolActions is RocketBase, RocketDAOProtocolActionsInterfa
 
     /*** Action Methods ************************/
 
-   
+
 }

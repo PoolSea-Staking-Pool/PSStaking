@@ -3,14 +3,14 @@ pragma solidity 0.7.6;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "./RocketDAONodeTrustedSettings.sol";
-import "../../../../interface/dao/node/settings/RocketDAONodeTrustedSettingsProposalsInterface.sol";
+import "../../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsProposalsInterface.sol";
 
 
-// The Trusted Node DAO Members 
-contract RocketDAONodeTrustedSettingsProposals is RocketDAONodeTrustedSettings, RocketDAONodeTrustedSettingsProposalsInterface { 
+// The Trusted Node DAO Members
+contract RocketDAONodeTrustedSettingsProposals is RocketDAONodeTrustedSettings, PoolseaDAONodeTrustedSettingsProposalsInterface {
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "proposals") {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAONodeTrustedSettings(_rocketStorageAddress, "proposals") {
         // Set version
         version = 1;
         // Initialize settings on deployment
@@ -26,7 +26,7 @@ contract RocketDAONodeTrustedSettingsProposals is RocketDAONodeTrustedSettings, 
         }
     }
 
-  
+
     // Getters
 
     // How long before a member can make sequential proposals

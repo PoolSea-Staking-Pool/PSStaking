@@ -2,12 +2,12 @@
 pragma solidity 0.7.6;
 
 import "./RocketDAOProtocolSettings.sol";
-import "../../../../interface/dao/protocol/settings/RocketDAOProtocolSettingsDepositInterface.sol";
- 
-/// @notice Network deposit settings
-contract RocketDAOProtocolSettingsDeposit is RocketDAOProtocolSettings, RocketDAOProtocolSettingsDepositInterface {
+import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsDepositInterface.sol";
 
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "deposit") {
+/// @notice Network deposit settings
+contract RocketDAOProtocolSettingsDeposit is RocketDAOProtocolSettings, PoolseaDAOProtocolSettingsDepositInterface {
+
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketDAOProtocolSettings(_rocketStorageAddress, "deposit") {
         // Set version
         version = 3;
         // Initialize settings on deployment

@@ -9,7 +9,7 @@ contract RocketNodeDistributor is RocketNodeDistributorStorageLayout {
     bytes32 immutable distributorStorageKey;
 
     constructor(address _nodeAddress, address _rocketStorage) {
-        rocketStorage = RocketStorageInterface(_rocketStorage);
+        rocketStorage = PoolseaStorageInterface(_rocketStorage);
         nodeAddress = _nodeAddress;
 
         // Precompute storage key for rocketNodeDistributorDelegate

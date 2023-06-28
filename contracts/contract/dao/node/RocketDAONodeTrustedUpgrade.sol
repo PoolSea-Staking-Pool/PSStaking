@@ -5,11 +5,11 @@ pragma solidity 0.7.6;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../../RocketBase.sol";
-import "../../../interface/dao/node/RocketDAONodeTrustedUpgradeInterface.sol";
+import "../../../interface/dao/node/PoolseaDAONodeTrustedUpgradeInterface.sol";
 
 // Handles network contract upgrades
 
-contract RocketDAONodeTrustedUpgrade is RocketBase, RocketDAONodeTrustedUpgradeInterface {
+contract RocketDAONodeTrustedUpgrade is RocketBase, PoolseaDAONodeTrustedUpgradeInterface {
 
     // Events
     event ContractUpgraded(bytes32 indexed name, address indexed oldAddress, address indexed newAddress, uint256 time);
@@ -18,7 +18,7 @@ contract RocketDAONodeTrustedUpgrade is RocketBase, RocketDAONodeTrustedUpgradeI
     event ABIAdded(bytes32 indexed name, uint256 time);
 
     // Construct
-    constructor(RocketStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
+    constructor(PoolseaStorageInterface _rocketStorageAddress) RocketBase(_rocketStorageAddress) {
         version = 1;
     }
 
