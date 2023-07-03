@@ -20,7 +20,7 @@ import { setDAONodeTrustedBootstrapSetting } from '../dao/scenario-dao-node-trus
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketNodeDeposit', async (accounts) => {
+    contract('PoolseaNodeDeposit', async (accounts) => {
 
         // Accounts
         const [
@@ -197,8 +197,8 @@ export default function() {
             await stakeMinipool(minipool, {from: node});
 
             // Signal wanting to reduce and wait 7 days
-            const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
-            await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+            const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
             await increaseTime(web3, bondReductionWindowStart + 1);
 
             // Reduce the bond to 8 ether to receive a deposit credit
@@ -231,8 +231,8 @@ export default function() {
             await stakeMinipool(minipool, {from: node});
 
             // Signal wanting to reduce and wait 7 days
-            const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
-            await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+            const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
             await increaseTime(web3, bondReductionWindowStart + 1);
 
             // Reduce the bond to 8 ether to receive a deposit credit

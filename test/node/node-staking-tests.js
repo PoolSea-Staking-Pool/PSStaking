@@ -24,7 +24,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { setDAOProtocolBootstrapSetting, setRewardsClaimIntervalTime } from '../dao/scenario-dao-protocol-bootstrap';
 
 export default function() {
-    contract('RocketNodeStaking', async (accounts) => {
+    contract('PoolseaNodeStaking', async (accounts) => {
 
 
         // Accounts
@@ -39,12 +39,12 @@ export default function() {
         const userDistributeStartTime = 60 * 60 * 24 * 90; // 90 days
 
         // Setup
-        let rocketNodeStaking;
+        let poolseaNodeStaking;
         before(async () => {
             await upgradeOneDotTwo(owner);
 
             // Load contracts
-            rocketNodeStaking = await PoolseaNodeStaking.deployed();
+            poolseaNodeStaking = await PoolseaNodeStaking.deployed();
 
             // Set settings
             await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
@@ -70,7 +70,7 @@ export default function() {
             const rplAmount = '5000'.ether;
 
             // Approve transfer & stake RPL once
-            await approveRPL(rocketNodeStaking.address, rplAmount, {from: node});
+            await approveRPL(poolseaNodeStaking.address, rplAmount, {from: node});
             await stakeRpl(rplAmount, {
                 from: node,
             });
@@ -79,7 +79,7 @@ export default function() {
             await nodeDeposit({from: node, value: '16'.ether});
 
             // Approve transfer & stake RPL twice
-            await approveRPL(rocketNodeStaking.address, rplAmount, {from: node});
+            await approveRPL(poolseaNodeStaking.address, rplAmount, {from: node});
             await stakeRpl(rplAmount, {
                 from: node,
             });
@@ -91,7 +91,7 @@ export default function() {
             const rplAmount = '10000'.ether;
 
             // Approve transfer & attempt to stake RPL
-            await approveRPL(rocketNodeStaking.address, rplAmount, {from: node});
+            await approveRPL(poolseaNodeStaking.address, rplAmount, {from: node});
             await shouldRevert(stakeRpl(rplAmount, {
                 from: random,
             }), 'Random address staked RPL');

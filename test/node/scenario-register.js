@@ -6,13 +6,13 @@ import { assertBN } from '../_helpers/bn';
 export async function register(timezoneLocation, txOptions) {
 
     // Load contracts
-    const rocketNodeManager = await PoolseaNodeManager.deployed();
+    const poolseaNodeManager = await PoolseaNodeManager.deployed();
 
     // Get node details
     function getNodeDetails(nodeAddress) {
         return Promise.all([
-            rocketNodeManager.getNodeExists.call(nodeAddress),
-            rocketNodeManager.getNodeTimezoneLocation.call(nodeAddress),
+            poolseaNodeManager.getNodeExists.call(nodeAddress),
+            poolseaNodeManager.getNodeTimezoneLocation.call(nodeAddress),
         ]).then(
             ([exists, timezoneLocation]) =>
             ({exists, timezoneLocation})
@@ -20,15 +20,15 @@ export async function register(timezoneLocation, txOptions) {
     }
 
     // Get initial node index
-    let nodeCount1 = await rocketNodeManager.getNodeCount.call();
+    let nodeCount1 = await poolseaNodeManager.getNodeCount.call();
 
     // Register
-    await rocketNodeManager.registerNode(timezoneLocation, txOptions);
+    await poolseaNodeManager.registerNode(timezoneLocation, txOptions);
 
     // Get updated node index & node details
-    let nodeCount2 = await rocketNodeManager.getNodeCount.call();
+    let nodeCount2 = await poolseaNodeManager.getNodeCount.call();
     let [lastNodeAddress, details] = await Promise.all([
-        rocketNodeManager.getNodeAt.call(nodeCount2.sub('1'.BN)),
+        poolseaNodeManager.getNodeAt.call(nodeCount2.sub('1'.BN)),
         getNodeDetails(txOptions.from),
     ]);
 

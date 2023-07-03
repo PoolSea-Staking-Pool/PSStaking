@@ -14,10 +14,10 @@ export async function depositV2(minimumNodeFee, bondAmount, txOptions) {
 
     // Load contracts
     const [
-        rocketMinipoolManager,
-        rocketMinipoolFactory,
-        rocketNodeDeposit,
-        rocketStorage,
+        poolseaMinipoolManager,
+        poolseaMinipoolFactory,
+        poolseaNodeDeposit,
+        poolseaStorage,
     ] = await Promise.all([
         PoolseaMinipoolManager.deployed(),
         PoolseaMinipoolFactory.deployed(),
@@ -28,8 +28,8 @@ export async function depositV2(minimumNodeFee, bondAmount, txOptions) {
     // Get minipool counts
     function getMinipoolCounts(nodeAddress) {
         return Promise.all([
-            rocketMinipoolManager.getMinipoolCount.call(),
-            rocketMinipoolManager.getNodeMinipoolCount.call(nodeAddress),
+            poolseaMinipoolManager.getMinipoolCount.call(),
+            poolseaMinipoolManager.getNodeMinipoolCount.call(nodeAddress),
         ]).then(
             ([network, node]) =>
             ({network, node})
@@ -39,7 +39,7 @@ export async function depositV2(minimumNodeFee, bondAmount, txOptions) {
     // Get minipool details
     function getMinipoolDetails(minipoolAddress) {
         return PoolseaMinipoolDelegate.at(minipoolAddress).then(minipool => Promise.all([
-            rocketMinipoolManager.getMinipoolExists.call(minipoolAddress),
+            poolseaMinipoolManager.getMinipoolExists.call(minipoolAddress),
             minipool.getNodeAddress.call(),
             minipool.getNodeDepositBalance.call(),
             minipool.getNodeDepositAssigned.call(),
@@ -54,7 +54,7 @@ export async function depositV2(minimumNodeFee, bondAmount, txOptions) {
 
     // Deposit
     const salt = minipoolSalt++;
-    const minipoolAddress = await rocketMinipoolFactory.getExpectedAddress(txOptions.from, salt);
+    const minipoolAddress = await poolseaMinipoolFactory.getExpectedAddress(txOptions.from, salt);
     let withdrawalCredentials = '0x010000000000000000000000' + minipoolAddress.substr(2);
 
     // Get validator deposit data
@@ -69,9 +69,9 @@ export async function depositV2(minimumNodeFee, bondAmount, txOptions) {
 
     // Make node deposit
     if (bondAmount.eq(txOptions.from)) {
-        await rocketNodeDeposit.deposit(bondAmount, minimumNodeFee, depositData.pubkey, depositData.signature, depositDataRoot, salt, minipoolAddress, txOptions);
+        await poolseaNodeDeposit.deposit(bondAmount, minimumNodeFee, depositData.pubkey, depositData.signature, depositDataRoot, salt, minipoolAddress, txOptions);
     } else {
-        await rocketNodeDeposit.depositWithCredit(bondAmount, minimumNodeFee, depositData.pubkey, depositData.signature, depositDataRoot, salt, minipoolAddress, txOptions);
+        await poolseaNodeDeposit.depositWithCredit(bondAmount, minimumNodeFee, depositData.pubkey, depositData.signature, depositDataRoot, salt, minipoolAddress, txOptions);
     }
 
     // Get updated minipool indexes & created minipool details
@@ -81,8 +81,8 @@ export async function depositV2(minimumNodeFee, bondAmount, txOptions) {
         lastNodeMinipoolAddress,
         minipoolDetails,
     ] = await Promise.all([
-        rocketMinipoolManager.getMinipoolAt.call(minipoolCounts2.network.sub('1'.BN)),
-        rocketMinipoolManager.getNodeMinipoolAt.call(txOptions.from, minipoolCounts2.node.sub('1'.BN)),
+        poolseaMinipoolManager.getMinipoolAt.call(minipoolCounts2.network.sub('1'.BN)),
+        poolseaMinipoolManager.getNodeMinipoolAt.call(txOptions.from, minipoolCounts2.node.sub('1'.BN)),
         getMinipoolDetails(minipoolAddress),
     ]);
 

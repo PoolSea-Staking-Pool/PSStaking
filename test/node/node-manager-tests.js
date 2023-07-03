@@ -12,7 +12,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 
 
 export default function() {
-    contract('RocketNodeManager', async (accounts) => {
+    contract('PoolseaNodeManager', async (accounts) => {
 
         // One day in seconds
         const ONE_DAY = 24 * 60 * 60;
@@ -244,11 +244,11 @@ export default function() {
 
 
         it(printTitle('random', 'can query timezone counts'), async () => {
-            const rocketNodeManager = await PoolseaNodeManager.deployed();
-            await rocketNodeManager.registerNode('Australia/Sydney', {from: random2});
-            await rocketNodeManager.registerNode('Australia/Perth', {from: random3});
+            const poolseaNodeManager = await PoolseaNodeManager.deployed();
+            await poolseaNodeManager.registerNode('Australia/Sydney', {from: random2});
+            await poolseaNodeManager.registerNode('Australia/Perth', {from: random3});
 
-            const timezones = await rocketNodeManager.getNodeCountPerTimezone(0, 0)
+            const timezones = await poolseaNodeManager.getNodeCountPerTimezone(0, 0)
 
             const expects = {
                 'Australia/Brisbane': 2,
