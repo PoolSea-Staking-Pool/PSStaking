@@ -1,6 +1,6 @@
 import { printGasUsage, startGasUsage, endGasUsage } from './_utils/gasusage';
 import { endSnapShot, injectGlobalSnapShot, startSnapShot } from './_utils/snapshotting';
-import { deployRocketPool } from './_helpers/deployment';
+import { deployPoolseaPool } from './_helpers/deployment';
 import { setDefaultParameters } from './_helpers/defaults';
 import { suppressLog } from './_helpers/console';
 // Import tests
@@ -49,8 +49,8 @@ afterEach(endSnapShot);
 after(printGasUsage);
 
 before(async function() {
-  // Deploy Rocket Pool
-  await suppressLog(deployRocketPool);
+  // Deploy Poolsea Pool
+  await suppressLog(deployPoolseaPool);
   // Set starting parameters for all tests
   await setDefaultParameters();
   // Inject a global snapshot before every suite

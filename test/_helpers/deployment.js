@@ -28,85 +28,85 @@ function loadABI(abiFilePath) {
 
 
 // Storage
-const rocketStorage =                       artifacts.require('PoolseaStorage.sol');
+const poolseaStorage =                       artifacts.require('PoolseaStorage.sol');
 
 // Network contracts
 const contracts = {
     // Vault
-    rocketVault:                              artifacts.require('PoolseaVault.sol'),
+    poolseaVault:                              artifacts.require('PoolseaVault.sol'),
     // Tokens
-    rocketTokenRPLFixedSupply:                artifacts.require('PoolseaTokenDummyRPL.sol'),
-    rocketTokenRETH:                          artifacts.require('PoolseaTokenRETH.sol'),
-    rocketTokenRPL:                           artifacts.require('PoolseaTokenRPL.sol'),
+    poolseaTokenRPLFixedSupply:                artifacts.require('PoolseaTokenDummyRPL.sol'),
+    poolseaTokenRETH:                          artifacts.require('PoolseaTokenRETH.sol'),
+    poolseaTokenRPL:                           artifacts.require('PoolseaTokenRPL.sol'),
     // Auction
-    rocketAuctionManager:                     artifacts.require('PoolseaAuctionManager.sol'),
+    poolseaAuctionManager:                     artifacts.require('PoolseaAuctionManager.sol'),
     // Deposit
-    rocketDepositPool:                        artifacts.require('PoolseaDepositPoolOld.sol'),
+    poolseaDepositPool:                        artifacts.require('PoolseaDepositPoolOld.sol'),
     // Minipool
-    rocketMinipoolDelegate:                   artifacts.require('PoolseaMinipoolDelegateOld.sol'),
-    rocketMinipoolManager:                    artifacts.require('PoolseaMinipoolManagerOld.sol'),
-    rocketMinipoolQueue:                      artifacts.require('PoolseaMinipoolQueueOld.sol'),
-    rocketMinipoolStatus:                     artifacts.require('PoolseaMinipoolStatus.sol'),
-    rocketMinipoolPenalty:                    artifacts.require('PoolseaMinipoolPenalty.sol'),
+    poolseaMinipoolDelegate:                   artifacts.require('PoolseaMinipoolDelegateOld.sol'),
+    poolseaMinipoolManager:                    artifacts.require('PoolseaMinipoolManagerOld.sol'),
+    poolseaMinipoolQueue:                      artifacts.require('PoolseaMinipoolQueueOld.sol'),
+    poolseaMinipoolStatus:                     artifacts.require('PoolseaMinipoolStatus.sol'),
+    poolseaMinipoolPenalty:                    artifacts.require('PoolseaMinipoolPenalty.sol'),
     // Network
-    rocketNetworkBalances:                    artifacts.require('PoolseaNetworkBalancesOld.sol'),
-    rocketNetworkFees:                        artifacts.require('PoolseaNetworkFeesOld.sol'),
-    rocketNetworkPrices:                      artifacts.require('PoolseaNetworkPricesOld.sol'),
-    rocketNetworkPenalties:                   artifacts.require('PoolseaNetworkPenalties.sol'),
+    poolseaNetworkBalances:                    artifacts.require('PoolseaNetworkBalancesOld.sol'),
+    poolseaNetworkFees:                        artifacts.require('PoolseaNetworkFeesOld.sol'),
+    poolseaNetworkPrices:                      artifacts.require('PoolseaNetworkPricesOld.sol'),
+    poolseaNetworkPenalties:                   artifacts.require('PoolseaNetworkPenalties.sol'),
     // Rewards
-    rocketRewardsPool:                        artifacts.require('PoolseaRewardsPoolOld.sol'),
-    rocketClaimDAO:                           artifacts.require('PoolseaClaimDAO.sol'),
+    poolseaRewardsPool:                        artifacts.require('PoolseaRewardsPoolOld.sol'),
+    poolseaClaimDAO:                           artifacts.require('PoolseaClaimDAO.sol'),
     // Node
-    rocketNodeDeposit:                        artifacts.require('PoolseaNodeDepositOld.sol'),
-    rocketNodeManager:                        artifacts.require('PoolseaNodeManagerOld.sol'),
-    rocketNodeStaking:                        artifacts.require('PoolseaNodeStakingOld.sol'),
+    poolseaNodeDeposit:                        artifacts.require('PoolseaNodeDepositOld.sol'),
+    poolseaNodeManager:                        artifacts.require('PoolseaNodeManagerOld.sol'),
+    poolseaNodeStaking:                        artifacts.require('PoolseaNodeStakingOld.sol'),
     // DAOs
-    rocketDAOProposal:                        artifacts.require('PoolseaDAOProposal.sol'),
-    rocketDAONodeTrusted:                     artifacts.require('PoolseaDAONodeTrusted.sol'),
-    rocketDAONodeTrustedProposals:            artifacts.require('PoolseaDAONodeTrustedProposals.sol'),
-    rocketDAONodeTrustedActions:              artifacts.require('PoolseaDAONodeTrustedActions.sol'),
-    rocketDAONodeTrustedUpgrade:              artifacts.require('PoolseaDAONodeTrustedUpgrade.sol'),
-    rocketDAONodeTrustedSettingsMembers:      artifacts.require('PoolseaDAONodeTrustedSettingsMembers.sol'),
-    rocketDAONodeTrustedSettingsProposals:    artifacts.require('PoolseaDAONodeTrustedSettingsProposals.sol'),
-    rocketDAONodeTrustedSettingsMinipool:     artifacts.require('PoolseaDAONodeTrustedSettingsMinipoolOld.sol'),
-    rocketDAOProtocol:                        artifacts.require('PoolseaDAOProtocol.sol'),
-    rocketDAOProtocolProposals:               artifacts.require('PoolseaDAOProtocolProposals.sol'),
-    rocketDAOProtocolActions:                 artifacts.require('PoolseaDAOProtocolActions.sol'),
-    rocketDAOProtocolSettingsInflation:       artifacts.require('PoolseaDAOProtocolSettingsInflation.sol'),
-    rocketDAOProtocolSettingsRewards:         artifacts.require('PoolseaDAOProtocolSettingsRewards.sol'),
-    rocketDAOProtocolSettingsAuction:         artifacts.require('PoolseaDAOProtocolSettingsAuction.sol'),
-    rocketDAOProtocolSettingsNode:            artifacts.require('PoolseaDAOProtocolSettingsNodeOld.sol'),
-    rocketDAOProtocolSettingsNetwork:         artifacts.require('PoolseaDAOProtocolSettingsNetwork.sol'),
-    rocketDAOProtocolSettingsDeposit:         artifacts.require('PoolseaDAOProtocolSettingsDepositOld.sol'),
-    rocketDAOProtocolSettingsMinipool:        artifacts.require('PoolseaDAOProtocolSettingsMinipoolOld.sol'),
+    poolseaDAOProposal:                        artifacts.require('PoolseaDAOProposal.sol'),
+    poolseaDAONodeTrusted:                     artifacts.require('PoolseaDAONodeTrusted.sol'),
+    poolseaDAONodeTrustedProposals:            artifacts.require('PoolseaDAONodeTrustedProposals.sol'),
+    poolseaDAONodeTrustedActions:              artifacts.require('PoolseaDAONodeTrustedActions.sol'),
+    poolseaDAONodeTrustedUpgrade:              artifacts.require('PoolseaDAONodeTrustedUpgrade.sol'),
+    poolseaDAONodeTrustedSettingsMembers:      artifacts.require('PoolseaDAONodeTrustedSettingsMembers.sol'),
+    poolseaDAONodeTrustedSettingsProposals:    artifacts.require('PoolseaDAONodeTrustedSettingsProposals.sol'),
+    poolseaDAONodeTrustedSettingsMinipool:     artifacts.require('PoolseaDAONodeTrustedSettingsMinipoolOld.sol'),
+    poolseaDAOProtocol:                        artifacts.require('PoolseaDAOProtocol.sol'),
+    poolseaDAOProtocolProposals:               artifacts.require('PoolseaDAOProtocolProposals.sol'),
+    poolseaDAOProtocolActions:                 artifacts.require('PoolseaDAOProtocolActions.sol'),
+    poolseaDAOProtocolSettingsInflation:       artifacts.require('PoolseaDAOProtocolSettingsInflation.sol'),
+    poolseaDAOProtocolSettingsRewards:         artifacts.require('PoolseaDAOProtocolSettingsRewards.sol'),
+    poolseaDAOProtocolSettingsAuction:         artifacts.require('PoolseaDAOProtocolSettingsAuction.sol'),
+    poolseaDAOProtocolSettingsNode:            artifacts.require('PoolseaDAOProtocolSettingsNodeOld.sol'),
+    poolseaDAOProtocolSettingsNetwork:         artifacts.require('PoolseaDAOProtocolSettingsNetwork.sol'),
+    poolseaDAOProtocolSettingsDeposit:         artifacts.require('PoolseaDAOProtocolSettingsDepositOld.sol'),
+    poolseaDAOProtocolSettingsMinipool:        artifacts.require('PoolseaDAOProtocolSettingsMinipoolOld.sol'),
     // v1.1
-    rocketMerkleDistributorMainnet:           artifacts.require('PoolseaMerkleDistributorMainnet.sol'),
-    rocketDAONodeTrustedSettingsRewards:      artifacts.require('PoolseaDAONodeTrustedSettingsRewards.sol'),
-    rocketSmoothingPool:                      artifacts.require('PoolseaSmoothingPool.sol'),
-    rocketNodeDistributorFactory:             artifacts.require('PoolseaNodeDistributorFactory.sol'),
-    rocketNodeDistributorDelegate:            artifacts.require('PoolseaNodeDistributorDelegateOld.sol'),
-    rocketMinipoolFactory:                    artifacts.require('PoolseaMinipoolFactoryOld.sol'),
+    poolseaMerkleDistributorMainnet:           artifacts.require('PoolseaMerkleDistributorMainnet.sol'),
+    poolseaDAONodeTrustedSettingsRewards:      artifacts.require('PoolseaDAONodeTrustedSettingsRewards.sol'),
+    poolseaSmoothingPool:                      artifacts.require('PoolseaSmoothingPool.sol'),
+    poolseaNodeDistributorFactory:             artifacts.require('PoolseaNodeDistributorFactory.sol'),
+    poolseaNodeDistributorDelegate:            artifacts.require('PoolseaNodeDistributorDelegateOld.sol'),
+    poolseaMinipoolFactory:                    artifacts.require('PoolseaMinipoolFactoryOld.sol'),
     // v1.2
-    rocketNodeDepositNew:                     artifacts.require('PoolseaNodeDeposit.sol'),
-    rocketMinipoolDelegateNew:                artifacts.require('PoolseaMinipoolDelegate.sol'),
-    rocketDAOProtocolSettingsMinipoolNew:     artifacts.require('PoolseaDAOProtocolSettingsMinipool.sol'),
-    rocketMinipoolQueueNew:                   artifacts.require('PoolseaMinipoolQueue.sol'),
-    rocketDepositPoolNew:                     artifacts.require('PoolseaDepositPool.sol'),
-    rocketDAOProtocolSettingsDepositNew:      artifacts.require('PoolseaDAOProtocolSettingsDeposit.sol'),
-    rocketMinipoolManagerNew:                 artifacts.require('PoolseaMinipoolManager.sol'),
-    rocketNodeStakingNew:                     artifacts.require('PoolseaNodeStaking.sol'),
-    rocketNodeDistributorDelegateNew:         artifacts.require('PoolseaNodeDistributorDelegate.sol'),
-    rocketMinipoolFactoryNew:                 artifacts.require('PoolseaMinipoolFactory.sol'),
-    rocketNetworkFeesNew:                     artifacts.require('PoolseaNetworkFees.sol'),
-    rocketNetworkPricesNew:                   artifacts.require('PoolseaNetworkPrices.sol'),
-    rocketMinipoolBase:                       artifacts.require('PoolseaMinipoolBase.sol'),
-    rocketDAONodeTrustedSettingsMinipoolNew:  artifacts.require('PoolseaDAONodeTrustedSettingsMinipool.sol'),
-    rocketNodeManagerNew:                     artifacts.require('PoolseaNodeManager.sol'),
-    rocketDAOProtocolSettingsNodeNew:         artifacts.require('PoolseaDAOProtocolSettingsNode.sol'),
-    rocketRewardsPoolNew:                     artifacts.require('PoolseaRewardsPool.sol'),
-    rocketMinipoolBondReducer:                artifacts.require('PoolseaMinipoolBondReducer.sol'),
-    rocketNetworkBalancesNew:                 artifacts.require('PoolseaNetworkBalances.sol'),
-    rocketUpgradeOneDotTwo:                   artifacts.require('PoolseaUpgradeOneDotTwo.sol'),
+    poolseaNodeDepositNew:                     artifacts.require('PoolseaNodeDeposit.sol'),
+    poolseaMinipoolDelegateNew:                artifacts.require('PoolseaMinipoolDelegate.sol'),
+    poolseaDAOProtocolSettingsMinipoolNew:     artifacts.require('PoolseaDAOProtocolSettingsMinipool.sol'),
+    poolseaMinipoolQueueNew:                   artifacts.require('PoolseaMinipoolQueue.sol'),
+    poolseaDepositPoolNew:                     artifacts.require('PoolseaDepositPool.sol'),
+    poolseaDAOProtocolSettingsDepositNew:      artifacts.require('PoolseaDAOProtocolSettingsDeposit.sol'),
+    poolseaMinipoolManagerNew:                 artifacts.require('PoolseaMinipoolManager.sol'),
+    poolseaNodeStakingNew:                     artifacts.require('PoolseaNodeStaking.sol'),
+    poolseaNodeDistributorDelegateNew:         artifacts.require('PoolseaNodeDistributorDelegate.sol'),
+    poolseaMinipoolFactoryNew:                 artifacts.require('PoolseaMinipoolFactory.sol'),
+    poolseaNetworkFeesNew:                     artifacts.require('PoolseaNetworkFees.sol'),
+    poolseaNetworkPricesNew:                   artifacts.require('PoolseaNetworkPrices.sol'),
+    poolseaMinipoolBase:                       artifacts.require('PoolseaMinipoolBase.sol'),
+    poolseaDAONodeTrustedSettingsMinipoolNew:  artifacts.require('PoolseaDAONodeTrustedSettingsMinipool.sol'),
+    poolseaNodeManagerNew:                     artifacts.require('PoolseaNodeManager.sol'),
+    poolseaDAOProtocolSettingsNodeNew:         artifacts.require('PoolseaDAOProtocolSettingsNode.sol'),
+    poolseaRewardsPoolNew:                     artifacts.require('PoolseaRewardsPool.sol'),
+    poolseaMinipoolBondReducer:                artifacts.require('PoolseaMinipoolBondReducer.sol'),
+    poolseaNetworkBalancesNew:                 artifacts.require('PoolseaNetworkBalances.sol'),
+    poolseaUpgradeOneDotTwo:                   artifacts.require('PoolseaUpgradeOneDotTwo.sol'),
     // Utils
     addressQueueStorage:                      artifacts.require('AddressQueueStorage.sol'),
     addressSetStorage:                        artifacts.require('AddressSetStorage.sol'),
@@ -114,28 +114,28 @@ const contracts = {
 
 // Development helper contracts
 const revertOnTransfer = artifacts.require('RevertOnTransfer.sol');
-const rocketNodeDepositLEB4 = artifacts.require('PoolseaNodeDepositLEB4.sol');
+const poolseaNodeDepositLEB4 = artifacts.require('PoolseaNodeDepositLEB4.sol');
 
 // Instance contract ABIs
 const abis = {
     // Minipool
-    rocketMinipool:                           [artifacts.require('PoolseaMinipoolDelegateOld.sol'), artifacts.require('PoolseaMinipoolOld.sol')],
+    poolseaMinipool:                           [artifacts.require('PoolseaMinipoolDelegateOld.sol'), artifacts.require('PoolseaMinipoolOld.sol')],
 };
 
-// Construct ABI for rocketMinipool
-const rocketMinipoolAbi = []
+// Construct ABI for poolseaMinipool
+const poolseaMinipoolAbi = []
     .concat(artifacts.require('PoolseaMinipoolDelegate.sol').abi)
     .concat(artifacts.require('PoolseaMinipoolBase.sol').abi)
     .filter(i => i.type !== 'fallback' && i.type !== 'receive');
 
-rocketMinipoolAbi.push({ stateMutability: 'payable', type: 'fallback'});
-rocketMinipoolAbi.push({ stateMutability: 'payable', type: 'receive'});
+poolseaMinipoolAbi.push({ stateMutability: 'payable', type: 'fallback'});
+poolseaMinipoolAbi.push({ stateMutability: 'payable', type: 'receive'});
 
 /*** Deployment **********************/
 
 
-// Deploy Rocket Pool
-export async function deployRocketPool() {
+// Deploy poolsea Pool
+export async function deployPoolseaPool() {
     // Set our web3 provider
     const network = hre.network;
     let $web3 = new Web3(network.provider);
@@ -165,7 +165,7 @@ export async function deployRocketPool() {
             precompiled: true
         };
         // Add our live RPL token address in place
-        contracts.rocketTokenRPLFixedSupply.address = '0xb4efd85c19999d84251304bda99e90b92300bd93';
+        contracts.poolseaTokenRPLFixedSupply.address = '0xb4efd85c19999d84251304bda99e90b92300bd93';
     }
 
     // Goerli test network
@@ -209,13 +209,13 @@ export async function deployRocketPool() {
         };
     }
 
-    // Deploy rocketStorage first - has to be done in this order so that the following contracts already know the storage address
-    const rs = await rocketStorage.new();
-    rocketStorage.setAsDeployed(rs);
+    // Deploy poolseaStorage first - has to be done in this order so that the following contracts already know the storage address
+    const rs = await poolseaStorage.new();
+    poolseaStorage.setAsDeployed(rs);
     const rsTx = await $web3.eth.getTransactionReceipt(rs.transactionHash);
     const deployBlock = rsTx.blockNumber;
     // Update the storage with the new addresses
-    let rocketStorageInstance = await rocketStorage.deployed();
+    let poolseaStorageInstance = await poolseaStorage.deployed();
 
     // Deploy other contracts - have to be inside an async loop
     const deployContracts = async function() {
@@ -226,69 +226,69 @@ export async function deployRocketPool() {
                 switch (contract) {
 
                     // New RPL contract - pass storage address & existing RPL contract address
-                    case 'rocketTokenRPL':
-                        instance = await contracts[contract].new(rocketStorageInstance.address, (await contracts.rocketTokenRPLFixedSupply.deployed()).address);
+                    case 'poolseaTokenRPL':
+                        instance = await contracts[contract].new(poolseaStorageInstance.address, (await contracts.poolseaTokenRPLFixedSupply.deployed()).address);
                         contracts[contract].setAsDeployed(instance);
                         break;
 
                     // Contracts with no constructor args
-                    case 'rocketMinipoolDelegate':
-                    case 'rocketNodeDistributorDelegate':
-                    case 'rocketNodeDistributorDelegateNew':
-                    case 'rocketMinipoolBase':
+                    case 'poolseaMinipoolDelegate':
+                    case 'poolseaNodeDistributorDelegate':
+                    case 'poolseaNodeDistributorDelegateNew':
+                    case 'poolseaMinipoolBase':
                         instance = await contracts[contract].new();
                         contracts[contract].setAsDeployed(instance);
                         break;
 
                     // Upgrade rewards
-                    case 'rocketUpgradeOneDotTwo':
-                        const upgrader = await contracts[contract].new(rocketStorageInstance.address);
+                    case 'poolseaUpgradeOneDotTwo':
+                        const upgrader = await contracts[contract].new(poolseaStorageInstance.address);
                         contracts[contract].setAsDeployed(upgrader);
                         const args = [
                             [
-                                // compressABI(contracts.rocketContract.abi),
-                                (await contracts.rocketNodeDepositNew.deployed()).address,
-                                (await contracts.rocketMinipoolDelegateNew.deployed()).address,
-                                (await contracts.rocketDAOProtocolSettingsMinipoolNew.deployed()).address,
-                                (await contracts.rocketMinipoolQueueNew.deployed()).address,
-                                (await contracts.rocketDepositPoolNew.deployed()).address,
-                                (await contracts.rocketDAOProtocolSettingsDepositNew.deployed()).address,
-                                (await contracts.rocketMinipoolManagerNew.deployed()).address,
-                                (await contracts.rocketNodeStakingNew.deployed()).address,
-                                (await contracts.rocketNodeDistributorDelegateNew.deployed()).address,
-                                (await contracts.rocketMinipoolFactoryNew.deployed()).address,
-                                (await contracts.rocketNetworkFeesNew.deployed()).address,
-                                (await contracts.rocketNetworkPricesNew.deployed()).address,
-                                (await contracts.rocketDAONodeTrustedSettingsMinipoolNew.deployed()).address,
-                                (await contracts.rocketNodeManagerNew.deployed()).address,
-                                (await contracts.rocketDAOProtocolSettingsNodeNew.deployed()).address,
-                                (await contracts.rocketNetworkBalancesNew.deployed()).address,
-                                (await contracts.rocketRewardsPoolNew.deployed()).address,
-                                (await contracts.rocketMinipoolBase.deployed()).address,
-                                (await contracts.rocketMinipoolBondReducer.deployed()).address,
+                                // compressABI(contracts.poolseaContract.abi),
+                                (await contracts.poolseaNodeDepositNew.deployed()).address,
+                                (await contracts.poolseaMinipoolDelegateNew.deployed()).address,
+                                (await contracts.poolseaDAOProtocolSettingsMinipoolNew.deployed()).address,
+                                (await contracts.poolseaMinipoolQueueNew.deployed()).address,
+                                (await contracts.poolseaDepositPoolNew.deployed()).address,
+                                (await contracts.poolseaDAOProtocolSettingsDepositNew.deployed()).address,
+                                (await contracts.poolseaMinipoolManagerNew.deployed()).address,
+                                (await contracts.poolseaNodeStakingNew.deployed()).address,
+                                (await contracts.poolseaNodeDistributorDelegateNew.deployed()).address,
+                                (await contracts.poolseaMinipoolFactoryNew.deployed()).address,
+                                (await contracts.poolseaNetworkFeesNew.deployed()).address,
+                                (await contracts.poolseaNetworkPricesNew.deployed()).address,
+                                (await contracts.poolseaDAONodeTrustedSettingsMinipoolNew.deployed()).address,
+                                (await contracts.poolseaNodeManagerNew.deployed()).address,
+                                (await contracts.poolseaDAOProtocolSettingsNodeNew.deployed()).address,
+                                (await contracts.poolseaNetworkBalancesNew.deployed()).address,
+                                (await contracts.poolseaRewardsPoolNew.deployed()).address,
+                                (await contracts.poolseaMinipoolBase.deployed()).address,
+                                (await contracts.poolseaMinipoolBondReducer.deployed()).address,
                             ],
                             [
-                                // compressABI(contracts.rocketContract.abi),
-                                compressABI(contracts.rocketNodeDepositNew.abi),
-                                compressABI(contracts.rocketMinipoolDelegateNew.abi),
-                                compressABI(contracts.rocketDAOProtocolSettingsMinipoolNew.abi),
-                                compressABI(contracts.rocketMinipoolQueueNew.abi),
-                                compressABI(contracts.rocketDepositPoolNew.abi),
-                                compressABI(contracts.rocketDAOProtocolSettingsDepositNew.abi),
-                                compressABI(contracts.rocketMinipoolManagerNew.abi),
-                                compressABI(contracts.rocketNodeStakingNew.abi),
-                                compressABI(contracts.rocketNodeDistributorDelegateNew.abi),
-                                compressABI(contracts.rocketMinipoolFactoryNew.abi),
-                                compressABI(contracts.rocketNetworkFeesNew.abi),
-                                compressABI(contracts.rocketNetworkPricesNew.abi),
-                                compressABI(contracts.rocketDAONodeTrustedSettingsMinipoolNew.abi),
-                                compressABI(contracts.rocketNodeManagerNew.abi),
-                                compressABI(contracts.rocketDAOProtocolSettingsNodeNew.abi),
-                                compressABI(contracts.rocketNetworkBalancesNew.abi),
-                                compressABI(contracts.rocketRewardsPoolNew.abi),
-                                compressABI(contracts.rocketMinipoolBase.abi),
-                                compressABI(contracts.rocketMinipoolBondReducer.abi),
-                                compressABI(rocketMinipoolAbi),
+                                // compressABI(contracts.poolseaContract.abi),
+                                compressABI(contracts.poolseaNodeDepositNew.abi),
+                                compressABI(contracts.poolseaMinipoolDelegateNew.abi),
+                                compressABI(contracts.poolseaDAOProtocolSettingsMinipoolNew.abi),
+                                compressABI(contracts.poolseaMinipoolQueueNew.abi),
+                                compressABI(contracts.poolseaDepositPoolNew.abi),
+                                compressABI(contracts.poolseaDAOProtocolSettingsDepositNew.abi),
+                                compressABI(contracts.poolseaMinipoolManagerNew.abi),
+                                compressABI(contracts.poolseaNodeStakingNew.abi),
+                                compressABI(contracts.poolseaNodeDistributorDelegateNew.abi),
+                                compressABI(contracts.poolseaMinipoolFactoryNew.abi),
+                                compressABI(contracts.poolseaNetworkFeesNew.abi),
+                                compressABI(contracts.poolseaNetworkPricesNew.abi),
+                                compressABI(contracts.poolseaDAONodeTrustedSettingsMinipoolNew.abi),
+                                compressABI(contracts.poolseaNodeManagerNew.abi),
+                                compressABI(contracts.poolseaDAOProtocolSettingsNodeNew.abi),
+                                compressABI(contracts.poolseaNetworkBalancesNew.abi),
+                                compressABI(contracts.poolseaRewardsPoolNew.abi),
+                                compressABI(contracts.poolseaMinipoolBase.abi),
+                                compressABI(contracts.poolseaMinipoolBondReducer.abi),
+                                compressABI(poolseaMinipoolAbi),
                             ],
                         ]
                         await upgrader.set(...args)
@@ -296,11 +296,11 @@ export async function deployRocketPool() {
 
                     // All other contracts - pass storage address
                     default:
-                        instance = await contracts[contract].new(rocketStorageInstance.address);
+                        instance = await contracts[contract].new(poolseaStorageInstance.address);
                         contracts[contract].setAsDeployed(instance);
                         // Slight hack to allow gas optimisation using immutable addresses for non-upgradable contracts
-                        if (contract === 'rocketVault' || contract === 'rocketTokenRETH') {
-                            await rocketStorageInstance.setAddress(
+                        if (contract === 'poolseaVault' || contract === 'poolseaTokenRETH') {
+                            await poolseaStorageInstance.setAddress(
                                 $web3.utils.soliditySha3('contract.address', contract),
                                 (await contracts[contract].deployed()).address
                             );
@@ -316,35 +316,35 @@ export async function deployRocketPool() {
 
     // Register all other contracts with storage and store their abi
     const addContracts = async function() {
-        // Log RocketStorage
+        // Log poolseaStorage
         console.log('\x1b[31m%s\x1b[0m:', '   Set Storage Address');
-        console.log('     ' + (await rocketStorage.deployed()).address);
-        // Add Rocket Storage to deployed contracts
-        contracts.rocketStorage = artifacts.require('PoolseaStorage.sol');
+        console.log('     ' + (await poolseaStorage.deployed()).address);
+        // Add poolsea Storage to deployed contracts
+        contracts.poolseaStorage = artifacts.require('PoolseaStorage.sol');
         // Now process the rest
         for (let contract in contracts) {
             if(contracts.hasOwnProperty(contract)) {
                 switch (contract) {
                     // Ignore contracts that will be upgraded later
-                    case 'rocketNodeDepositNew':
-                    case 'rocketMinipoolDelegateNew':
-                    case 'rocketDAOProtocolSettingsMinipoolNew':
-                    case 'rocketMinipoolQueueNew':
-                    case 'rocketDepositPoolNew':
-                    case 'rocketDAOProtocolSettingsDepositNew':
-                    case 'rocketMinipoolManagerNew':
-                    case 'rocketNodeStakingNew':
-                    case 'rocketNodeDistributorDelegateNew':
-                    case 'rocketMinipoolFactoryNew':
-                    case 'rocketNetworkFeesNew':
-                    case 'rocketNetworkPricesNew':
-                    case 'rocketDAONodeTrustedSettingsMinipoolNew':
-                    case 'rocketNodeManagerNew':
-                    case 'rocketDAOProtocolSettingsNodeNew':
-                    case 'rocketNetworkBalancesNew':
-                    case 'rocketRewardsPoolNew':
-                    case 'rocketMinipoolBase':
-                    case 'rocketMinipoolBondReducer':
+                    case 'poolseaNodeDepositNew':
+                    case 'poolseaMinipoolDelegateNew':
+                    case 'poolseaDAOProtocolSettingsMinipoolNew':
+                    case 'poolseaMinipoolQueueNew':
+                    case 'poolseaDepositPoolNew':
+                    case 'poolseaDAOProtocolSettingsDepositNew':
+                    case 'poolseaMinipoolManagerNew':
+                    case 'poolseaNodeStakingNew':
+                    case 'poolseaNodeDistributorDelegateNew':
+                    case 'poolseaMinipoolFactoryNew':
+                    case 'poolseaNetworkFeesNew':
+                    case 'poolseaNetworkPricesNew':
+                    case 'poolseaDAONodeTrustedSettingsMinipoolNew':
+                    case 'poolseaNodeManagerNew':
+                    case 'poolseaDAOProtocolSettingsNodeNew':
+                    case 'poolseaNetworkBalancesNew':
+                    case 'poolseaRewardsPoolNew':
+                    case 'poolseaMinipoolBase':
+                    case 'poolseaMinipoolBondReducer':
                         break;
 
                     default:
@@ -354,24 +354,24 @@ export async function deployRocketPool() {
                         console.log('\x1b[31m%s\x1b[0m:', '   Set Storage ' + contract + ' Address');
                         console.log('     ' + address);
                         // Register the contract address as part of the network
-                        await rocketStorageInstance.setBool(
+                        await poolseaStorageInstance.setBool(
                             $web3.utils.soliditySha3('contract.exists', address),
                             true
                         );
                         // Register the contract's name by address
-                        await rocketStorageInstance.setString(
+                        await poolseaStorageInstance.setString(
                             $web3.utils.soliditySha3('contract.name', address),
                             contract
                         );
-                        // Register the contract's address by name (rocketVault and rocketTokenRETH addresses already stored)
-                        if (!(contract === 'rocketVault' || contract === 'rocketTokenRETH')) {
-                            await rocketStorageInstance.setAddress(
+                        // Register the contract's address by name (poolseaVault and poolseaTokenRETH addresses already stored)
+                        if (!(contract === 'poolseaVault' || contract === 'poolseaTokenRETH')) {
+                            await poolseaStorageInstance.setAddress(
                                 $web3.utils.soliditySha3('contract.address', contract),
                                 address
                             );
                         }
                         // Compress and store the ABI by name
-                        await rocketStorageInstance.setString(
+                        await poolseaStorageInstance.setString(
                             $web3.utils.soliditySha3('contract.abi', contract),
                             compressABI(contracts[contract].abi)
                         );
@@ -394,13 +394,13 @@ export async function deployRocketPool() {
                         combinedAbi = combinedAbi.concat(artifact.abi);
                     }
                     // Compress and store the ABI
-                    await rocketStorageInstance.setString(
+                    await poolseaStorageInstance.setString(
                         $web3.utils.soliditySha3('contract.abi', contract),
                         compressABI(combinedAbi)
                     );
                 } else {
                     // Compress and store the ABI
-                    await rocketStorageInstance.setString(
+                    await poolseaStorageInstance.setString(
                         $web3.utils.soliditySha3('contract.abi', contract),
                         compressABI(abis[contract].abi)
                     );
@@ -421,14 +421,14 @@ export async function deployRocketPool() {
     // Store deployed block
     console.log('\n');
     console.log('Setting deploy.block to ' + deployBlock);
-    await rocketStorageInstance.setUint(
+    await poolseaStorageInstance.setUint(
         $web3.utils.soliditySha3('deploy.block'),
         deployBlock
     );
 
     // Disable direct access to storage now
-    await rocketStorageInstance.setDeployedStatus();
-    if(await rocketStorageInstance.getDeployedStatus() !== true) throw 'Storage Access Not Locked Down!!';
+    await poolseaStorageInstance.setDeployedStatus();
+    if(await poolseaStorageInstance.getDeployedStatus() !== true) throw 'Storage Access Not Locked Down!!';
 
     // Log it
     console.log('\n');
@@ -440,15 +440,15 @@ export async function deployRocketPool() {
         let instance = await revertOnTransfer.new();
         revertOnTransfer.setAsDeployed(instance);
 
-        instance = await rocketNodeDepositLEB4.new(rocketStorageInstance.address);
-        rocketNodeDepositLEB4.setAsDeployed(instance);
+        instance = await poolseaNodeDepositLEB4.new(poolseaStorageInstance.address);
+        poolseaNodeDepositLEB4.setAsDeployed(instance);
     }
 
     // Perform upgrade if we are not running in test environment
     if (network.name !== 'hardhat') {
         console.log('Executing upgrade to v1.2')
-        const RocketUpgradeOneDotTwo = artifacts.require('RocketUpgradeOneDotTwo')
-        const rocketUpgradeOneDotTwo = await RocketUpgradeOneDotTwo.deployed();
-        await rocketUpgradeOneDotTwo.execute({ from: accounts[0] });
+        const PoolseaUpgradeOneDotTwo = artifacts.require('PoolseaUpgradeOneDotTwo')
+        const poolseaUpgradeOneDotTwo = await PoolseaUpgradeOneDotTwo.deployed();
+        await poolseaUpgradeOneDotTwo.execute({ from: accounts[0] });
     }
 };

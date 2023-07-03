@@ -28,22 +28,22 @@ export const minipoolStates = {
 
 // Get the number of minipools a node has
 export async function getNodeMinipoolCount(nodeAddress) {
-    const rocketMinipoolManager = await PoolseaMinipoolManager.deployed();
-    let count = await rocketMinipoolManager.getNodeMinipoolCount.call(nodeAddress);
+    const poolseaMinipoolManager = await PoolseaMinipoolManager.deployed();
+    let count = await poolseaMinipoolManager.getNodeMinipoolCount.call(nodeAddress);
     return count;
 }
 
 // Get the number of minipools a node has in Staking status
 export async function getNodeStakingMinipoolCount(nodeAddress) {
-  const rocketMinipoolManager = await PoolseaMinipoolManager.deployed();
-  let count = await rocketMinipoolManager.getNodeStakingMinipoolCount.call(nodeAddress);
+  const poolseaMinipoolManager = await PoolseaMinipoolManager.deployed();
+  let count = await poolseaMinipoolManager.getNodeStakingMinipoolCount.call(nodeAddress);
   return count;
 }
 
 // Get the number of minipools a node has in that are active
 export async function getNodeActiveMinipoolCount(nodeAddress) {
-    const rocketMinipoolManager = await PoolseaMinipoolManager.deployed();
-    let count = await rocketMinipoolManager.getNodeActiveMinipoolCount.call(nodeAddress);
+    const poolseaMinipoolManager = await PoolseaMinipoolManager.deployed();
+    let count = await poolseaMinipoolManager.getNodeActiveMinipoolCount.call(nodeAddress);
     return count;
 }
 
@@ -52,9 +52,9 @@ export async function getMinipoolMinimumRPLStake() {
 
     // Load contracts
     const [
-        rocketDAOProtocolSettingsMinipool,
-        rocketNetworkPrices,
-        rocketDAOProtocolSettingsNode,
+        poolseaDAOProtocolSettingsMinipool,
+        poolseaNetworkPrices,
+        poolseaDAOProtocolSettingsNode,
     ] = await Promise.all([
         PoolseaDAOProtocolSettingsMinipool.deployed(),
         PoolseaNetworkPrices.deployed(),
@@ -63,9 +63,9 @@ export async function getMinipoolMinimumRPLStake() {
 
     // Load data
     let [depositUserAmount, minMinipoolStake, rplPrice] = await Promise.all([
-        rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount(),
-        rocketDAOProtocolSettingsNode.getMinimumPerMinipoolStake(),
-        rocketNetworkPrices.getRPLPrice(),
+        poolseaDAOProtocolSettingsMinipool.getHalfDepositUserAmount(),
+        poolseaDAOProtocolSettingsNode.getMinimumPerMinipoolStake(),
+        poolseaNetworkPrices.getRPLPrice(),
     ]);
 
     // Calculate & return
@@ -85,10 +85,10 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
 
     // Load contracts
     const [
-        rocketMinipoolFactory,
-        rocketNodeDeposit,
-        rocketNodeStaking,
-        rocketStorage,
+        poolseaMinipoolFactory,
+        poolseaNodeDeposit,
+        poolseaNodeStaking,
+        poolseaStorage,
     ] = await Promise.all([
         preUpdate ? PoolseaMinipoolFactoryOld.deployed() : PoolseaMinipoolFactory.deployed(),
         preUpdate ? PoolseaNodeDepositOld.deployed() : PoolseaNodeDeposit.deployed(),
@@ -106,11 +106,11 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
     let minipoolAddress;
 
     if (preUpdate) {
-        const RocketMinipool = artifacts.require('RocketMinipoolOld');
-        contractBytecode = RocketMinipool.bytecode;
+        const PoolseaMinipool = artifacts.require('PoolseaMinipoolOld');
+        contractBytecode = PoolseaMinipool.bytecode;
 
-        const depositType = await rocketNodeDeposit.getDepositType(txOptions.value);
-        const constructorArgs = web3.eth.abi.encodeParameters(['address', 'address', 'uint8'], [rocketStorage.address, txOptions.from, depositType]);
+        const depositType = await poolseaNodeDeposit.getDepositType(txOptions.value);
+        const constructorArgs = web3.eth.abi.encodeParameters(['address', 'address', 'uint8'], [poolseaStorage.address, txOptions.from, depositType]);
 
         const deployCode = contractBytecode + constructorArgs.substr(2);
 
@@ -128,7 +128,7 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
         // Construct deterministic minipool address
         const raw = web3.utils.soliditySha3(
             {type: 'bytes1', value: '0xff'},
-            {type: 'address', value: rocketMinipoolFactory.address},
+            {type: 'address', value: poolseaMinipoolFactory.address},
             {type: 'bytes32', value: nodeSalt},
             {type: 'bytes32', value: bytecodeHash}
         )
@@ -136,7 +136,7 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
         minipoolAddress = raw.substr(raw.length - 40);
 
     } else {
-        minipoolAddress = (await rocketMinipoolFactory.getExpectedAddress(txOptions.from, salt)).substr(2);
+        minipoolAddress = (await poolseaMinipoolFactory.getExpectedAddress(txOptions.from, salt)).substr(2);
     }
 
     let withdrawalCredentials = '0x010000000000000000000000' + minipoolAddress;
@@ -153,9 +153,9 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
 
         let depositDataRoot = getDepositDataRoot(depositData);
 
-        await rocketNodeDeposit.deposit('0'.ether, depositData.pubkey, depositData.signature, depositDataRoot, salt, '0x' + minipoolAddress, txOptions);
+        await poolseaNodeDeposit.deposit('0'.ether, depositData.pubkey, depositData.signature, depositDataRoot, salt, '0x' + minipoolAddress, txOptions);
     } else {
-        const ethMatched1 = await rocketNodeStaking.getNodeETHMatched(txOptions.from);
+        const ethMatched1 = await poolseaNodeStaking.getNodeETHMatched(txOptions.from);
 
         // Get validator deposit data
         let depositData = {
@@ -168,12 +168,12 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
         let depositDataRoot = getDepositDataRoot(depositData);
 
         if (txOptions.value.eq(bondAmount)) {
-            await rocketNodeDeposit.deposit(bondAmount, '0'.ether, depositData.pubkey, depositData.signature, depositDataRoot, salt, '0x' + minipoolAddress, txOptions);
+            await poolseaNodeDeposit.deposit(bondAmount, '0'.ether, depositData.pubkey, depositData.signature, depositDataRoot, salt, '0x' + minipoolAddress, txOptions);
         } else {
-            await rocketNodeDeposit.depositWithCredit(bondAmount, '0'.ether, depositData.pubkey, depositData.signature, depositDataRoot, salt, '0x' + minipoolAddress, txOptions);
+            await poolseaNodeDeposit.depositWithCredit(bondAmount, '0'.ether, depositData.pubkey, depositData.signature, depositDataRoot, salt, '0x' + minipoolAddress, txOptions);
         }
 
-        const ethMatched2 = await rocketNodeStaking.getNodeETHMatched(txOptions.from);
+        const ethMatched2 = await poolseaNodeStaking.getNodeETHMatched(txOptions.from);
 
         // Expect node's ETH matched to be increased by (32 - bondAmount)
         assertBN.equal(ethMatched2.sub(ethMatched1), '32'.ether.sub(bondAmount), 'Incorrect ETH matched');
@@ -187,10 +187,10 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
 export async function createVacantMinipool(bondAmount, txOptions, salt = null, currentBalance = '32'.ether, pubkey = null) {
     // Load contracts
     const [
-        rocketMinipoolFactory,
-        rocketNodeDeposit,
-        rocketNodeStaking,
-        rocketStorage,
+        poolseaMinipoolFactory,
+        poolseaNodeDeposit,
+        poolseaNodeStaking,
+        poolseaStorage,
     ] = await Promise.all([
         PoolseaMinipoolFactory.deployed(),
         PoolseaNodeDeposit.deployed(),
@@ -206,11 +206,11 @@ export async function createVacantMinipool(bondAmount, txOptions, salt = null, c
         pubkey = getValidatorPubkey();
     }
 
-    const minipoolAddress = (await rocketMinipoolFactory.getExpectedAddress(txOptions.from, salt)).substr(2);
+    const minipoolAddress = (await poolseaMinipoolFactory.getExpectedAddress(txOptions.from, salt)).substr(2);
 
-    const ethMatched1 = await rocketNodeStaking.getNodeETHMatched(txOptions.from);
-    await rocketNodeDeposit.createVacantMinipool(bondAmount, '0'.ether, pubkey, salt, '0x' + minipoolAddress, currentBalance, txOptions);
-    const ethMatched2 = await rocketNodeStaking.getNodeETHMatched(txOptions.from);
+    const ethMatched1 = await poolseaNodeStaking.getNodeETHMatched(txOptions.from);
+    await poolseaNodeDeposit.createVacantMinipool(bondAmount, '0'.ether, pubkey, salt, '0x' + minipoolAddress, currentBalance, txOptions);
+    const ethMatched2 = await poolseaNodeStaking.getNodeETHMatched(txOptions.from);
 
     // Expect node's ETH matched to be increased by (32 - bondAmount)
     assertBN.equal(ethMatched2.sub(ethMatched1), '32'.ether.sub(bondAmount), 'Incorrect ETH matched');
@@ -231,13 +231,13 @@ export async function stakeMinipool(minipool, txOptions) {
     const preUpdate = !(await upgradeExecuted());
 
     // Get contracts
-    const rocketMinipoolManager = preUpdate ? await PoolseaMinipoolManagerOld.deployed() : await PoolseaMinipoolManager.deployed()
+    const poolseaMinipoolManager = preUpdate ? await PoolseaMinipoolManagerOld.deployed() : await PoolseaMinipoolManager.deployed()
 
     // Get minipool validator pubkey
-    const validatorPubkey = await rocketMinipoolManager.getMinipoolPubkey(minipool.address);
+    const validatorPubkey = await poolseaMinipoolManager.getMinipoolPubkey(minipool.address);
 
     // Get minipool withdrawal credentials
-    let withdrawalCredentials = await rocketMinipoolManager.getMinipoolWithdrawalCredentials.call(minipool.address);
+    let withdrawalCredentials = await poolseaMinipoolManager.getMinipoolWithdrawalCredentials.call(minipool.address);
 
     // Check if legacy or new minipool
     let legacy = !(await minipool.getDepositType()).eq('4'.BN);
