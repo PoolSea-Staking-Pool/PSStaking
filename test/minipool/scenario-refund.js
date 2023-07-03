@@ -5,11 +5,11 @@ import { assertBN } from '../_helpers/bn';
 // Refund refinanced node balance from a minipool
 export async function refund(minipool, txOptions) {
     // Load contracts
-    const rocketNodeManager = await PoolseaNodeManager.deployed();
+    const poolseaNodeManager = await PoolseaNodeManager.deployed();
 
     // Get parameters
     let nodeAddress = await minipool.getNodeAddress.call();
-    let nodeWithdrawalAddress = await rocketNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
 
     // Get balances
     function getBalances() {

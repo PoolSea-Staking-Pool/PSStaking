@@ -29,7 +29,7 @@ import { refund } from './scenario-refund';
 import { getValidatorPubkey } from '../_utils/beacon';
 
 export default function() {
-    contract('RocketMinipool', async (accounts) => {
+    contract('PoolseaMinipool', async (accounts) => {
 
 
         // Accounts
@@ -51,10 +51,10 @@ export default function() {
         let prelaunchMinipool16;
         let prelaunchMinipool8;
 
-        let rocketNodeStaking;
+        let poolseaNodeStaking;
 
         before(async () => {
-            rocketNodeStaking = await PoolseaNodeStaking.deployed();
+            poolseaNodeStaking = await PoolseaNodeStaking.deployed();
 
             await upgradeOneDotTwo(owner);
 
@@ -91,7 +91,7 @@ export default function() {
             assertBN.equal(prelaunch8Status, minipoolStates.Prelaunch, 'Incorrect prelaunch minipool status');
 
             // ETH matched for node should be 40 ETH (24 + 16)
-            assertBN.equal(await rocketNodeStaking.getNodeETHMatched(node), '40'.ether, 'Incorrect ETH matched');
+            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '40'.ether, 'Incorrect ETH matched');
         });
 
 
@@ -182,15 +182,15 @@ export default function() {
             await voteScrub(prelaunchMinipool16, {from: trustedNode1});
             await voteScrub(prelaunchMinipool16, {from: trustedNode2});
             // ETH matched should still be 40 ETH
-            assertBN.equal(await rocketNodeStaking.getNodeETHMatched(node), '40'.ether, 'Incorrect ETH matched');
+            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '40'.ether, 'Incorrect ETH matched');
             // After closing ETH matched should drop by 16
             await closeMinipool(prelaunchMinipool16, {from: node});
-            assertBN.equal(await rocketNodeStaking.getNodeETHMatched(node), '24'.ether, 'Incorrect ETH matched');
+            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '24'.ether, 'Incorrect ETH matched');
             // 2 out of 3 should dissolve the minipool
             await voteScrub(prelaunchMinipool8, {from: trustedNode1});
             await voteScrub(prelaunchMinipool8, {from: trustedNode2});
             await closeMinipool(prelaunchMinipool8, {from: node});
-            assertBN.equal(await rocketNodeStaking.getNodeETHMatched(node), '0'.ether, 'Incorrect ETH matched');
+            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '0'.ether, 'Incorrect ETH matched');
         });
 
 

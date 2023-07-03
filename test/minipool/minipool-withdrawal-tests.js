@@ -24,7 +24,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketMinipool', async (accounts) => {
+    contract('PoolseaMinipool', async (accounts) => {
 
         // Accounts
         const [
@@ -72,15 +72,15 @@ export default function() {
             await submitPrices(block, '1'.ether, {from: trustedNode});
 
             // Add penalty helper contract
-            const rocketStorage = await PoolseaStorage.deployed();
-            penaltyTestContract = await PenaltyTest.new(rocketStorage.address, {from: owner});
-            await setDaoNodeTrustedBootstrapUpgrade('addContract', 'rocketPenaltyTest', penaltyTestContract.abi, penaltyTestContract.address, {
+            const poolseaStorage = await PoolseaStorage.deployed();
+            penaltyTestContract = await PenaltyTest.new(poolseaStorage.address, {from: owner});
+            await setDaoNodeTrustedBootstrapUpgrade('addContract', 'poolseaPenaltyTest', penaltyTestContract.abi, penaltyTestContract.address, {
                 from: owner,
             });
 
             // Enable penalties
-            const rocketMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
-            await rocketMinipoolPenalty.setMaxPenaltyRate(maxPenaltyRate, {from: owner})
+            const poolseaMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
+            await poolseaMinipoolPenalty.setMaxPenaltyRate(maxPenaltyRate, {from: owner})
 
             // Hard code fee to 50%
             const fee = '0.5'.ether;
@@ -144,10 +144,10 @@ export default function() {
 
         async function slashAndCheck(from, expectedSlash) {
             // Get contracts
-            const rocketNodeStaking = await PoolseaNodeStaking.deployed()
-            const rplStake1 = await rocketNodeStaking.getNodeRPLStake(node)
+            const poolseaNodeStaking = await PoolseaNodeStaking.deployed()
+            const rplStake1 = await poolseaNodeStaking.getNodeRPLStake(node)
             await minipool.slash({from: from})
-            const rplStake2 = await rocketNodeStaking.getNodeRPLStake(node)
+            const rplStake2 = await poolseaNodeStaking.getNodeRPLStake(node)
             const slashedAmount = rplStake1.sub(rplStake2)
             assertBN.equal(expectedSlash, slashedAmount, 'Slashed amount was incorrect')
         }
@@ -275,8 +275,8 @@ export default function() {
 
         it(printTitle('guardian', 'can disable penalising all together'), async () => {
             // Disable penalising by setting rate to 0
-            const rocketMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
-            await rocketMinipoolPenalty.setMaxPenaltyRate('0', {from: owner})
+            const poolseaMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
+            await poolseaMinipoolPenalty.setMaxPenaltyRate('0', {from: owner})
             // Try to penalise the minipool 50%
             await penaltyTestContract.setPenaltyRate(minipool.address, web3.utils.toWei('0.5'));
             // Process withdraw

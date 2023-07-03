@@ -15,12 +15,12 @@ export async function voteScrub(minipool, txOptions) {
     const nodeAddress = await minipool.getNodeAddress.call();
 
     // Get contracts
-    const rocketNodeStaking = await PoolseaNodeStaking.deployed();
-    const rocketVault = await PoolseaVault.deployed();
-    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
-    const rocketDAONodeTrustedSettingsMinipool = await PoolseaDAONodeTrustedSettingsMinipool.deployed();
-    const rocketNetworkPrices = await PoolseaNetworkPrices.deployed();
-    const rocketDAOProtocolSettingsNode = await PoolseaDAOProtocolSettingsNode.deployed();
+    const poolseaNodeStaking = await PoolseaNodeStaking.deployed();
+    const poolseaVault = await PoolseaVault.deployed();
+    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaDAONodeTrustedSettingsMinipool = await PoolseaDAONodeTrustedSettingsMinipool.deployed();
+    const poolseaNetworkPrices = await PoolseaNetworkPrices.deployed();
+    const poolseaDAOProtocolSettingsNode = await PoolseaDAOProtocolSettingsNode.deployed();
 
     // Get minipool details
     function getMinipoolDetails() {
@@ -28,9 +28,9 @@ export async function voteScrub(minipool, txOptions) {
             minipool.getStatus.call(),
             minipool.getUserDepositBalance.call(),
             minipool.getTotalScrubVotes.call(),
-            rocketNodeStaking.getNodeRPLStake.call(nodeAddress),
-            rocketVault.balanceOfToken('rocketAuctionManager', rocketTokenRPL.address),
-            rocketDAONodeTrustedSettingsMinipool.getScrubPenaltyEnabled(),
+            poolseaNodeStaking.getNodeRPLStake.call(nodeAddress),
+            poolseaVault.balanceOfToken('poolseaAuctionManager', poolseaTokenRPL.address),
+            poolseaDAONodeTrustedSettingsMinipool.getScrubPenaltyEnabled(),
             minipool.getVacant.call()
         ]).then(
             ([status, userDepositBalance, votes, nodeRPLStake, auctionBalance, penaltyEnabled, vacant]) =>
@@ -48,8 +48,8 @@ export async function voteScrub(minipool, txOptions) {
     let details2 = await getMinipoolDetails();
 
     // Get member count
-    const rocketDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
-    const memberCount = await rocketDAONodeTrusted.getMemberCount();
+    const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
+    const memberCount = await poolseaDAONodeTrusted.getMemberCount();
     const quorum = memberCount.div('2'.BN);
 
     // Check state
@@ -60,11 +60,11 @@ export async function voteScrub(minipool, txOptions) {
             // Calculate amount slashed
             const slashAmount = details1.nodeRPLStake.sub(details2.nodeRPLStake);
             // Get current RPL price
-            const rplPrice = await rocketNetworkPrices.getRPLPrice.call();
+            const rplPrice = await poolseaNetworkPrices.getRPLPrice.call();
             // Calculate amount slashed in ETH
             const slashAmountEth = slashAmount.mul(rplPrice).div('1'.ether);
             // Calculate expected slash amount
-            const minimumStake = await rocketDAOProtocolSettingsNode.getMinimumPerMinipoolStake();
+            const minimumStake = await poolseaDAOProtocolSettingsNode.getMinimumPerMinipoolStake();
             const expectedSlash = details1.userDepositBalance.mul(minimumStake).div('1'.ether);
             // Perform checks
             assertBN.equal(slashAmountEth, expectedSlash, 'Amount of RPL slashed is incorrect');

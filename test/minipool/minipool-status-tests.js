@@ -14,7 +14,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketMinipoolStatus', async (accounts) => {
+    contract('PoolseaMinipoolStatus', async (accounts) => {
 
         // Accounts
         const [

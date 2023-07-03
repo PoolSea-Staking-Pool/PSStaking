@@ -8,16 +8,16 @@ import { minipoolStates } from '../_helpers/minipool';
 export async function stake(minipool, withdrawalCredentials, txOptions, validatorPubkey = null) {
     // Load contracts
     const [
-        rocketMinipoolManager,
+        poolseaMinipoolManager,
     ] = await Promise.all([
         PoolseaMinipoolManager.deployed(),
     ]);
 
     // Get minipool validator pubkey
-    if (!validatorPubkey) validatorPubkey = await rocketMinipoolManager.getMinipoolPubkey(minipool.address);
+    if (!validatorPubkey) validatorPubkey = await poolseaMinipoolManager.getMinipoolPubkey(minipool.address);
 
     // Get minipool withdrawal credentials
-    if (!withdrawalCredentials) withdrawalCredentials = await rocketMinipoolManager.getMinipoolWithdrawalCredentials.call(minipool.address);
+    if (!withdrawalCredentials) withdrawalCredentials = await poolseaMinipoolManager.getMinipoolWithdrawalCredentials.call(minipool.address);
 
     // Get validator deposit data
     let depositData = {
@@ -42,7 +42,7 @@ export async function stake(minipool, withdrawalCredentials, txOptions, validato
     // Get initial minipool details & minipool by validator pubkey
     let [details1, validatorMinipool1] = await Promise.all([
         getMinipoolDetails(),
-        rocketMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
+        poolseaMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
     ]);
 
     // Stake
@@ -51,7 +51,7 @@ export async function stake(minipool, withdrawalCredentials, txOptions, validato
     // Get updated minipool details & minipool by validator pubkey
     let [details2, validatorMinipool2] = await Promise.all([
         getMinipoolDetails(),
-        rocketMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
+        poolseaMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
     ]);
 
     // Check minpool details

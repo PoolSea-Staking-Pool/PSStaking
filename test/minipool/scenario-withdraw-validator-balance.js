@@ -9,9 +9,9 @@ import { assertBN } from '../_helpers/bn';
 export async function withdrawValidatorBalance(minipool, withdrawalBalance, from) {
     // Load contracts
     const [
-        rocketDepositPool,
-        rocketTokenRETH,
-        rocketNodeManager
+        poolseaDepositPool,
+        poolseaTokenRETH,
+        poolseaNodeManager
     ] = await Promise.all([
         PoolseaDepositPool.deployed(),
         PoolseaTokenRETH.deployed(),
@@ -20,7 +20,7 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
 
     // Get node parameters
     let nodeAddress = await minipool.getNodeAddress.call();
-    let nodeWithdrawalAddress = await rocketNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
 
     // Get parameters
     let [
@@ -32,8 +32,8 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
     // Get balances
     function getBalances() {
         return Promise.all([
-            web3.eth.getBalance(rocketTokenRETH.address).then(value => value.BN),
-            rocketDepositPool.getBalance.call(),
+            web3.eth.getBalance(poolseaTokenRETH.address).then(value => value.BN),
+            poolseaDepositPool.getBalance.call(),
             web3.eth.getBalance(nodeWithdrawalAddress).then(value => value.BN),
             web3.eth.getBalance(minipool.address).then(value => value.BN),
         ]).then(
@@ -115,8 +115,8 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
     // console.log('Calculated node share: ' + web3.utils.fromWei(calculatedNodeShare));
 
     // Get penalty rate for this minipool
-    const rocketMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
-    const penaltyRate = await rocketMinipoolPenalty.getPenaltyRate(minipool.address);
+    const poolseaMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
+    const penaltyRate = await poolseaMinipoolPenalty.getPenaltyRate(minipool.address);
 
     // Calculate rewards
     let depositBalance = '32'.ether;
