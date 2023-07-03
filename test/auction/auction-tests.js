@@ -23,7 +23,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketAuctionManager', async (accounts) => {
+    contract('PoolseaAuctionManager', async (accounts) => {
 
 
         // Accounts
