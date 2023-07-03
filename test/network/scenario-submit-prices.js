@@ -6,9 +6,9 @@ import { assertBN } from '../_helpers/bn';
 export async function submitPrices(block, rplPrice, txOptions) {
     // Load contracts
     const [
-        rocketDAONodeTrusted,
-        rocketNetworkPrices,
-        rocketStorage,
+        poolseaDAONodeTrusted,
+        poolseaNetworkPrices,
+        poolseaStorage,
     ] = await Promise.all([
         PoolseaDAONodeTrusted.deployed(),
         PoolseaNetworkPrices.deployed(),
@@ -16,7 +16,7 @@ export async function submitPrices(block, rplPrice, txOptions) {
     ]);
 
     // Get parameters
-    let trustedNodeCount = await rocketDAONodeTrusted.getMemberCount.call();
+    let trustedNodeCount = await poolseaDAONodeTrusted.getMemberCount.call();
 
     // Get submission keys
     let nodeSubmissionKey = web3.utils.soliditySha3('network.prices.submitted.node.key', txOptions.from, block, rplPrice);
@@ -25,8 +25,8 @@ export async function submitPrices(block, rplPrice, txOptions) {
     // Get submission details
     function getSubmissionDetails() {
         return Promise.all([
-            rocketStorage.getBool.call(nodeSubmissionKey),
-            rocketStorage.getUint.call(submissionCountKey),
+            poolseaStorage.getBool.call(nodeSubmissionKey),
+            poolseaStorage.getUint.call(submissionCountKey),
         ]).then(
             ([nodeSubmitted, count]) =>
             ({nodeSubmitted, count})
@@ -36,8 +36,8 @@ export async function submitPrices(block, rplPrice, txOptions) {
     // Get prices
     function getPrices() {
         return Promise.all([
-            rocketNetworkPrices.getPricesBlock.call(),
-            rocketNetworkPrices.getRPLPrice.call(),
+            poolseaNetworkPrices.getPricesBlock.call(),
+            poolseaNetworkPrices.getRPLPrice.call(),
         ]).then(
             ([block, rplPrice]) =>
             ({block, rplPrice})
@@ -48,7 +48,7 @@ export async function submitPrices(block, rplPrice, txOptions) {
     let submission1 = await getSubmissionDetails();
 
     // Submit prices
-    await rocketNetworkPrices.submitPrices(block, rplPrice, txOptions);
+    await poolseaNetworkPrices.submitPrices(block, rplPrice, txOptions);
 
     // Get updated submission details & prices
     let [submission2, prices] = await Promise.all([
@@ -78,13 +78,13 @@ export async function submitPrices(block, rplPrice, txOptions) {
 // Execute price update
 export async function executeUpdatePrices(block, rplPrice, txOptions) {
     // Load contracts
-    const rocketNetworkPrices = await PoolseaNetworkPrices.deployed();
+    const poolseaNetworkPrices = await PoolseaNetworkPrices.deployed();
 
     // Get prices
     function getPrices() {
         return Promise.all([
-            rocketNetworkPrices.getPricesBlock.call(),
-            rocketNetworkPrices.getRPLPrice.call(),
+            poolseaNetworkPrices.getPricesBlock.call(),
+            poolseaNetworkPrices.getRPLPrice.call(),
         ]).then(
           ([block, rplPrice]) =>
             ({block, rplPrice})
@@ -92,7 +92,7 @@ export async function executeUpdatePrices(block, rplPrice, txOptions) {
     }
 
     // Submit prices
-    await rocketNetworkPrices.executeUpdatePrices(block, rplPrice, txOptions);
+    await poolseaNetworkPrices.executeUpdatePrices(block, rplPrice, txOptions);
 
     // Get updated submission details & prices
     let prices = await getPrices();

@@ -15,7 +15,7 @@ import { getDAOProposalEndTime, getDAOProposalStartTime } from '../dao/scenario-
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 
 export default function() {
-    contract('RocketNetworkPrices', async (accounts) => {
+    contract('PoolseaNetworkPrices', async (accounts) => {
 
 
         // Accounts

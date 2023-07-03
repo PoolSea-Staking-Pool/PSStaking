@@ -7,9 +7,9 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
 
     // Load contracts
     const [
-        rocketDAONodeTrusted,
-        rocketNetworkBalances,
-        rocketStorage,
+        poolseaDAONodeTrusted,
+        poolseaNetworkBalances,
+        poolseaStorage,
     ] = await Promise.all([
         PoolseaDAONodeTrusted.deployed(),
         PoolseaNetworkBalances.deployed(),
@@ -17,7 +17,7 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
     ]);
 
     // Get parameters
-    let trustedNodeCount = await rocketDAONodeTrusted.getMemberCount.call();
+    let trustedNodeCount = await poolseaDAONodeTrusted.getMemberCount.call();
 
     // Get submission keys
     let nodeSubmissionKey = web3.utils.soliditySha3('network.balances.submitted.node', txOptions.from, block, totalEth, stakingEth, rethSupply);
@@ -26,8 +26,8 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
     // Get submission details
     function getSubmissionDetails() {
         return Promise.all([
-            rocketStorage.getBool.call(nodeSubmissionKey),
-            rocketStorage.getUint.call(submissionCountKey),
+            poolseaStorage.getBool.call(nodeSubmissionKey),
+            poolseaStorage.getUint.call(submissionCountKey),
         ]).then(
             ([nodeSubmitted, count]) =>
             ({nodeSubmitted, count})
@@ -37,10 +37,10 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketNetworkBalances.getBalancesBlock.call(),
-            rocketNetworkBalances.getTotalETHBalance.call(),
-            rocketNetworkBalances.getStakingETHBalance.call(),
-            rocketNetworkBalances.getTotalRETHSupply.call(),
+            poolseaNetworkBalances.getBalancesBlock.call(),
+            poolseaNetworkBalances.getTotalETHBalance.call(),
+            poolseaNetworkBalances.getStakingETHBalance.call(),
+            poolseaNetworkBalances.getTotalRETHSupply.call(),
         ]).then(
             ([block, totalEth, stakingEth, rethSupply]) =>
             ({block, totalEth, stakingEth, rethSupply})
@@ -51,7 +51,7 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
     let submission1 = await getSubmissionDetails();
 
     // Submit balances
-    await rocketNetworkBalances.submitBalances(block, totalEth, stakingEth, rethSupply, txOptions);
+    await poolseaNetworkBalances.submitBalances(block, totalEth, stakingEth, rethSupply, txOptions);
 
     // Get updated submission details & balances
     let [submission2, balances] = await Promise.all([
@@ -84,15 +84,15 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
 // Execute update network balances
 export async function executeUpdateBalances(block, totalEth, stakingEth, rethSupply, txOptions) {
     // Load contracts
-    const rocketNetworkBalances = await PoolseaNetworkBalances.deployed()
+    const poolseaNetworkBalances = await PoolseaNetworkBalances.deployed()
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketNetworkBalances.getBalancesBlock.call(),
-            rocketNetworkBalances.getTotalETHBalance.call(),
-            rocketNetworkBalances.getStakingETHBalance.call(),
-            rocketNetworkBalances.getTotalRETHSupply.call(),
+            poolseaNetworkBalances.getBalancesBlock.call(),
+            poolseaNetworkBalances.getTotalETHBalance.call(),
+            poolseaNetworkBalances.getStakingETHBalance.call(),
+            poolseaNetworkBalances.getTotalRETHSupply.call(),
         ]).then(
           ([block, totalEth, stakingEth, rethSupply]) =>
             ({block, totalEth, stakingEth, rethSupply})
@@ -100,7 +100,7 @@ export async function executeUpdateBalances(block, totalEth, stakingEth, rethSup
     }
 
     // Submit balances
-    await rocketNetworkBalances.executeUpdateBalances(block, totalEth, stakingEth, rethSupply, txOptions);
+    await poolseaNetworkBalances.executeUpdateBalances(block, totalEth, stakingEth, rethSupply, txOptions);
 
     // Get updated balances
     let balances = await getBalances()

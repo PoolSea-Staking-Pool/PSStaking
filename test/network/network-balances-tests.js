@@ -11,7 +11,7 @@ import { setDAONodeTrustedBootstrapSetting } from '../dao/scenario-dao-node-trus
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 
 export default function() {
-    contract('RocketNetworkBalances', async (accounts) => {
+    contract('PoolseaNetworkBalances', async (accounts) => {
 
 
         // Accounts
