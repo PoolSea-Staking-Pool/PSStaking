@@ -35,7 +35,7 @@ import { skimRewards } from '../minipool/scenario-skim-rewards';
 
 
 export default function() {
-    contract('RocketUpgradeOneDotTwo', async (accounts) => {
+    contract('PoolseaUpgradeOneDotTwo', async (accounts) => {
 
 
         // Accounts
@@ -61,23 +61,23 @@ export default function() {
 
         describe('Upgrade Checklist', async () => {
             // Contracts
-            let rocketDepositPool;
-            let rocketTokenRETH;
-            let rocketMinipoolQueue;
-            let rocketNetworkFees;
-            let rocketNodeStaking;
-            let rocketNodeDeposit;
-            let rocketMinipoolBondReducer;
+            let poolseaDepositPool;
+            let poolseaTokenRETH;
+            let poolseaMinipoolQueue;
+            let poolseaNetworkFees;
+            let poolseaNodeStaking;
+            let poolseaNodeDeposit;
+            let poolseaMinipoolBondReducer;
 
             // Setup
             before(async () => {
-                rocketDepositPool = await PoolseaDepositPool.deployed();
-                rocketTokenRETH = await PoolseaTokenRETH.deployed();
-                rocketMinipoolQueue = await PoolseaMinipoolQueue.deployed();
-                rocketNetworkFees = await PoolseaNetworkFees.deployed();
-                rocketNodeStaking = await PoolseaNodeStaking.deployed();
-                rocketNodeDeposit = await PoolseaNodeDeposit.deployed();
-                rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+                poolseaDepositPool = await PoolseaDepositPool.deployed();
+                poolseaTokenRETH = await PoolseaTokenRETH.deployed();
+                poolseaMinipoolQueue = await PoolseaMinipoolQueue.deployed();
+                poolseaNetworkFees = await PoolseaNetworkFees.deployed();
+                poolseaNodeStaking = await PoolseaNodeStaking.deployed();
+                poolseaNodeDeposit = await PoolseaNodeDeposit.deployed();
+                poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // Register node
                 await registerNode({from: node});
@@ -125,8 +125,8 @@ export default function() {
                 assertBN.equal(initialisedStatus, minipoolStates.Initialised, 'Incorrect staking minipool status');
 
                 // Check deposit pool balances
-                const depositPoolBalance = await rocketDepositPool.getBalance();
-                const depositPoolNodeBalance = await rocketDepositPool.getNodeBalance();
+                const depositPoolBalance = await poolseaDepositPool.getBalance();
+                const depositPoolNodeBalance = await poolseaDepositPool.getNodeBalance();
                 assertBN.isZero(depositPoolBalance, 'Incorrect deposit pool balance');
                 assertBN.isZero(depositPoolNodeBalance, 'Incorrect deposit pool node balance');
 
@@ -156,15 +156,15 @@ export default function() {
                         // Expected: 1 ETH is deposited on beacon chain, minipool is in queue (initialised), 7 ETH is added to the deposit pool
                         let status = await variableMinipool1.getStatus.call();
                         assertBN.equal(status, minipoolStates.Initialised, 'Incorrect minipool status');
-                        const depositPoolBalance = await rocketDepositPool.getBalance();
+                        const depositPoolBalance = await poolseaDepositPool.getBalance();
                         assertBN.equal(depositPoolBalance, '7'.ether, 'Incorrect deposit pool balance');
                     }
 
                     {
                         // Test: Deposit 16 ETH minipool
-                        const depositPoolBalanceBefore = await rocketDepositPool.getBalance();
+                        const depositPoolBalanceBefore = await poolseaDepositPool.getBalance();
                         variableMinipool2 = await createMinipool({ from: node, value: '16'.ether });
-                        const depositPoolBalanceAfter = await rocketDepositPool.getBalance();
+                        const depositPoolBalanceAfter = await poolseaDepositPool.getBalance();
                         // Expected: 1 ETH is deposited on beacon chain, minipool is in queue (initialised), 15 ETH is added to deposit pool, a half legacy minipool should be assigned 16 ETH and moves to prelaunch
                         let status = await variableMinipool2.getStatus.call();
                         assertBN.equal(status, minipoolStates.Initialised, 'Incorrect minipool status');
@@ -196,7 +196,7 @@ export default function() {
                         // Expected: 20 ETH in deposit pool, no assignments
                         let status = await variableMinipool2.getStatus.call();
                         assertBN.equal(status, minipoolStates.Initialised, 'Incorrect minipool status');
-                        const depositPoolBalance = await rocketDepositPool.getBalance();
+                        const depositPoolBalance = await poolseaDepositPool.getBalance();
                         assertBN.equal(depositPoolBalance, '20'.ether, 'Incorrect deposit pool balance');
                     }
 
@@ -212,7 +212,7 @@ export default function() {
                         // Test: Deposit 2 ETH into deposit pool
                         await userDeposit({ from: random, value: '2'.ether });
                         // Expected: 2 ETH is in the deposit pool
-                        const depositPoolBalance = await rocketDepositPool.getBalance();
+                        const depositPoolBalance = await poolseaDepositPool.getBalance();
                         assertBN.equal(depositPoolBalance, '2'.ether, 'Incorrect deposit pool balance');
                     }
 
@@ -241,10 +241,10 @@ export default function() {
                         // Test: Deposit 8 ETH minipool, wait beyond timeout period, node calls close on dissolved pool
                         await userDeposit({ from: random, value: '29'.ether });
                         variableMinipool4 = await createMinipool({ from: node, value: '8'.ether });
-                        const rethBalance1 = await rocketDepositPool.getBalance();
+                        const rethBalance1 = await poolseaDepositPool.getBalance();
                         await voteScrub(variableMinipool4, {from: trustedNode1});
                         await voteScrub(variableMinipool4, {from: trustedNode2});
-                        const depositBalance2 = await rocketDepositPool.getBalance();
+                        const depositBalance2 = await poolseaDepositPool.getBalance();
                         await close(variableMinipool4, {from: node});
                         // Expect: 24 ETH transferred to deposit pool
                         assertBN.equal(depositBalance2.sub(rethBalance1), '24'.ether, 'Invalid deposit balance');
@@ -253,10 +253,10 @@ export default function() {
                     {
                         // Test: Deposit 8 ETH minipool, wait beyond timeout period, node calls close on dissolved pool
                         variableMinipool5 = await createMinipool({ from: node, value: '16'.ether });
-                        const rethBalance1 = await rocketDepositPool.getBalance();
+                        const rethBalance1 = await poolseaDepositPool.getBalance();
                         await voteScrub(variableMinipool5, {from: trustedNode1});
                         await voteScrub(variableMinipool5, {from: trustedNode2});
-                        const depositBalance2 = await rocketDepositPool.getBalance();
+                        const depositBalance2 = await poolseaDepositPool.getBalance();
                         await close(variableMinipool5, {from: node});
                         // Expect: 16 ETH transferred to deposit pool
                         assertBN.equal(depositBalance2.sub(rethBalance1), '16'.ether, 'Invalid deposit balance');
@@ -271,15 +271,15 @@ export default function() {
                         variableMinipool4 = await createMinipool({ from: node, value: '8'.ether });
                         variableMinipool5 = await createMinipool({ from: node, value: '8'.ether });
                         // Expected: 2x 8 ETH minipools are in the queue and unassigned, deposit pool contains 14 ETH from node deposits
-                        assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '2', 'Invalid queue length')
-                        assertBN.equal(await rocketDepositPool.getBalance(), '14'.ether, 'Invalid deposit balance');
+                        assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '2', 'Invalid queue length')
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '14'.ether, 'Invalid deposit balance');
                     }
 
                     {
                         // Test: Set deposit limit to 1 ETH
                         await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '1'.ether, {from: owner});
                         // Expected: Deposit limit set to 1 ETH, dynamic limit should be 49 ETH (1+24*2)
-                        assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), '49'.ether, 'Invalid maximum deposit amount')
+                        assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), '49'.ether, 'Invalid maximum deposit amount')
                     }
 
                     {
@@ -292,8 +292,8 @@ export default function() {
                         // Test: Deposit 49 ETH into deposit pool
                         // Expected: Deposit should succeed, 2x 8 ETH minipools should be assigned, deposit pool should have 1 ETH remaining
                         await userDeposit({ from: random, value: '49'.ether });
-                        assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '0', 'Invalid queue length')
-                        assertBN.equal(await rocketDepositPool.getBalance(), '1'.ether, 'Invalid deposit balance');
+                        assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '0', 'Invalid queue length')
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '1'.ether, 'Invalid deposit balance');
                         // Reset deposit limit
                         await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '360'.ether, {from: owner});
                     }
@@ -314,7 +314,7 @@ export default function() {
                         // Expected: 8 ETH minipool should be in the queue as initialised, deposit pool should contain 8 ETH
                         let status = await variableMinipool3.getStatus.call();
                         assertBN.equal(status, minipoolStates.Initialised, 'Incorrect minipool status');
-                        assertBN.equal(await rocketDepositPool.getBalance(), '8'.ether, 'Incorrect deposit pool balance');
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '8'.ether, 'Incorrect deposit pool balance');
                     }
 
                     {
@@ -329,7 +329,7 @@ export default function() {
                         // Expected: 8 ETH minipool assigned 31 ETH, 1 ETH remaining in the deposit pool
                         let status = await variableMinipool3.getStatus.call();
                         assertBN.equal(status, minipoolStates.Prelaunch, 'Incorrect minipool status');
-                        assertBN.equal(await rocketDepositPool.getBalance(), '1'.ether, 'Incorrect deposit pool balance');
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '1'.ether, 'Incorrect deposit pool balance');
                     }
 
                     {
@@ -352,42 +352,42 @@ export default function() {
                         // Test: Set deposit limit to 5 ETH
                         await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '5'.ether, {from: owner});
                         // Expected: Deposit limit should be 5 ETH
-                        assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), '5'.ether, 'Invalid maximum deposit amount')
+                        assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), '5'.ether, 'Invalid maximum deposit amount')
                     }
 
                     {
                         // Test: Deposit 5 ETH into deposit pool
                         await userDeposit({ from: random, value: '5'.ether });
-                        // Expected: Deposit pool should contain 5 ETH and commission rate (RocketNetworkFees.getNodeFee()) should be at max (20%)
-                        assertBN.equal(await rocketDepositPool.getBalance(), '5'.ether, 'Incorrect deposit pool balance');
-                        assertBN.equal(await rocketNetworkFees.getNodeFee(), '0.20'.ether, 'Incorrect network node fee');
+                        // Expected: Deposit pool should contain 5 ETH and commission rate (poolseaNetworkFees.getNodeFee()) should be at max (20%)
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '5'.ether, 'Incorrect deposit pool balance');
+                        assertBN.equal(await poolseaNetworkFees.getNodeFee(), '0.20'.ether, 'Incorrect network node fee');
                     }
 
                     {
                         // Test: Deposit 8 ETH minipool
                         variableMinipool3 = await createMinipool({ from: node, value: '8'.ether });
                         // Expected: 8 ETH minipool should be in the queue, deposit pool balance should be 12 ETH, commission rate should be min (5%)
-                        assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '1', 'Invalid queue length')
-                        assertBN.equal(await rocketDepositPool.getBalance(), '12'.ether, 'Incorrect deposit pool balance');
-                        assertBN.equal(await rocketNetworkFees.getNodeFee(), '0.05'.ether, 'Incorrect network node fee');
+                        assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '1', 'Invalid queue length')
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '12'.ether, 'Incorrect deposit pool balance');
+                        assertBN.equal(await poolseaNetworkFees.getNodeFee(), '0.05'.ether, 'Incorrect network node fee');
                     }
 
                     {
                         // Test: Deposit 16 ETH into deposit pool
                         await userDeposit({ from: random, value: '16'.ether });
                         // Expected: Deposit pool should contain 28 ETH, commission rate should be 9%
-                        assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '1', 'Invalid queue length')
-                        assertBN.equal(await rocketDepositPool.getBalance(), '28'.ether, 'Incorrect deposit pool balance');
-                        assertBN.equal(await rocketNetworkFees.getNodeFee(), '0.0892'.ether, 'Incorrect network node fee');
+                        assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '1', 'Invalid queue length')
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '28'.ether, 'Incorrect deposit pool balance');
+                        assertBN.equal(await poolseaNetworkFees.getNodeFee(), '0.0892'.ether, 'Incorrect network node fee');
                     }
 
                     {
                         // Test: Deposit 6 ETH into deposit pool
                         await userDeposit({ from: random, value: '6'.ether });
                         // Expected: 8 ETH minipool should be in prelaunch, deposit pool contains 3 ETH, commission rate should be 12%
-                        assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '0', 'Invalid queue length')
-                        assertBN.equal(await rocketDepositPool.getBalance(), '3'.ether, 'Incorrect deposit pool balance');
-                        assertBN.equal(await rocketNetworkFees.getNodeFee(), '0.1216'.ether, 'Incorrect network node fee');
+                        assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '0', 'Invalid queue length')
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '3'.ether, 'Incorrect deposit pool balance');
+                        assertBN.equal(await poolseaNetworkFees.getNodeFee(), '0.1216'.ether, 'Incorrect network node fee');
                     }
 
                     {
@@ -406,7 +406,7 @@ export default function() {
                         // Expected: Should fail with not enough RPL stake
                         const minipool = await PoolseaMinipoolBase.at(queuedHalfMinipool1.address);
                         await minipool.delegateUpgrade({from: node});
-                        await rocketMinipoolBondReducer.beginReduceBondAmount(queuedHalfMinipool1.address, '8'.ether, {from: node});
+                        await poolseaMinipoolBondReducer.beginReduceBondAmount(queuedHalfMinipool1.address, '8'.ether, {from: node});
                         await increaseTime(web3, bondReductionWindowStart + 1);
                         await shouldRevert(queuedHalfMinipool1.reduceBondAmount({from: node}), 'Was able to reduce bond', 'ETH matched after deposit exceeds limit based on node RPL stake');
                     }
@@ -420,7 +420,7 @@ export default function() {
                         // Expected: Node fee should be new fee, deposit type should be variable, node should have a credit for 8 ETH
                         assertBN.equal(await queuedHalfMinipool1.getNodeFee(), '0.14'.ether, 'Incorrect node fee');
                         assertBN.equal(await queuedHalfMinipool1.getDepositType(), '4'.BN, 'Incorrect deposit type');
-                        assertBN.equal(await rocketNodeDeposit.getNodeDepositCredit(node), '8'.ether, 'Incorrect deposit credit balance');
+                        assertBN.equal(await poolseaNodeDeposit.getNodeDepositCredit(node), '8'.ether, 'Incorrect deposit credit balance');
                     }
 
                     {
@@ -447,9 +447,9 @@ export default function() {
                         await userDeposit({ from: random, value: '1'.ether });
                         await createMinipoolWithBondAmount('8'.ether, { from: node, value: '0'.ether });
                         // Expected: Minipool deposit succeeded, credit should be 0, predeposit 1 ETH taken from deposit pool
-                        assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '1', 'Invalid queue length')
-                        assertBN.equal(await rocketNodeDeposit.getNodeDepositCredit(node), '0'.ether, 'Incorrect deposit credit balance');
-                        assertBN.equal(await rocketDepositPool.getBalance(), '0'.ether, 'Incorrect deposit pool balance');
+                        assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '1', 'Invalid queue length')
+                        assertBN.equal(await poolseaNodeDeposit.getNodeDepositCredit(node), '0'.ether, 'Incorrect deposit credit balance');
+                        assertBN.equal(await poolseaDepositPool.getBalance(), '0'.ether, 'Incorrect deposit pool balance');
                     }
 
                     {
@@ -506,8 +506,8 @@ export default function() {
 
             it('Can create a minipool from deposit credit with zero node balance in deposit pool', async () => {
                 // Get contracts
-                const rocketTokenReth = await PoolseaTokenRETH.deployed();
-                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+                const poolseaTokenReth = await PoolseaTokenRETH.deployed();
+                const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Upgrade
                 await upgradeOneDotTwo(owner);
@@ -524,7 +524,7 @@ export default function() {
                 await stakeMinipool(minipool, {from: node});
 
                 // 4. Reduce bond
-                await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+                await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
                 await increaseTime(web3, bondReductionWindowStart + 1);
                 await reduceBond(minipool, {from: node});
 
@@ -539,8 +539,8 @@ export default function() {
 
             it('Stops node operator from withdrawing after rolling back an LEB8', async () => {
                 // Get contracts
-                const rocketTokenReth = await PoolseaTokenRETH.deployed();
-                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+                const poolseaTokenReth = await PoolseaTokenRETH.deployed();
+                const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking
                 let rplStake = '1600'.ether;
@@ -561,7 +561,7 @@ export default function() {
                 await minipoolBase.delegateUpgrade({from: node});
 
                 // 4. Reduce bond
-                await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+                await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
                 await increaseTime(web3, bondReductionWindowStart + 1);
                 await reduceBond(minipool, {from: node});
 
@@ -576,11 +576,11 @@ export default function() {
                     value: '32'.ether
                 });
                 const nodeBalance1 = await web3.eth.getBalance(node);
-                const rethBalance1 = await web3.eth.getBalance(rocketTokenReth.address);
+                const rethBalance1 = await web3.eth.getBalance(poolseaTokenReth.address);
                 const oldMinipool = await PoolseaMinipoolDelegateOld.at(minipool.address)
                 await oldMinipool.distributeBalance({ from: node });
                 const nodeBalance2 = await web3.eth.getBalance(node);
-                const rethBalance2 = await web3.eth.getBalance(rocketTokenReth.address);
+                const rethBalance2 = await web3.eth.getBalance(poolseaTokenReth.address);
 
                 // Check balance changes
                 assertBN.isAtMost(nodeBalance2, nodeBalance1, 'Node balance incorrect');
@@ -590,8 +590,8 @@ export default function() {
 
             it('Stops node operator from withdrawing after rolling back an LEB8 (with useLatest)', async () => {
                 // Get contracts
-                const rocketTokenReth = await PoolseaTokenRETH.deployed();
-                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+                const poolseaTokenReth = await PoolseaTokenRETH.deployed();
+                const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking
                 let rplStake = '1600'.ether;
@@ -612,7 +612,7 @@ export default function() {
                 await minipoolBase.setUseLatestDelegate(true, {from: node});
 
                 // 4. Reduce bond
-                await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+                await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
                 await increaseTime(web3, bondReductionWindowStart + 1);
                 await reduceBond(minipool, {from: node});
 
@@ -627,11 +627,11 @@ export default function() {
                     value: '32'.ether
                 });
                 const nodeBalance1 = await web3.eth.getBalance(node);
-                const rethBalance1 = await web3.eth.getBalance(rocketTokenReth.address);
+                const rethBalance1 = await web3.eth.getBalance(poolseaTokenReth.address);
                 const oldMinipool = await PoolseaMinipoolDelegateOld.at(minipool.address)
                 await oldMinipool.distributeBalance({ from: node });
                 const nodeBalance2 = await web3.eth.getBalance(node);
-                const rethBalance2 = await web3.eth.getBalance(rocketTokenReth.address);
+                const rethBalance2 = await web3.eth.getBalance(poolseaTokenReth.address);
 
                 // Check balance changes
                 assertBN.isAtMost(nodeBalance2, nodeBalance1, 'Node balance incorrect');
@@ -641,7 +641,7 @@ export default function() {
 
             it('Handles a bond reduction with useLatest delegate setting', async () => {
                 // Get contracts
-                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+                const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking
                 let rplStake = '1600'.ether;
@@ -662,7 +662,7 @@ export default function() {
                 await upgradeOneDotTwo(owner);
 
                 // 4. Reduce bond
-                await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+                await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
                 await increaseTime(web3, bondReductionWindowStart + 1);
                 await reduceBond(minipool, {from: node});
 
@@ -679,9 +679,9 @@ export default function() {
 
             it('Handles legacy and variable minipools in the queue simultaneously', async () => {
                 // Get contracts
-                const rocketMinipoolQueue = await PoolseaMinipoolQueue.deployed();
-                const rocketMinipoolQueueOld = await PoolseaMinipoolQueueOld.deployed();
-                const rocketDepositPool = await PoolseaDepositPool.deployed();
+                const poolseaMinipoolQueue = await PoolseaMinipoolQueue.deployed();
+                const poolseaMinipoolQueueOld = await PoolseaMinipoolQueueOld.deployed();
+                const poolseaDepositPool = await PoolseaDepositPool.deployed();
 
                 // Stake enough RPL to run a few minipools
                 let rplStake = '1600'.ether.mul('10'.BN);
@@ -695,43 +695,43 @@ export default function() {
                 const fullMinipools = [];
                 fullMinipools.push(await createMinipool({from: node, value: '32'.ether}));
                 fullMinipools.push(await createMinipool({from: node, value: '32'.ether}));
-                assertBN.equal(await rocketMinipoolQueueOld.getTotalLength(), '4'.BN, 'Incorrect queue length');
+                assertBN.equal(await poolseaMinipoolQueueOld.getTotalLength(), '4'.BN, 'Incorrect queue length');
 
                 // Upgrade
                 await upgradeOneDotTwo(owner);
 
                 // User balance of deposit pool should be 0
-                assertBN.equal(await rocketDepositPool.getUserBalance(), '0'.BN, 'Incorrect deposit pool user balance');
-                assertBN.equal(await rocketDepositPool.getNodeBalance(), '0'.ether, 'Incorrect deposit pool node balance');
+                assertBN.equal(await poolseaDepositPool.getUserBalance(), '0'.BN, 'Incorrect deposit pool user balance');
+                assertBN.equal(await poolseaDepositPool.getNodeBalance(), '0'.ether, 'Incorrect deposit pool node balance');
 
                 // Create a few variable minipools
                 const variableMinipools = [];
                 variableMinipools.push(await createMinipool({from: node, value: '16'.ether}));
-                assertBN.equal(await rocketDepositPool.getNodeBalance(), '15'.ether, 'Incorrect deposit pool node balance');
-                assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '5'.BN, 'Incorrect queue length');
+                assertBN.equal(await poolseaDepositPool.getNodeBalance(), '15'.ether, 'Incorrect deposit pool node balance');
+                assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '5'.BN, 'Incorrect queue length');
                 variableMinipools.push(await createMinipool({from: node, value: '8'.ether}));
 
                 // The 16 ETH pool should have added 15 ETH to deposit pool, then LEB8 added 7 ETH which then would trigger assignment of first half pool with 16 ETH going to it
-                assertBN.equal(await rocketDepositPool.getBalance(), '6'.ether, 'Incorrect deposit pool balance');
+                assertBN.equal(await poolseaDepositPool.getBalance(), '6'.ether, 'Incorrect deposit pool balance');
 
                 // Check the queue
                 async function checkQueue(expected) {
-                    const actual = await Promise.all([...Array(expected.length).keys()].map(i => rocketMinipoolQueue.getMinipoolAt(i)));
+                    const actual = await Promise.all([...Array(expected.length).keys()].map(i => poolseaMinipoolQueue.getMinipoolAt(i)));
                     for (let i = 0; i < expected.length; i++) {
                         assert.strictEqual(actual[i], expected[i].address, `Invalid minipool queue in position ${i}`);
                     }
-                    const positions = await Promise.all(expected.map(minipool => rocketMinipoolQueue.getMinipoolPosition(minipool.address)));
+                    const positions = await Promise.all(expected.map(minipool => poolseaMinipoolQueue.getMinipoolPosition(minipool.address)));
                     for (let i = 0; i < expected.length; i++) {
                         assertBN.equal(positions[i], i.BN, 'Invalid minipool position');
                     }
                 }
-                assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '5'.BN, 'Incorrect queue length');
+                assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '5'.BN, 'Incorrect queue length');
                 await checkQueue([halfMinipools[1], fullMinipools[0], fullMinipools[1], variableMinipools[0], variableMinipools[1]]);
 
                 // Depositing 10 ETH should clear out the other half minipool and empty deposit pool
                 await userDeposit({ from: random, value: '10'.ether });
                 await checkQueue([fullMinipools[0], fullMinipools[1], variableMinipools[0], variableMinipools[1]]);
-                assertBN.equal(await rocketDepositPool.getBalance(), '0'.ether, 'Incorrect deposit pool balance');
+                assertBN.equal(await poolseaDepositPool.getBalance(), '0'.ether, 'Incorrect deposit pool balance');
 
                 // Depositing another 32 ETH should clear out the full minipools
                 await userDeposit({ from: random, value: '32'.ether });
@@ -740,7 +740,7 @@ export default function() {
                 // Create a new 16 ETH minipool should add 15 ETH to deposit pool
                 variableMinipools.push(await createMinipool({from: node, value: '16'.ether}));
                 await checkQueue([variableMinipools[0], variableMinipools[1], variableMinipools[2]]);
-                assertBN.equal(await rocketDepositPool.getBalance(), '15'.ether, 'Incorrect deposit pool balance');
+                assertBN.equal(await poolseaDepositPool.getBalance(), '15'.ether, 'Incorrect deposit pool balance');
 
                 // Both variable minipools now require 31 ETH each to move to prelaunch so 15 ETH should do nothing to the queue
                 await userDeposit({ from: random, value: '15'.ether });
@@ -752,25 +752,25 @@ export default function() {
 
                 // 62 more ETH should clear the queue (2x 31 ETH)
                 await userDeposit({ from: random, value: '62'.ether });
-                assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '0'.BN, 'Incorrect queue length');
+                assertBN.equal(await poolseaMinipoolQueue.getTotalLength(), '0'.BN, 'Incorrect queue length');
 
                 // Deposit pool should be empty
-                assertBN.equal(await rocketDepositPool.getBalance(), '0'.BN, 'Incorrect deposit pool balance');
-                assertBN.equal(await rocketDepositPool.getUserBalance(), '0'.BN, 'Incorrect deposit pool user balance');
-                assertBN.equal(await rocketDepositPool.getNodeBalance(), '0'.BN, 'Incorrect deposit pool node balance');
+                assertBN.equal(await poolseaDepositPool.getBalance(), '0'.BN, 'Incorrect deposit pool balance');
+                assertBN.equal(await poolseaDepositPool.getUserBalance(), '0'.BN, 'Incorrect deposit pool user balance');
+                assertBN.equal(await poolseaDepositPool.getNodeBalance(), '0'.BN, 'Incorrect deposit pool node balance');
             });
 
 
             it('Handles a legacy minipool that has been upgraded and dissolved', async () => {
                 // Get contracts
-                const rocketNodeStaking = await PoolseaNodeStaking.deployed();
+                const poolseaNodeStaking = await PoolseaNodeStaking.deployed();
 
                 // 1. Create 16 ETH minipool and progress to prelaunch
                 let rplStake = '1600'.ether;
                 await mintRPL(owner, node, rplStake);
                 await nodeStakeRPL(rplStake, {from: node});
                 const minipool = await createMinipool({from: node, value: '16'.ether});
-                assertBN.equal(await rocketNodeStaking.getNodeETHMatched(node), '16'.ether, 'Incorrect ETH matched');
+                assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '16'.ether, 'Incorrect ETH matched');
                 await userDeposit({ from: random, value: '16'.ether });
                 await increaseTime(web3, launchTimeout + 1);
 
@@ -786,7 +786,7 @@ export default function() {
 
                 // 5. Close pool
                 await closeMinipool(minipool, {from :node});
-                assertBN.equal(await rocketNodeStaking.getNodeETHMatched(node), '0'.ether, 'Incorrect ETH matched');
+                assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '0'.ether, 'Incorrect ETH matched');
             });
         });
     })
