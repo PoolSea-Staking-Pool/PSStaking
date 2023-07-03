@@ -1,6 +1,6 @@
 import { printTitle } from '../_utils/formatting';
 import { getNodeFeeByDemand } from '../_helpers/network';
-import { RocketDAOProtocolSettingsNetwork } from '../_utils/artifacts';
+import { PoolseaDAOProtocolSettingsNetwork } from '../_utils/artifacts';
 import { setDAOProtocolBootstrapSetting } from '../dao/scenario-dao-protocol-bootstrap';
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
@@ -25,10 +25,10 @@ export default function() {
             await upgradeOneDotTwo(owner);
 
             // Set network settings
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.minimum', minNodeFee, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.target', targetNodeFee, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.maximum', maxNodeFee, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.demand.range', demandRange, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.minimum', minNodeFee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.target', targetNodeFee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.maximum', maxNodeFee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.demand.range', demandRange, {from: owner});
         });
 
 

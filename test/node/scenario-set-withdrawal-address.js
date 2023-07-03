@@ -1,10 +1,10 @@
-import { RocketNodeManager, RocketStorage } from '../_utils/artifacts'
+import { PoolseaNodeManager, PoolseaStorage } from '../_utils/artifacts'
 
 
 // Set a node's withdrawal address
 export async function setWithdrawalAddress(nodeAddress, withdrawalAddress, confirm, txOptions) {
     // Load contracts
-    const rocketStorage = await RocketStorage.deployed();
+    const rocketStorage = await PoolseaStorage.deployed();
 
     // Set withdrawal address
     await rocketStorage.setWithdrawalAddress(nodeAddress, withdrawalAddress, confirm, txOptions);
@@ -28,7 +28,7 @@ export async function setWithdrawalAddress(nodeAddress, withdrawalAddress, confi
 // Confirm a node's net withdrawal address
 export async function confirmWithdrawalAddress(nodeAddress, txOptions) {
     // Load contracts
-    const rocketStorage = await RocketStorage.deployed();
+    const rocketStorage = await PoolseaStorage.deployed();
 
     // Confirm withdrawal address
     await rocketStorage.confirmWithdrawalAddress(nodeAddress, txOptions);

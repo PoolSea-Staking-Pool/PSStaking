@@ -1,18 +1,18 @@
 import {
-    RocketMinipoolBondReducer,
-    RocketMinipoolManager,
-    RocketNodeDeposit,
-    RocketNodeStaking,
+    PoolseaMinipoolBondReducer,
+    PoolseaMinipoolManager,
+    PoolseaNodeDeposit,
+    PoolseaNodeStaking,
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 // Reduce bonding amount of a minipool
 export async function reduceBond(minipool, txOptions = null) {
-    const rocketNodeDeposit = await RocketNodeDeposit.deployed();
-    const rocketNodeStaking = await RocketNodeStaking.deployed();
-    const rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
-    const rocketNodeManager = await RocketMinipoolManager.deployed();
+    const rocketNodeDeposit = await PoolseaNodeDeposit.deployed();
+    const rocketNodeStaking = await PoolseaNodeStaking.deployed();
+    const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+    const rocketNodeManager = await PoolseaMinipoolManager.deployed();
     const node = await minipool.getNodeAddress();
 
     const newBond = await rocketMinipoolBondReducer.getReduceBondValue(minipool.address);

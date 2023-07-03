@@ -1,4 +1,4 @@
-const { RocketNodeManager, RocketMinipoolManager, RocketMinipoolDelegate } = require('../_utils/artifacts');
+const { PoolseaNodeManager, PoolseaMinipoolManager, PoolseaMinipoolDelegate } = require('../_utils/artifacts');
 const { assertBN } = require('./bn');
 
 async function checkInvariants() {
@@ -11,12 +11,12 @@ async function checkInvariants() {
 }
 
 async function getNodeAddresses() {
-    const rocketNodeManager = await RocketNodeManager.deployed();
+    const rocketNodeManager = await PoolseaNodeManager.deployed();
     return await rocketNodeManager.getNodeAddresses(0, 1000);
 }
 
 async function getMinipoolDetails(address) {
-    const minipool = await RocketMinipoolDelegate.at(address);
+    const minipool = await PoolseaMinipoolDelegate.at(address);
 
     const [status, finalised, nodeFee, userDepositBalance, nodeDepositBalance] = await Promise.all([
         minipool.getStatus(),
@@ -36,7 +36,7 @@ async function getMinipoolDetails(address) {
 }
 
 async function getMinipoolsByNode(nodeAddress) {
-    const rocketMinipoolManager = await RocketMinipoolManager.deployed();
+    const rocketMinipoolManager = await PoolseaMinipoolManager.deployed();
     const count = await rocketMinipoolManager.getNodeMinipoolCount(nodeAddress);
     const minipools = [];
     for (let i = 0; i < count; i++) {
@@ -47,8 +47,8 @@ async function getMinipoolsByNode(nodeAddress) {
 }
 
 async function checkNodeInvariants(nodeAddress, minipools) {
-    const rocketMinipoolManager = await RocketMinipoolManager.deployed();
-    const rocketNodeManager = await RocketNodeManager.deployed();
+    const rocketMinipoolManager = await PoolseaMinipoolManager.deployed();
+    const rocketNodeManager = await PoolseaNodeManager.deployed();
     const depositSizes = ['8'.ether, '16'.ether];
     // Filter "staking" minipools
     const stakingMinipools = minipools.filter(minipool => minipool.status === '2' && minipool.finalised === false);

@@ -4,8 +4,8 @@ import { getMinipoolMinimumRPLStake, createMinipool, stakeMinipool, minipoolStat
 import { registerNode, setNodeTrusted, nodeStakeRPL } from '../_helpers/node';
 import { mintRPL } from '../_helpers/tokens';
 import {
-    RocketDAONodeTrustedSettingsMinipool,
-    RocketDAONodeTrustedSettingsProposals,
+    PoolseaDAONodeTrustedSettingsMinipool,
+    PoolseaDAONodeTrustedSettingsProposals,
 } from '../_utils/artifacts';
 import { daoNodeTrustedExecute, daoNodeTrustedMemberLeave, daoNodeTrustedPropose, daoNodeTrustedVote } from '../dao/scenario-dao-node-trusted'
 import { getDAOProposalEndTime, getDAOProposalStartTime } from '../dao/scenario-dao-proposal'
@@ -52,7 +52,7 @@ export default function() {
             await setNodeTrusted(trustedNode1, 'saas_1', 'node1@home.com', owner);
             await setNodeTrusted(trustedNode2, 'saas_2', 'node2@home.com', owner);
             await setNodeTrusted(trustedNode3, 'saas_3', 'node3@home.com', owner);
-     
+
 
             // Stake RPL to cover minipools
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
@@ -87,11 +87,11 @@ export default function() {
             assertBN.equal(stakingStatus3, minipoolStates.Staking, 'Incorrect staking minipool status');
 
             // Set a small proposal cooldown
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
             // Set a small vote delay
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
 
         });
 

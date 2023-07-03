@@ -10,11 +10,11 @@ import {
     getNodeEffectiveRPLStake,
 } from '../_helpers/node'
 import {
-    RocketDAONodeTrustedSettingsMinipool,
-    RocketDAOProtocolSettingsNode,
-    RocketMerkleDistributorMainnet,
-    RocketSmoothingPool,
-    RocketStorage,
+    PoolseaDAONodeTrustedSettingsMinipool,
+    PoolseaDAOProtocolSettingsNode,
+    PoolseaMerkleDistributorMainnet,
+    PoolseaSmoothingPool,
+    PoolseaStorage,
 } from '../_utils/artifacts';
 import { setDAOProtocolBootstrapSetting, setRewardsClaimIntervalTime, setRPLInflationStartTime } from '../dao/scenario-dao-protocol-bootstrap'
 import { mintRPL } from '../_helpers/tokens';
@@ -22,7 +22,7 @@ import { rewardsClaimersPercTotalGet } from './scenario-rewards-claim';
 import { setDAONetworkBootstrapRewardsClaimer, setRPLInflationIntervalRate } from '../dao/scenario-dao-protocol-bootstrap';
 
 // Contracts
-import { RocketRewardsPool } from '../_utils/artifacts';
+import { PoolseaRewardsPool } from '../_utils/artifacts';
 import { createMinipool, stakeMinipool } from '../_helpers/minipool'
 import { userDeposit } from '../_helpers/deposit'
 import { setDAONodeTrustedBootstrapSetting } from '../dao/scenario-dao-node-trusted-bootstrap';
@@ -122,7 +122,7 @@ export default function() {
             await setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', '0'.ether, {from: owner});
 
             // Set settings
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
 
             // Register nodes
             await registerNode({from: registeredNode1});
@@ -141,7 +141,7 @@ export default function() {
 
             // Set max per-minipool stake to 100% and RPL price to 1 ether
             const block = await web3.eth.getBlockNumber();
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNode, 'node.per.minipool.stake.maximum', '1'.ether, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNode, 'node.per.minipool.stake.maximum', '1'.ether, {from: owner});
             await submitPrices(block, '1'.ether, {from: registeredNodeTrusted1});
             await submitPrices(block, '1'.ether, {from: registeredNodeTrusted2});
 
@@ -271,10 +271,10 @@ export default function() {
             await increaseTime(web3, rplInflationStartTime - currentTime + claimIntervalTime);
 
             // Send ETH to rewards pool
-            const rocketSmoothingPool = await RocketSmoothingPool.deployed();
+            const rocketSmoothingPool = await PoolseaSmoothingPool.deployed();
             await web3.eth.sendTransaction({ from: owner, to: rocketSmoothingPool.address, value: '20'.ether});
 
-            const rocketRewardsPool = await RocketRewardsPool.deployed();
+            const rocketRewardsPool = await PoolseaRewardsPool.deployed();
             const pendingRewards = await rocketRewardsPool.getPendingETHRewards.call();
 
             // Submit rewards snapshot
@@ -350,7 +350,7 @@ export default function() {
             await increaseTime(web3, rplInflationStartTime - currentTime + claimIntervalTime);
 
             // Send ETH to rewards pool
-            const rocketSmoothingPool = await RocketSmoothingPool.deployed();
+            const rocketSmoothingPool = await PoolseaSmoothingPool.deployed();
             await web3.eth.sendTransaction({ from: owner, to: rocketSmoothingPool.address, value: '20'.ether});
 
             // Submit rewards snapshot
@@ -404,7 +404,7 @@ export default function() {
             let amountsETH = [proof.amountETH];
             let proofs = [proof.proof];
 
-            let rocketMerkleDistributorMainnet = await RocketMerkleDistributorMainnet.deployed();
+            let rocketMerkleDistributorMainnet = await PoolseaMerkleDistributorMainnet.deployed();
 
             // Attempt to claim reward for registeredNode1 with registeredNode2
             await shouldRevert(rocketMerkleDistributorMainnet.claim(registeredNode2, [0], amountsRPL, amountsETH, proofs, {from: registeredNode2}), 'Was able to claim with invalid proof', 'Invalid proof');
@@ -699,7 +699,7 @@ export default function() {
             });
 
             // Retrieve the bitmap of claims
-            const rocketStorage = await RocketStorage.deployed();
+            const rocketStorage = await PoolseaStorage.deployed();
             const key = web3.utils.soliditySha3(
                 {type: 'string', value: 'rewards.interval.claimed'},
                 {type: 'address', value: registeredNode1},

@@ -1,6 +1,6 @@
 import {
-    RocketDAONodeTrustedSettingsMinipool, RocketDAOProtocolSettingsMinipool,
-    RocketNodeStaking,
+    PoolseaDAONodeTrustedSettingsMinipool, PoolseaDAOProtocolSettingsMinipool,
+    PoolseaNodeStaking,
 } from '../_utils/artifacts';
 import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
@@ -44,11 +44,11 @@ export default function() {
             await upgradeOneDotTwo(owner);
 
             // Load contracts
-            rocketNodeStaking = await RocketNodeStaking.deployed();
+            rocketNodeStaking = await PoolseaNodeStaking.deployed();
 
             // Set settings
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.start', userDistributeStartTime, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.start', userDistributeStartTime, {from: owner});
 
             // Register node
             await registerNode({from: node});

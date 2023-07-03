@@ -1,4 +1,4 @@
-import { RocketDAONodeTrusted, RocketStorage, RocketVault, RocketTokenRPL } from '../_utils/artifacts';
+import { PoolseaDAONodeTrusted, PoolseaStorage, PoolseaVault, PoolseaTokenRPL } from '../_utils/artifacts';
 import { compressABI, decompressABI } from '../_utils/contract';
 import { assertBN } from '../_helpers/bn';
 
@@ -6,7 +6,7 @@ import { assertBN } from '../_helpers/bn';
 // The trusted node DAO can be bootstrapped with several nodes
 export async function setDaoNodeTrustedBootstrapMember(_id, _url, _nodeAddress, txOptions) {
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
+    const rocketDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
 
     // Get data about the tx
     function getTxData() {
@@ -37,7 +37,7 @@ export async function setDAONodeTrustedBootstrapSetting(_settingContractInstance
     }
 
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
+    const rocketDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
     const rocketDAONodeTrustedSettingsContract = await _settingContractInstance.deployed();
 
     // Get data about the tx
@@ -58,7 +58,7 @@ export async function setDAONodeTrustedBootstrapSetting(_settingContractInstance
     if(typeof(_value) == 'boolean') {
         await rocketDAONodeTrusted.bootstrapSettingBool(_settingContractInstance._json.contractName.lowerCaseFirstLetter(), _settingPath, _value, txOptions);
     }
-    
+
     // Capture data
     let ds2 = await getTxData();
 
@@ -75,7 +75,7 @@ export async function setDAONodeTrustedBootstrapSetting(_settingContractInstance
 // Disable bootstrap mode
 export async function setDaoNodeTrustedBootstrapModeDisabled(txOptions) {
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
+    const rocketDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
 
     // Get data about the tx
     function getTxData() {
@@ -98,15 +98,15 @@ export async function setDaoNodeTrustedBootstrapModeDisabled(txOptions) {
 }
 
 
-// The trusted node DAO can also upgrade contracts + abi if consensus is reached 
+// The trusted node DAO can also upgrade contracts + abi if consensus is reached
 export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _contractAddress, txOptions) {
     // Load contracts
     const [
         rocketStorage,
         rocketDAONodeTrusted,
     ] = await Promise.all([
-        RocketStorage.deployed(),
-        RocketDAONodeTrusted.deployed(),
+        PoolseaStorage.deployed(),
+        PoolseaDAONodeTrusted.deployed(),
     ]);
 
     // Add test method to ABI
@@ -193,9 +193,9 @@ export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _con
 // A registered node attempting to join as a member due to low DAO member count
 export async function setDaoNodeTrustedMemberRequired(_id, _url, txOptions) {
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
-    const rocketVault = await RocketVault.deployed();
-    const rocketTokenRPL = await RocketTokenRPL.deployed();
+    const rocketDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
+    const rocketVault = await PoolseaVault.deployed();
+    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
 
     // Get data about the tx
     function getTxData() {

@@ -1,10 +1,10 @@
 import {
-    RocketDepositPool,
-    RocketDAOProtocolSettingsDeposit,
-    RocketMinipoolQueue,
-    RocketDAOProtocolSettingsMinipool,
-    RocketVault,
-    RocketMinipoolDelegate,
+    PoolseaDepositPool,
+    PoolseaDAOProtocolSettingsDeposit,
+    PoolseaMinipoolQueue,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaVault,
+    PoolseaMinipoolDelegate,
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
@@ -19,11 +19,11 @@ export async function assignDepositsV2(txOptions) {
         rocketDAOProtocolSettingsMinipool,
         rocketVault,
     ] = await Promise.all([
-        RocketDepositPool.deployed(),
-        RocketDAOProtocolSettingsDeposit.deployed(),
-        RocketMinipoolQueue.deployed(),
-        RocketDAOProtocolSettingsMinipool.deployed(),
-        RocketVault.deployed(),
+        PoolseaDepositPool.deployed(),
+        PoolseaDAOProtocolSettingsDeposit.deployed(),
+        PoolseaMinipoolQueue.deployed(),
+        PoolseaDAOProtocolSettingsMinipool.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Get parameters
@@ -73,7 +73,7 @@ export async function assignDepositsV2(txOptions) {
 
         let indices = [...Array(expectedDepositAssignments).keys()];
         let addressesInQueue = await Promise.all(indices.map(i => rocketMinipoolQueue.getMinipoolAt(i)));
-        let minipoolsInQueue = await Promise.all(addressesInQueue.map(a => RocketMinipoolDelegate.at(a)));
+        let minipoolsInQueue = await Promise.all(addressesInQueue.map(a => PoolseaMinipoolDelegate.at(a)));
         let topUpValues = await Promise.all(minipoolsInQueue.map(m => m.getNodeTopUpValue()))
         expectedNodeBalanceUsed = topUpValues.reduce((p, c) => p.add(c), expectedNodeBalanceUsed);
     }

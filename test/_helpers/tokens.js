@@ -1,9 +1,9 @@
-import { RocketTokenRETH, RocketTokenNETH, RocketTokenDummyRPL, RocketTokenRPL } from '../_utils/artifacts';
+import { PoolseaTokenRETH, RocketTokenNETH, PoolseaTokenDummyRPL, PoolseaTokenRPL } from '../_utils/artifacts';
 
 
 // Get the RPL balance of an address
 export async function getRplBalance(address) {
-    const rocketTokenRPL = await RocketTokenRPL.deployed();
+    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
     let balance = rocketTokenRPL.balanceOf.call(address);
     return balance;
 }
@@ -11,7 +11,7 @@ export async function getRplBalance(address) {
 
 // Get the rETH balance of an address
 export async function getRethBalance(address) {
-    const rocketTokenRETH = await RocketTokenRETH.deployed();
+    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
     let balance = rocketTokenRETH.balanceOf.call(address);
     return balance;
 }
@@ -19,7 +19,7 @@ export async function getRethBalance(address) {
 
 // Get the current rETH exchange rate
 export async function getRethExchangeRate() {
-    const rocketTokenRETH = await RocketTokenRETH.deployed();
+    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
     let exchangeRate = await rocketTokenRETH.getExchangeRate.call();
     return exchangeRate;
 }
@@ -27,7 +27,7 @@ export async function getRethExchangeRate() {
 
 // Get the current rETH collateral rate
 export async function getRethCollateralRate() {
-    const rocketTokenRETH = await RocketTokenRETH.deployed();
+    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
     let collateralRate = await rocketTokenRETH.getCollateralRate.call();
     return collateralRate;
 }
@@ -35,7 +35,7 @@ export async function getRethCollateralRate() {
 
 // Get the current rETH token supply
 export async function getRethTotalSupply() {
-    const rocketTokenRETH = await RocketTokenRETH.deployed();
+    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
     let totalSupply = await rocketTokenRETH.totalSupply.call();
     return totalSupply;
 }
@@ -54,8 +54,8 @@ export async function mintRPL(owner, toAddress, amount) {
 
     // Load contracts
     const [rocketTokenDummyRPL, rocketTokenRPL] = await Promise.all([
-        RocketTokenDummyRPL.deployed(),
-        RocketTokenRPL.deployed(),
+        PoolseaTokenDummyRPL.deployed(),
+        PoolseaTokenRPL.deployed(),
     ]);
 
     // Mint dummy RPL to address
@@ -70,12 +70,12 @@ export async function mintRPL(owner, toAddress, amount) {
 
 // Approve RPL to be spend by an address
 export async function approveRPL(spender, amount, txOptions) {
-    const rocketTokenRPL = await RocketTokenRPL.deployed();
+    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
     await rocketTokenRPL.approve(spender, amount, txOptions);
 }
 
 
 export async function depositExcessCollateral(txOptions) {
-    const rocketTokenRETH = await RocketTokenRETH.deployed();
+    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
     await rocketTokenRETH.depositExcessCollateral(txOptions);
 }

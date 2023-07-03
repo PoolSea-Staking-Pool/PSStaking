@@ -1,9 +1,9 @@
-import { RocketNetworkBalances, RocketNetworkFees, RocketNetworkPrices, RocketNetworkWithdrawal } from '../_utils/artifacts';
+import { PoolseaNetworkBalances, PoolseaNetworkFees, PoolseaNetworkPrices, RocketNetworkWithdrawal } from '../_utils/artifacts';
 
 
 // Get the network total ETH balance
 export async function getTotalETHBalance() {
-    const rocketNetworkBalances = await RocketNetworkBalances.deployed();
+    const rocketNetworkBalances = await PoolseaNetworkBalances.deployed();
     let balance = await rocketNetworkBalances.getTotalETHBalance.call();
     return balance;
 }
@@ -11,7 +11,7 @@ export async function getTotalETHBalance() {
 
 // Get the network staking ETH balance
 export async function getStakingETHBalance() {
-    const rocketNetworkBalances = await RocketNetworkBalances.deployed();
+    const rocketNetworkBalances = await PoolseaNetworkBalances.deployed();
     let balance = await rocketNetworkBalances.getStakingETHBalance.call();
     return balance;
 }
@@ -19,7 +19,7 @@ export async function getStakingETHBalance() {
 
 // Get the network ETH utilization rate
 export async function getETHUtilizationRate() {
-    const rocketNetworkBalances = await RocketNetworkBalances.deployed();
+    const rocketNetworkBalances = await PoolseaNetworkBalances.deployed();
     let utilizationRate = await rocketNetworkBalances.getETHUtilizationRate.call();
     return utilizationRate;
 }
@@ -27,21 +27,21 @@ export async function getETHUtilizationRate() {
 
 // Submit network balances
 export async function submitBalances(block, totalEth, stakingEth, rethSupply, txOptions) {
-    const rocketNetworkBalances = await RocketNetworkBalances.deployed();
+    const rocketNetworkBalances = await PoolseaNetworkBalances.deployed();
     await rocketNetworkBalances.submitBalances(block, totalEth, stakingEth, rethSupply, txOptions);
 }
 
 
 // Submit network token prices
 export async function submitPrices(block, rplPrice, txOptions) {
-    const rocketNetworkPrices = await RocketNetworkPrices.deployed();
+    const rocketNetworkPrices = await PoolseaNetworkPrices.deployed();
     await rocketNetworkPrices.submitPrices(block, rplPrice, txOptions);
 }
 
 
 // Get network RPL price
 export async function getRPLPrice() {
-    const rocketNetworkPrices = await RocketNetworkPrices.deployed();
+    const rocketNetworkPrices = await PoolseaNetworkPrices.deployed();
     let price = await rocketNetworkPrices.getRPLPrice.call();
     return price;
 }
@@ -49,7 +49,7 @@ export async function getRPLPrice() {
 
 // Get the network node demand
 export async function getNodeDemand() {
-    const rocketNetworkFees = await RocketNetworkFees.deployed();
+    const rocketNetworkFees = await PoolseaNetworkFees.deployed();
     let nodeDemand = await rocketNetworkFees.getNodeDemand.call();
     return nodeDemand;
 }
@@ -57,7 +57,7 @@ export async function getNodeDemand() {
 
 // Get the current network node fee
 export async function getNodeFee() {
-    const rocketNetworkFees = await RocketNetworkFees.deployed();
+    const rocketNetworkFees = await PoolseaNetworkFees.deployed();
     let nodeFee = await rocketNetworkFees.getNodeFee.call();
     return nodeFee;
 }
@@ -65,7 +65,7 @@ export async function getNodeFee() {
 
 // Get the network node fee for a node demand value
 export async function getNodeFeeByDemand(nodeDemand) {
-    const rocketNetworkFees = await RocketNetworkFees.deployed();
+    const rocketNetworkFees = await PoolseaNetworkFees.deployed();
     let nodeFee = await rocketNetworkFees.getNodeFeeByDemand.call(nodeDemand);
     return nodeFee;
 }

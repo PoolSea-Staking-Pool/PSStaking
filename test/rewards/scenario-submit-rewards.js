@@ -1,8 +1,8 @@
 import {
-    RocketClaimDAO,
-    RocketDAONodeTrusted,
-    RocketRewardsPool,
-    RocketTokenRETH, RocketTokenRPL,
+    PoolseaClaimDAO,
+    PoolseaDAONodeTrusted,
+    PoolseaRewardsPool,
+    PoolseaTokenRETH, PoolseaTokenRPL,
 } from '../_utils/artifacts';
 import { parseRewardsMap } from '../_utils/merkle-tree';
 import { assertBN } from '../_helpers/bn';
@@ -19,11 +19,11 @@ export async function submitRewards(index, rewards, treasuryRPL, userETH, txOpti
         rocketTokenRPL,
         rocketClaimDAO
     ] = await Promise.all([
-        RocketDAONodeTrusted.deployed(),
-        RocketRewardsPool.deployed(),
-        RocketTokenRETH.deployed(),
-        RocketTokenRPL.deployed(),
-        RocketClaimDAO.deployed()
+        PoolseaDAONodeTrusted.deployed(),
+        PoolseaRewardsPool.deployed(),
+        PoolseaTokenRETH.deployed(),
+        PoolseaTokenRPL.deployed(),
+        PoolseaClaimDAO.deployed()
     ]);
 
     // Get parameters
@@ -141,7 +141,7 @@ export async function executeRewards(index, rewards, treasuryRPL, userETH, txOpt
     const [
         rocketRewardsPool,
     ] = await Promise.all([
-        RocketRewardsPool.deployed(),
+        PoolseaRewardsPool.deployed(),
     ]);
 
     // Construct the merkle tree

@@ -1,4 +1,4 @@
-import { RocketMinipoolManager, RocketDAOProtocolSettingsMinipool } from '../_utils/artifacts';
+import { PoolseaMinipoolManager, PoolseaDAOProtocolSettingsMinipool } from '../_utils/artifacts';
 import { getValidatorSignature, getDepositDataRoot, getValidatorPubkey } from '../_utils/beacon';
 import { assertBN } from '../_helpers/bn';
 import { minipoolStates } from '../_helpers/minipool';
@@ -10,7 +10,7 @@ export async function stake(minipool, withdrawalCredentials, txOptions, validato
     const [
         rocketMinipoolManager,
     ] = await Promise.all([
-        RocketMinipoolManager.deployed(),
+        PoolseaMinipoolManager.deployed(),
     ]);
 
     // Get minipool validator pubkey

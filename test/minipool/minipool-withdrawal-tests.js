@@ -1,10 +1,10 @@
 import {
-    RocketDAOProtocolSettingsMinipool,
-    RocketDAOProtocolSettingsNetwork,
-    RocketMinipoolPenalty,
-    RocketStorage,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaDAOProtocolSettingsNetwork,
+    PoolseaMinipoolPenalty,
+    PoolseaStorage,
     PenaltyTest,
-    RocketNodeStaking, RocketDAONodeTrustedSettingsMinipool,
+    PoolseaNodeStaking, PoolseaDAONodeTrustedSettingsMinipool,
 } from '../_utils/artifacts';
 import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
@@ -58,35 +58,35 @@ export default function() {
             await setNodeTrusted(trustedNode, 'saas_1', 'node@home.com', owner);
 
             // Set settings
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.start', userDistributeStartTime, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.length', userDistributeLength, {from: owner});
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.start', userDistributeStartTime, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.length', userDistributeLength, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
 
             // Set rETH collateralisation target to a value high enough it won't cause excess ETH to be funneled back into deposit pool and mess with our calcs
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.reth.collateral.target', '50'.ether, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.reth.collateral.target', '50'.ether, {from: owner});
 
             // Set RPL price
             let block = await web3.eth.getBlockNumber();
             await submitPrices(block, '1'.ether, {from: trustedNode});
 
             // Add penalty helper contract
-            const rocketStorage = await RocketStorage.deployed();
+            const rocketStorage = await PoolseaStorage.deployed();
             penaltyTestContract = await PenaltyTest.new(rocketStorage.address, {from: owner});
             await setDaoNodeTrustedBootstrapUpgrade('addContract', 'rocketPenaltyTest', penaltyTestContract.abi, penaltyTestContract.address, {
                 from: owner,
             });
 
             // Enable penalties
-            const rocketMinipoolPenalty = await RocketMinipoolPenalty.deployed();
+            const rocketMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
             await rocketMinipoolPenalty.setMaxPenaltyRate(maxPenaltyRate, {from: owner})
 
             // Hard code fee to 50%
             const fee = '0.5'.ether;
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.minimum', fee, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.target', fee, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.maximum', fee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.minimum', fee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.target', fee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.maximum', fee, {from: owner});
 
             // Deposit some user funds to assign to pools
             let userDepositAmount = '16'.ether;
@@ -144,7 +144,7 @@ export default function() {
 
         async function slashAndCheck(from, expectedSlash) {
             // Get contracts
-            const rocketNodeStaking = await RocketNodeStaking.deployed()
+            const rocketNodeStaking = await PoolseaNodeStaking.deployed()
             const rplStake1 = await rocketNodeStaking.getNodeRPLStake(node)
             await minipool.slash({from: from})
             const rplStake2 = await rocketNodeStaking.getNodeRPLStake(node)
@@ -275,7 +275,7 @@ export default function() {
 
         it(printTitle('guardian', 'can disable penalising all together'), async () => {
             // Disable penalising by setting rate to 0
-            const rocketMinipoolPenalty = await RocketMinipoolPenalty.deployed();
+            const rocketMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
             await rocketMinipoolPenalty.setMaxPenaltyRate('0', {from: owner})
             // Try to penalise the minipool 50%
             await penaltyTestContract.setPenaltyRate(minipool.address, web3.utils.toWei('0.5'));

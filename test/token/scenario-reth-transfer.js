@@ -1,11 +1,11 @@
-import { RocketTokenRETH } from '../_utils/artifacts';
+import { PoolseaTokenRETH } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 // Transfer rETH between accounts
 export async function transferReth(to, amount, txOptions) {
     // Load contracts
-    const rocketTokenRETH = await RocketTokenRETH.deployed();
+    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
 
     // Get balances
     function getBalances() {

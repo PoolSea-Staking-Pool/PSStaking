@@ -2,8 +2,8 @@ import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
 import { nodeStakeRPL, registerNode, setNodeTrusted } from '../_helpers/node';
 import {
-    RocketDAONodeTrustedSettingsProposals,
-    RocketMinipoolPenalty
+    PoolseaDAONodeTrustedSettingsProposals,
+    PoolseaMinipoolPenalty
 } from '../_utils/artifacts';
 import { setDAONodeTrustedBootstrapSetting } from '../dao/scenario-dao-node-trusted-bootstrap'
 import { createMinipool, getMinipoolMinimumRPLStake } from '../_helpers/minipool';
@@ -50,12 +50,12 @@ export default function() {
             await setNodeTrusted(trustedNode3, 'saas_3', 'node@home.com', owner);
 
             // Set a small proposal cooldown
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
             // Set a small vote delay
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
             // Set max penalty rate
-            let rocketMinipoolPenalty = await RocketMinipoolPenalty.deployed();
+            let rocketMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
             rocketMinipoolPenalty.setMaxPenaltyRate('1'.ether, {from: owner})
 
             // Stake RPL to cover minipools

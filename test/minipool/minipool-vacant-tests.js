@@ -1,7 +1,7 @@
 import {
-    RocketDAOProtocolSettingsMinipool,
-    RocketDAOProtocolSettingsNetwork,
-    RocketDAONodeTrustedSettingsMinipool, RocketNodeStaking,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaDAOProtocolSettingsNetwork,
+    PoolseaDAONodeTrustedSettingsMinipool, PoolseaNodeStaking,
 } from '../_utils/artifacts';
 import { increaseTime } from '../_utils/evm';
 import { printTitle } from '../_utils/formatting';
@@ -54,7 +54,7 @@ export default function() {
         let rocketNodeStaking;
 
         before(async () => {
-            rocketNodeStaking = await RocketNodeStaking.deployed();
+            rocketNodeStaking = await PoolseaNodeStaking.deployed();
 
             await upgradeOneDotTwo(owner);
 
@@ -69,12 +69,12 @@ export default function() {
             await setNodeTrusted(trustedNode2, 'saas_2', 'node@home.com', owner);
 
             // Set settings
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.promotion.scrub.period', promotionScrubDelay, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.promotion.scrub.period', promotionScrubDelay, {from: owner});
 
             // Set rETH collateralisation target to a value high enough it won't cause excess ETH to be funneled back into deposit pool and mess with our calcs
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.reth.collateral.target', '50'.ether, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.reth.collateral.target', '50'.ether, {from: owner});
 
             // Stake RPL to cover minipools
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
@@ -196,7 +196,7 @@ export default function() {
 
         it(printTitle('trusted node', 'can scrub a prelaunch minipool (no penalty applied even with scrub penalty active)'), async () => {
             // Enabled penalty
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.penalty.enabled', true, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.penalty.enabled', true, {from: owner});
             // 2 out of 3 should dissolve the minipool
             await voteScrub(prelaunchMinipool16, {from: trustedNode1});
             await voteScrub(prelaunchMinipool16, {from: trustedNode2});

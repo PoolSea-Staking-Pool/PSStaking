@@ -1,8 +1,8 @@
 import { printTitle } from '../_utils/formatting';
 import {
-    RocketNodeManager,
-    RocketDAONodeTrustedSettingsMinipool,
-    RocketNodeDistributorFactory
+    PoolseaNodeManager,
+    PoolseaDAONodeTrustedSettingsMinipool,
+    PoolseaNodeDistributorFactory
 } from '../_utils/artifacts';
 import {
     createMinipool,
@@ -40,9 +40,9 @@ export default function() {
             await upgradeOneDotTwo(owner);
 
             // Get contracts
-            const rocketNodeDistributorFactory = await RocketNodeDistributorFactory.deployed();
+            const rocketNodeDistributorFactory = await PoolseaNodeDistributorFactory.deployed();
             // Set settings
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
             // Register node
             await registerNode({from: node1});
             distributorAddress = await rocketNodeDistributorFactory.getProxyAddress(node1);
@@ -63,7 +63,7 @@ export default function() {
             await registerNode({from: node2});
             await nodeStakeRPL(rplStake, {from: node2});
             // Get contracts
-            const rocketNodeManager = await RocketNodeManager.deployed();
+            const rocketNodeManager = await PoolseaNodeManager.deployed();
             // Attempt to initialise
             await shouldRevert(rocketNodeManager.initialiseFeeDistributor({from: node2}), 'Was able to initialise again', 'Already initialised');
         });
@@ -71,7 +71,7 @@ export default function() {
 
         it(printTitle('node operator', 'can not initialise fee distributor if already initialised'), async () => {
             // Attempt to initialise a second time
-            const rocketNodeManager = await RocketNodeManager.deployed();
+            const rocketNodeManager = await PoolseaNodeManager.deployed();
             await shouldRevert(rocketNodeManager.initialiseFeeDistributor({from: node1}), 'Was able to initialise again', 'Already initialised');
         });
 
@@ -85,7 +85,7 @@ export default function() {
 
         it(printTitle('node operator', 'can distribute rewards with 1 minipool'), async () => {
             // Get contracts
-            const rocketNodeDistributorFactory = await RocketNodeDistributorFactory.deployed();
+            const rocketNodeDistributorFactory = await PoolseaNodeDistributorFactory.deployed();
             // Register node
             await registerNode({from: node2});
             await nodeStakeRPL(rplStake, {from: node2});
@@ -103,7 +103,7 @@ export default function() {
 
         it(printTitle('node operator', 'can distribute rewards with multiple minipools'), async () => {
             // Get contracts
-            const rocketNodeDistributorFactory = await RocketNodeDistributorFactory.deployed();
+            const rocketNodeDistributorFactory = await PoolseaNodeDistributorFactory.deployed();
             // Register node
             await registerNode({from: node2});
             await nodeStakeRPL(rplStake, {from: node2});
@@ -123,7 +123,7 @@ export default function() {
 
         it(printTitle('node operator', 'can distribute rewards after staking and withdrawing'), async () => {
             // Get contracts
-            const rocketNodeDistributorFactory = await RocketNodeDistributorFactory.deployed();
+            const rocketNodeDistributorFactory = await PoolseaNodeDistributorFactory.deployed();
             // Register node
             await registerNode({from: node2});
             await nodeStakeRPL(rplStake, {from: node2});

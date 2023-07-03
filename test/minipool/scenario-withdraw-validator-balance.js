@@ -1,8 +1,8 @@
 import {
-    RocketDepositPool,
-    RocketMinipoolPenalty,
-    RocketNodeManager,
-    RocketTokenRETH
+    PoolseaDepositPool,
+    PoolseaMinipoolPenalty,
+    PoolseaNodeManager,
+    PoolseaTokenRETH
 } from '../_utils/artifacts'
 import { assertBN } from '../_helpers/bn';
 
@@ -13,9 +13,9 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
         rocketTokenRETH,
         rocketNodeManager
     ] = await Promise.all([
-        RocketDepositPool.deployed(),
-        RocketTokenRETH.deployed(),
-        RocketNodeManager.deployed(),
+        PoolseaDepositPool.deployed(),
+        PoolseaTokenRETH.deployed(),
+        PoolseaNodeManager.deployed(),
     ]);
 
     // Get node parameters
@@ -115,7 +115,7 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
     // console.log('Calculated node share: ' + web3.utils.fromWei(calculatedNodeShare));
 
     // Get penalty rate for this minipool
-    const rocketMinipoolPenalty = await RocketMinipoolPenalty.deployed();
+    const rocketMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
     const penaltyRate = await rocketMinipoolPenalty.getPenaltyRate(minipool.address);
 
     // Calculate rewards

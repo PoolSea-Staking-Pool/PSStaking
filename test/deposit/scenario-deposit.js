@@ -1,9 +1,9 @@
 import {
-    RocketDAOProtocolSettingsDeposit,
-    RocketDepositPool,
-    RocketDepositPoolOld,
-    RocketTokenRETH,
-    RocketVault,
+    PoolseaDAOProtocolSettingsDeposit,
+    PoolseaDepositPool,
+    PoolseaDepositPoolOld,
+    PoolseaTokenRETH,
+    PoolseaVault,
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
@@ -17,10 +17,10 @@ export async function deposit(txOptions, preUpdate = false) {
         rocketTokenRETH,
         rocketVault,
     ] = await Promise.all([
-        RocketDAOProtocolSettingsDeposit.deployed(),
-        preUpdate ? RocketDepositPoolOld.deployed() : RocketDepositPool.deployed(),
-        RocketTokenRETH.deployed(),
-        RocketVault.deployed(),
+        PoolseaDAOProtocolSettingsDeposit.deployed(),
+        preUpdate ? PoolseaDepositPoolOld.deployed() : PoolseaDepositPool.deployed(),
+        PoolseaTokenRETH.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Get parameters

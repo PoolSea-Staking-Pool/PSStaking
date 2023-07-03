@@ -1,4 +1,4 @@
-import { RocketDAONodeTrusted, RocketNetworkPrices, RocketStorage } from '../_utils/artifacts';
+import { PoolseaDAONodeTrusted, PoolseaNetworkPrices, PoolseaStorage } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -10,9 +10,9 @@ export async function submitPrices(block, rplPrice, txOptions) {
         rocketNetworkPrices,
         rocketStorage,
     ] = await Promise.all([
-        RocketDAONodeTrusted.deployed(),
-        RocketNetworkPrices.deployed(),
-        RocketStorage.deployed(),
+        PoolseaDAONodeTrusted.deployed(),
+        PoolseaNetworkPrices.deployed(),
+        PoolseaStorage.deployed(),
     ]);
 
     // Get parameters
@@ -78,7 +78,7 @@ export async function submitPrices(block, rplPrice, txOptions) {
 // Execute price update
 export async function executeUpdatePrices(block, rplPrice, txOptions) {
     // Load contracts
-    const rocketNetworkPrices = await RocketNetworkPrices.deployed();
+    const rocketNetworkPrices = await PoolseaNetworkPrices.deployed();
 
     // Get prices
     function getPrices() {

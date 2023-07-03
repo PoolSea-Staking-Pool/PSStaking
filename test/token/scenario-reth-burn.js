@@ -1,11 +1,11 @@
-import { RocketTokenRETH } from '../_utils/artifacts';
+import { PoolseaTokenRETH } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 // Burn rETH for ETH
 export async function burnReth(amount, txOptions) {
     // Load contracts
-    const rocketTokenRETH = await RocketTokenRETH.deployed();
+    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
 
     // Get balances
     function getBalances() {

@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { RocketDAOProtocol, RocketDAOProtocolSettingsRewards, RocketDAOProtocolSettingsInflation, RocketTokenRPL, RocketVault } from '../_utils/artifacts';
+import { PoolseaDAOProtocol, PoolseaDAOProtocolSettingsRewards, PoolseaDAOProtocolSettingsInflation, PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -12,7 +12,7 @@ export async function setDAOProtocolBootstrapSetting(_settingContractInstance, _
     }
 
     // Load contracts
-    const rocketDAOProtocol = await RocketDAOProtocol.deployed();
+    const rocketDAOProtocol = await PoolseaDAOProtocol.deployed();
     const rocketDAOProtocolSettingsContract = await _settingContractInstance.deployed();
 
     // Get data about the tx
@@ -57,8 +57,8 @@ export async function setDAOProtocolBootstrapSetting(_settingContractInstance, _
 // Set a contract that can claim rewards
 export async function setDAONetworkBootstrapRewardsClaimer(_contractName, _perc, txOptions, expectedTotalPerc = null) {
     // Load contracts
-    const rocketDAOProtocol = await RocketDAOProtocol.deployed();
-    const rocketDAOProtocolSettingsRewards = await RocketDAOProtocolSettingsRewards.deployed();
+    const rocketDAOProtocol = await PoolseaDAOProtocol.deployed();
+    const rocketDAOProtocolSettingsRewards = await PoolseaDAOProtocolSettingsRewards.deployed();
     // Get data about the tx
     function getTxData() {
         return Promise.all([
@@ -87,16 +87,16 @@ export async function setDAONetworkBootstrapRewardsClaimer(_contractName, _perc,
 // Set the current rewards claim period in seconds
 export async function setRewardsClaimIntervalTime(intervalTime, txOptions) {
     // Set it now
-    await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsRewards, 'rpl.rewards.claim.period.time', intervalTime, txOptions);
+    await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsRewards, 'rpl.rewards.claim.period.time', intervalTime, txOptions);
 }
 
 
 // Spend the DAO treasury in bootstrap mode
 export async function spendRewardsClaimTreasury(_invoiceID, _recipientAddress, _amount, txOptions) {
     // Load contracts
-    const rocketDAOProtocol = await RocketDAOProtocol.deployed();
-    const rocketTokenRPL = await RocketTokenRPL.deployed();
-    const rocketVault = await RocketVault.deployed();
+    const rocketDAOProtocol = await PoolseaDAOProtocol.deployed();
+    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
+    const rocketVault = await PoolseaVault.deployed();
 
     // Get data about the tx
     function getTxData() {
@@ -134,21 +134,21 @@ export async function setRPLInflationIntervalRate(yearlyInflationPerc, txOptions
     // Calculate the inflation rate per day
     let dailyInflation = (1 + yearlyInflationPerc) ** (1 / (365)).toFixed(18);
     // Set it now
-    await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsInflation, 'rpl.inflation.interval.rate', dailyInflation.ether, txOptions);
+    await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsInflation, 'rpl.inflation.interval.rate', dailyInflation.ether, txOptions);
 }
 
 
 // Set the current RPL inflation block interval
 export async function setRPLInflationStartTime(startTime, txOptions) {
     // Set it now
-    await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsInflation, 'rpl.inflation.interval.start', startTime, txOptions);
+    await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsInflation, 'rpl.inflation.interval.start', startTime, txOptions);
 }
 
 
 // Disable bootstrap mode
 export async function setDaoProtocolBootstrapModeDisabled(txOptions) {
     // Load contracts
-    const rocketDAOProtocol = await RocketDAOProtocol.deployed();
+    const rocketDAOProtocol = await PoolseaDAOProtocol.deployed();
 
     // Get data about the tx
     function getTxData() {
@@ -181,7 +181,7 @@ export async function setDAOProtocolBootstrapSettingMulti(_settingContractInstan
   }
 
   // Load contracts
-  const rocketDAOProtocol = await RocketDAOProtocol.deployed();
+  const rocketDAOProtocol = await PoolseaDAOProtocol.deployed();
 
 
   const contractNames = [];

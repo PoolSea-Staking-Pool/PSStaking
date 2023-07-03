@@ -1,9 +1,9 @@
 import {
-    RocketDAOProtocolSettingsDeposit,
-    RocketMinipoolQueue,
-    RocketDAOProtocolSettingsMinipool,
-    RocketVault,
-    RocketDepositPoolOld,
+    PoolseaDAOProtocolSettingsDeposit,
+    PoolseaMinipoolQueue,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaVault,
+    PoolseaDepositPoolOld,
 } from '../_utils/artifacts';
 
 
@@ -18,11 +18,11 @@ export async function assignDeposits(txOptions) {
         rocketDAOProtocolSettingsMinipool,
         rocketVault,
     ] = await Promise.all([
-        RocketDepositPoolOld.deployed(),
-        RocketDAOProtocolSettingsDeposit.deployed(),
-        RocketMinipoolQueue.deployed(),
-        RocketDAOProtocolSettingsMinipool.deployed(),
-        RocketVault.deployed(),
+        PoolseaDepositPoolOld.deployed(),
+        PoolseaDAOProtocolSettingsDeposit.deployed(),
+        PoolseaMinipoolQueue.deployed(),
+        PoolseaDAOProtocolSettingsMinipool.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Get parameters

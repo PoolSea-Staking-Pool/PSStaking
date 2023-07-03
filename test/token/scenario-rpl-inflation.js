@@ -1,5 +1,5 @@
 import { getCurrentTime, increaseTime } from '../_utils/evm'
-import { RocketTokenRPL, RocketVault } from '../_utils/artifacts';
+import { PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
 import { setRPLInflationIntervalRate, setRPLInflationStartTime } from '../dao/scenario-dao-protocol-bootstrap'
 import { assertBN } from '../_helpers/bn';
 
@@ -21,8 +21,8 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
     }
 
     // Load contracts
-    const rocketTokenRPL = await RocketTokenRPL.deployed();
-    const rocketVault = await RocketVault.deployed();
+    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
+    const rocketVault = await PoolseaVault.deployed();
 
     // Get the previously last inflation calculated block
     const timeIntervalLastCalc = web3.utils.toBN(await rocketTokenRPL.getInflationCalcTime.call());
@@ -89,7 +89,7 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
         // Calculate expected inflation amount
         expectedTokensMinted = newTotalSupply.sub(totalSupplyStart);
     }
-   
+
     // console.log('');
     // console.log('Current time', currentTime);
     // console.log('Inflation start time', Number(inflationData1.inflationStartTime));
@@ -101,7 +101,7 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
     // console.log('Inflation next calc time', Number(inflationData1.inflationCalcTime)+Number(inflationData1.intervalTime));
     // console.log('Daily inflation', Number(dailyInflation))
 
-    
+
     // Claim tokens now
     await rocketTokenRPL.inflationMintTokens(txOptions);
 

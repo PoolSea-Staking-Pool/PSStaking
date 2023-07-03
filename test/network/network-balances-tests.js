@@ -3,7 +3,7 @@ import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
 import { registerNode, setNodeTrusted } from '../_helpers/node';
 import { executeUpdateBalances, submitBalances } from './scenario-submit-balances'
-import { RocketDAONodeTrustedSettingsProposals, RocketDAOProtocolSettingsNetwork } from '../_utils/artifacts'
+import { PoolseaDAONodeTrustedSettingsProposals, PoolseaDAOProtocolSettingsNetwork } from '../_utils/artifacts'
 import { setDAOProtocolBootstrapSetting } from '../dao/scenario-dao-protocol-bootstrap';
 import { daoNodeTrustedExecute, daoNodeTrustedMemberLeave, daoNodeTrustedPropose, daoNodeTrustedVote } from '../dao/scenario-dao-node-trusted'
 import { getDAOProposalEndTime, getDAOProposalStartTime } from '../dao/scenario-dao-proposal'
@@ -47,10 +47,10 @@ export default function() {
             await setNodeTrusted(trustedNode3, 'saas_3', 'node@home.com', owner);
 
             // Set a small proposal cooldown
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
             // Set a small vote delay
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
 
         });
 
@@ -133,7 +133,7 @@ export default function() {
             let rethSupply = '8'.ether;
 
             // Disable submissions
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.submit.balances.enabled', false, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.submit.balances.enabled', false, {from: owner});
 
             // Attempt to submit balances
             await shouldRevert(submitBalances(block, totalBalance, stakingBalance, rethSupply, {

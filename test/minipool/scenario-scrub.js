@@ -1,10 +1,10 @@
 // Dissolve a minipool
 import {
-    RocketDAONodeTrusted,
-    RocketDAONodeTrustedSettingsMinipool, RocketDAOProtocolSettingsNode, RocketNetworkPrices,
-    RocketNodeStaking,
-    RocketTokenRPL,
-    RocketVault
+    PoolseaDAONodeTrusted,
+    PoolseaDAONodeTrustedSettingsMinipool, PoolseaDAOProtocolSettingsNode, PoolseaNetworkPrices,
+    PoolseaNodeStaking,
+    PoolseaTokenRPL,
+    PoolseaVault
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 import { minipoolStates } from '../_helpers/minipool';
@@ -15,12 +15,12 @@ export async function voteScrub(minipool, txOptions) {
     const nodeAddress = await minipool.getNodeAddress.call();
 
     // Get contracts
-    const rocketNodeStaking = await RocketNodeStaking.deployed();
-    const rocketVault = await RocketVault.deployed();
-    const rocketTokenRPL = await RocketTokenRPL.deployed();
-    const rocketDAONodeTrustedSettingsMinipool = await RocketDAONodeTrustedSettingsMinipool.deployed();
-    const rocketNetworkPrices = await RocketNetworkPrices.deployed();
-    const rocketDAOProtocolSettingsNode = await RocketDAOProtocolSettingsNode.deployed();
+    const rocketNodeStaking = await PoolseaNodeStaking.deployed();
+    const rocketVault = await PoolseaVault.deployed();
+    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
+    const rocketDAONodeTrustedSettingsMinipool = await PoolseaDAONodeTrustedSettingsMinipool.deployed();
+    const rocketNetworkPrices = await PoolseaNetworkPrices.deployed();
+    const rocketDAOProtocolSettingsNode = await PoolseaDAOProtocolSettingsNode.deployed();
 
     // Get minipool details
     function getMinipoolDetails() {
@@ -48,7 +48,7 @@ export async function voteScrub(minipool, txOptions) {
     let details2 = await getMinipoolDetails();
 
     // Get member count
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
+    const rocketDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
     const memberCount = await rocketDAONodeTrusted.getMemberCount();
     const quorum = memberCount.div('2'.BN);
 

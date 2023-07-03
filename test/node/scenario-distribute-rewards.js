@@ -1,22 +1,22 @@
 import {
-  RocketMinipoolDelegate, RocketMinipoolManager, RocketMinipoolManagerNew,
-  RocketNodeDistributorDelegate,
-  RocketNodeDistributorFactory, RocketNodeManager, RocketNodeManagerNew,
-  RocketStorage,
-  RocketTokenRETH
+  PoolseaMinipoolDelegate, PoolseaMinipoolManager, RocketMinipoolManagerNew,
+  PoolseaNodeDistributorDelegate,
+  PoolseaNodeDistributorFactory, PoolseaNodeManager, RocketNodeManagerNew,
+  PoolseaStorage,
+  PoolseaTokenRETH
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 export async function distributeRewards(nodeAddress, txOptions) {
   // Get contracts
-  const rocketStorage = await RocketStorage.deployed();
-  const rocketNodeDistributorFactory = await RocketNodeDistributorFactory.deployed();
+  const rocketStorage = await PoolseaStorage.deployed();
+  const rocketNodeDistributorFactory = await PoolseaNodeDistributorFactory.deployed();
   const distributorAddress = await rocketNodeDistributorFactory.getProxyAddress(nodeAddress);
-  const distributor = await RocketNodeDistributorDelegate.at(distributorAddress);
-  const rocketTokenRETH = await RocketTokenRETH.deployed();
-  const rocketMinipoolManager = await RocketMinipoolManager.deployed();
-  const rocketNodeManager = await RocketNodeManager.deployed();
+  const distributor = await PoolseaNodeDistributorDelegate.at(distributorAddress);
+  const rocketTokenRETH = await PoolseaTokenRETH.deployed();
+  const rocketMinipoolManager = await PoolseaMinipoolManager.deployed();
+  const rocketNodeManager = await PoolseaNodeManager.deployed();
   // Get node withdrawal address
   const withdrawalAddress = await rocketStorage.getNodeWithdrawalAddress(nodeAddress);
   // Get distributor contract balance
@@ -26,7 +26,7 @@ export async function distributeRewards(nodeAddress, txOptions) {
 
   async function getMinipoolDetails(index) {
     const minipoolAddress = await rocketMinipoolManager.getNodeMinipoolAt(nodeAddress, index);
-    const minipool = await RocketMinipoolDelegate.at(minipoolAddress)
+    const minipool = await PoolseaMinipoolDelegate.at(minipoolAddress)
     return Promise.all([
       minipool.getStatus(),
       minipool.getNodeFee()

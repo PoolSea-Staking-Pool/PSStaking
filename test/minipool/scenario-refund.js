@@ -1,11 +1,11 @@
-import { RocketNodeManager } from '../_utils/artifacts';
+import { PoolseaNodeManager } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 // Refund refinanced node balance from a minipool
 export async function refund(minipool, txOptions) {
     // Load contracts
-    const rocketNodeManager = await RocketNodeManager.deployed();
+    const rocketNodeManager = await PoolseaNodeManager.deployed();
 
     // Get parameters
     let nodeAddress = await minipool.getNodeAddress.call();

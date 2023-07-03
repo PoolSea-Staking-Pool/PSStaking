@@ -1,4 +1,4 @@
-import { RocketDAONodeTrusted, RocketNetworkBalances, RocketStorage } from '../_utils/artifacts';
+import { PoolseaDAONodeTrusted, PoolseaNetworkBalances, PoolseaStorage } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -11,9 +11,9 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
         rocketNetworkBalances,
         rocketStorage,
     ] = await Promise.all([
-        RocketDAONodeTrusted.deployed(),
-        RocketNetworkBalances.deployed(),
-        RocketStorage.deployed(),
+        PoolseaDAONodeTrusted.deployed(),
+        PoolseaNetworkBalances.deployed(),
+        PoolseaStorage.deployed(),
     ]);
 
     // Get parameters
@@ -84,7 +84,7 @@ export async function submitBalances(block, totalEth, stakingEth, rethSupply, tx
 // Execute update network balances
 export async function executeUpdateBalances(block, totalEth, stakingEth, rethSupply, txOptions) {
     // Load contracts
-    const rocketNetworkBalances = await RocketNetworkBalances.deployed()
+    const rocketNetworkBalances = await PoolseaNetworkBalances.deployed()
 
     // Get balances
     function getBalances() {

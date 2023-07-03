@@ -8,7 +8,7 @@ import { rplClaimInflation, rplSetInflationConfig } from './scenario-rpl-inflati
 import { setRPLInflationIntervalRate, setRPLInflationStartTime } from '../dao/scenario-dao-protocol-bootstrap';
 
 // Contracts
-import { RocketTokenRPL } from '../_utils/artifacts';
+import { PoolseaTokenRPL } from '../_utils/artifacts';
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
@@ -38,10 +38,10 @@ export default function() {
             await mintDummyRPL(userOne, userOneRPLBalance, {from: owner});
         });
 
-        
+
         it(printTitle('userOne', 'burn all their current fixed supply RPL for new RPL'), async () => {
             // Load contracts
-            const rocketTokenRPL = await RocketTokenRPL.deployed();
+            const rocketTokenRPL = await PoolseaTokenRPL.deployed();
             // Give allowance for all to be sent
             await allowDummyRPL(rocketTokenRPL.address, userOneRPLBalance, {
                 from: userOne,
@@ -55,7 +55,7 @@ export default function() {
 
         it(printTitle('userOne', 'burn less fixed supply RPL than they\'ve given an allowance for'), async () => {
             // Load contracts
-            const rocketTokenRPL = await RocketTokenRPL.deployed();
+            const rocketTokenRPL = await PoolseaTokenRPL.deployed();
             // The allowance
             let allowance = userOneRPLBalance.div('2'.BN);
             // Give allowance for half to be spent
@@ -71,7 +71,7 @@ export default function() {
 
         it(printTitle('userOne', 'fails to burn more fixed supply RPL than they\'ve given an allowance for'), async () => {
              // Load contracts
-            const rocketTokenRPL = await RocketTokenRPL.deployed();
+            const rocketTokenRPL = await PoolseaTokenRPL.deployed();
             // The allowance
             let allowance = userOneRPLBalance.sub('0.000001'.ether);
             // Give allowance for all to be sent
@@ -87,7 +87,7 @@ export default function() {
 
         it(printTitle('userOne', 'fails to burn more fixed supply RPL than they have'), async () => {
             // Load contracts
-           const rocketTokenRPL = await RocketTokenRPL.deployed();
+           const rocketTokenRPL = await PoolseaTokenRPL.deployed();
            // The allowance
            let allowance = userOneRPLBalance;
            // Give allowance for all to be sent
@@ -187,7 +187,7 @@ export default function() {
             assertBN.equal(newTokens, 0, 'Inflation claimed before start block has passed')
         });
 
-        
+
         it(printTitle('userOne', 'fail to mint inflation before an interval has passed'), async () => {
             // Current time
             let currentTime = await getCurrentTime(web3);
@@ -205,7 +205,7 @@ export default function() {
             const newTokens = await rplClaimInflation(config, { from: userOne });
             assertBN.equal(newTokens, 0, 'Inflation claimed before interval has passed');
         });
-        
+
 
         it(printTitle('userOne', 'mint inflation midway through a second interval, then mint again after another interval'), async () => {
             // Current time
@@ -228,7 +228,7 @@ export default function() {
             config.timeClaim += config.timeInterval;
             await rplClaimInflation(config, { from: userOne });
         });
-        
+
 
         it(printTitle('userOne', 'mint inflation at multiple random intervals'), async () => {
             // Current time
@@ -266,8 +266,8 @@ export default function() {
             config.timeClaim += HALF_INTERVAL * 70;
             await rplClaimInflation(config, { from: userOne });
         });
-        
-        
+
+
         it(printTitle('userOne', 'mint one years inflation after 365 days at 5% which would equal 18,900,000 tokens'), async () => {
             // Current time
             let currentTime = await getCurrentTime(web3);
@@ -287,8 +287,8 @@ export default function() {
             // Mint inflation now
             await rplClaimInflation(config, { from: userOne }, '18900000');
         });
-       
-        
+
+
         it(printTitle('userOne', 'mint one years inflation every quarter at 5% which would equal 18,900,000 tokens'), async () => {
             // Current time
             let currentTime = await getCurrentTime(web3);
@@ -316,7 +316,7 @@ export default function() {
             await rplClaimInflation(config, { from: userOne }, '18900000');
         });
 
-        
+
         it(printTitle('userTwo', 'mint two years inflation every 6 months at 5% which would equal 19,845,000 tokens'), async () => {
             // Current time
             let currentTime = await getCurrentTime(web3);

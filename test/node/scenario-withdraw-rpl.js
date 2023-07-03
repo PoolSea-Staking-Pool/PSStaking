@@ -1,4 +1,4 @@
-import { RocketMinipoolManager, RocketDAOProtocolSettingsMinipool, RocketNetworkPrices, RocketDAOProtocolSettingsNode, RocketNodeStaking, RocketTokenRPL, RocketVault } from '../_utils/artifacts';
+import { PoolseaMinipoolManager, PoolseaDAOProtocolSettingsMinipool, PoolseaNetworkPrices, PoolseaDAOProtocolSettingsNode, PoolseaNodeStaking, PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -15,13 +15,13 @@ export async function withdrawRpl(amount, txOptions) {
         rocketTokenRPL,
         rocketVault,
     ] = await Promise.all([
-        RocketMinipoolManager.deployed(),
-        RocketDAOProtocolSettingsMinipool.deployed(),
-        RocketNetworkPrices.deployed(),
-        RocketDAOProtocolSettingsNode.deployed(),
-        RocketNodeStaking.deployed(),
-        RocketTokenRPL.deployed(),
-        RocketVault.deployed(),
+        PoolseaMinipoolManager.deployed(),
+        PoolseaDAOProtocolSettingsMinipool.deployed(),
+        PoolseaNetworkPrices.deployed(),
+        PoolseaDAOProtocolSettingsNode.deployed(),
+        PoolseaNodeStaking.deployed(),
+        PoolseaTokenRPL.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Get parameters

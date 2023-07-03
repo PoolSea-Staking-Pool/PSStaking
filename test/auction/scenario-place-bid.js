@@ -1,4 +1,4 @@
-import { RocketAuctionManager, RocketDAOProtocolSettingsAuction, RocketVault } from '../_utils/artifacts';
+import { PoolseaAuctionManager, PoolseaDAOProtocolSettingsAuction, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -11,9 +11,9 @@ export async function placeBid(lotIndex, txOptions) {
         rocketAuctionSettings,
         rocketVault,
     ] = await Promise.all([
-        RocketAuctionManager.deployed(),
-        RocketDAOProtocolSettingsAuction.deployed(),
-        RocketVault.deployed(),
+        PoolseaAuctionManager.deployed(),
+        PoolseaDAOProtocolSettingsAuction.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Calculation base value

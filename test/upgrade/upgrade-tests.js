@@ -13,16 +13,16 @@ import {
 import { mintRPL } from '../_helpers/tokens';
 import { userDeposit } from '../_helpers/deposit';
 import {
-    RocketDAONodeTrustedSettingsMinipool,
-    RocketDAOProtocolSettingsDeposit,
-    RocketDAOProtocolSettingsMinipool,
-    RocketDAOProtocolSettingsNetwork,
-    RocketDepositPool,
-    RocketMinipoolBase, RocketMinipoolBondReducer, RocketMinipoolDelegateOld,
-    RocketMinipoolQueue,
-    RocketMinipoolQueueOld,
-    RocketNetworkFees, RocketNodeDeposit, RocketNodeStaking,
-    RocketTokenRETH,
+    PoolseaDAONodeTrustedSettingsMinipool,
+    PoolseaDAOProtocolSettingsDeposit,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaDAOProtocolSettingsNetwork,
+    PoolseaDepositPool,
+    PoolseaMinipoolBase, PoolseaMinipoolBondReducer, PoolseaMinipoolDelegateOld,
+    PoolseaMinipoolQueue,
+    PoolseaMinipoolQueueOld,
+    PoolseaNetworkFees, PoolseaNodeDeposit, PoolseaNodeStaking,
+    PoolseaTokenRETH,
 } from '../_utils/artifacts';
 import { increaseTime } from '../_utils/evm';
 import { burnReth } from '../token/scenario-reth-burn';
@@ -71,13 +71,13 @@ export default function() {
 
             // Setup
             before(async () => {
-                rocketDepositPool = await RocketDepositPool.deployed();
-                rocketTokenRETH = await RocketTokenRETH.deployed();
-                rocketMinipoolQueue = await RocketMinipoolQueue.deployed();
-                rocketNetworkFees = await RocketNetworkFees.deployed();
-                rocketNodeStaking = await RocketNodeStaking.deployed();
-                rocketNodeDeposit = await RocketNodeDeposit.deployed();
-                rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
+                rocketDepositPool = await PoolseaDepositPool.deployed();
+                rocketTokenRETH = await PoolseaTokenRETH.deployed();
+                rocketMinipoolQueue = await PoolseaMinipoolQueue.deployed();
+                rocketNetworkFees = await PoolseaNetworkFees.deployed();
+                rocketNodeStaking = await PoolseaNodeStaking.deployed();
+                rocketNodeDeposit = await PoolseaNodeDeposit.deployed();
+                rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // Register node
                 await registerNode({from: node});
@@ -89,11 +89,11 @@ export default function() {
                 await setNodeTrusted(trustedNode2, 'saas_1', 'node@home.com', owner);
 
                 // Set settings
-                await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
-                await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
-                await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
-                await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.start', bondReductionWindowStart, {from: owner});
-                await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.length', bondReductionWindowLength, {from: owner});
+                await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
+                await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
+                await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+                await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.start', bondReductionWindowStart, {from: owner});
+                await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.length', bondReductionWindowLength, {from: owner});
 
                 // Stake RPL to cover minipools
                 let rplStake = '2400'.ether;
@@ -277,7 +277,7 @@ export default function() {
 
                     {
                         // Test: Set deposit limit to 1 ETH
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '1'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '1'.ether, {from: owner});
                         // Expected: Deposit limit set to 1 ETH, dynamic limit should be 49 ETH (1+24*2)
                         assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), '49'.ether, 'Invalid maximum deposit amount')
                     }
@@ -295,7 +295,7 @@ export default function() {
                         assertBN.equal(await rocketMinipoolQueue.getTotalLength(), '0', 'Invalid queue length')
                         assertBN.equal(await rocketDepositPool.getBalance(), '1'.ether, 'Invalid deposit balance');
                         // Reset deposit limit
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '360'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '360'.ether, {from: owner});
                     }
 
                     // rETH Burn
@@ -342,15 +342,15 @@ export default function() {
 
                     {
                         // Test: set a dynamic commission rate
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.minimum', '0.05'.ether, {from: owner});
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.target', '0.10'.ether, {from: owner});
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.maximum', '0.20'.ether, {from: owner});
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.demand.range', '5'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.minimum', '0.05'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.target', '0.10'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.maximum', '0.20'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.demand.range', '5'.ether, {from: owner});
                     }
 
                     {
                         // Test: Set deposit limit to 5 ETH
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '5'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '5'.ether, {from: owner});
                         // Expected: Deposit limit should be 5 ETH
                         assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), '5'.ether, 'Invalid maximum deposit amount')
                     }
@@ -392,9 +392,9 @@ export default function() {
 
                     {
                         // Reset commission to 14%
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.minimum', '0.14'.ether, {from: owner});
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.target', '0.14'.ether, {from: owner});
-                        await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.maximum', '0.14'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.minimum', '0.14'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.target', '0.14'.ether, {from: owner});
+                        await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.maximum', '0.14'.ether, {from: owner});
                         // Burn DP
                         await burnReth('3'.ether, {from: random});
                     }
@@ -404,7 +404,7 @@ export default function() {
                     {
                         // Test: Using a 16 ETH minipool (premigration), execute beginReduceBondAmount, wait timeout period, execute reduceBondAmount
                         // Expected: Should fail with not enough RPL stake
-                        const minipool = await RocketMinipoolBase.at(queuedHalfMinipool1.address);
+                        const minipool = await PoolseaMinipoolBase.at(queuedHalfMinipool1.address);
                         await minipool.delegateUpgrade({from: node});
                         await rocketMinipoolBondReducer.beginReduceBondAmount(queuedHalfMinipool1.address, '8'.ether, {from: node});
                         await increaseTime(web3, bondReductionWindowStart + 1);
@@ -471,11 +471,11 @@ export default function() {
                 await setNodeTrusted(trustedNode1, 'saas_1', 'node@home.com', owner);
 
                 // Set settings
-                await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, { from: owner });
-                await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, { from: owner });
-                await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, { from: owner });
-                await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.start', bondReductionWindowStart, {from: owner});
-                await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.length', bondReductionWindowLength, {from: owner});
+                await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, { from: owner });
+                await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, { from: owner });
+                await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, { from: owner });
+                await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.start', bondReductionWindowStart, {from: owner});
+                await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.length', bondReductionWindowLength, {from: owner});
             });
 
 
@@ -495,7 +495,7 @@ export default function() {
                 assertBN.equal(await minipool.getStatus(), minipoolStates.Prelaunch, 'Incorrect minipool status');
 
                 // 4. Upgrade delegate
-                const minipoolBase = await RocketMinipoolBase.at(minipool.address);
+                const minipoolBase = await PoolseaMinipoolBase.at(minipool.address);
                 await minipoolBase.delegateUpgrade({from: node});
 
                 // 5. Attempt to stake
@@ -506,8 +506,8 @@ export default function() {
 
             it('Can create a minipool from deposit credit with zero node balance in deposit pool', async () => {
                 // Get contracts
-                const rocketTokenReth = await RocketTokenRETH.deployed();
-                const rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
+                const rocketTokenReth = await PoolseaTokenRETH.deployed();
+                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Upgrade
                 await upgradeOneDotTwo(owner);
@@ -539,8 +539,8 @@ export default function() {
 
             it('Stops node operator from withdrawing after rolling back an LEB8', async () => {
                 // Get contracts
-                const rocketTokenReth = await RocketTokenRETH.deployed();
-                const rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
+                const rocketTokenReth = await PoolseaTokenRETH.deployed();
+                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking
                 let rplStake = '1600'.ether;
@@ -557,7 +557,7 @@ export default function() {
                 await upgradeOneDotTwo(owner);
 
                 // 3. Upgrade delegate
-                const minipoolBase = await RocketMinipoolBase.at(minipool.address);
+                const minipoolBase = await PoolseaMinipoolBase.at(minipool.address);
                 await minipoolBase.delegateUpgrade({from: node});
 
                 // 4. Reduce bond
@@ -577,7 +577,7 @@ export default function() {
                 });
                 const nodeBalance1 = await web3.eth.getBalance(node);
                 const rethBalance1 = await web3.eth.getBalance(rocketTokenReth.address);
-                const oldMinipool = await RocketMinipoolDelegateOld.at(minipool.address)
+                const oldMinipool = await PoolseaMinipoolDelegateOld.at(minipool.address)
                 await oldMinipool.distributeBalance({ from: node });
                 const nodeBalance2 = await web3.eth.getBalance(node);
                 const rethBalance2 = await web3.eth.getBalance(rocketTokenReth.address);
@@ -590,8 +590,8 @@ export default function() {
 
             it('Stops node operator from withdrawing after rolling back an LEB8 (with useLatest)', async () => {
                 // Get contracts
-                const rocketTokenReth = await RocketTokenRETH.deployed();
-                const rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
+                const rocketTokenReth = await PoolseaTokenRETH.deployed();
+                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking
                 let rplStake = '1600'.ether;
@@ -608,7 +608,7 @@ export default function() {
                 await upgradeOneDotTwo(owner);
 
                 // 3. Upgrade delegate
-                const minipoolBase = await RocketMinipoolBase.at(minipool.address);
+                const minipoolBase = await PoolseaMinipoolBase.at(minipool.address);
                 await minipoolBase.setUseLatestDelegate(true, {from: node});
 
                 // 4. Reduce bond
@@ -628,7 +628,7 @@ export default function() {
                 });
                 const nodeBalance1 = await web3.eth.getBalance(node);
                 const rethBalance1 = await web3.eth.getBalance(rocketTokenReth.address);
-                const oldMinipool = await RocketMinipoolDelegateOld.at(minipool.address)
+                const oldMinipool = await PoolseaMinipoolDelegateOld.at(minipool.address)
                 await oldMinipool.distributeBalance({ from: node });
                 const nodeBalance2 = await web3.eth.getBalance(node);
                 const rethBalance2 = await web3.eth.getBalance(rocketTokenReth.address);
@@ -641,7 +641,7 @@ export default function() {
 
             it('Handles a bond reduction with useLatest delegate setting', async () => {
                 // Get contracts
-                const rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
+                const rocketMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking
                 let rplStake = '1600'.ether;
@@ -655,7 +655,7 @@ export default function() {
                 await stakeMinipool(minipool, {from: node});
 
                 // 2. Enable useDelegate
-                const minipoolBase = await RocketMinipoolBase.at(minipool.address);
+                const minipoolBase = await PoolseaMinipoolBase.at(minipool.address);
                 await minipoolBase.setUseLatestDelegate(true, {from: node});
 
                 // 3. Upgrade
@@ -679,9 +679,9 @@ export default function() {
 
             it('Handles legacy and variable minipools in the queue simultaneously', async () => {
                 // Get contracts
-                const rocketMinipoolQueue = await RocketMinipoolQueue.deployed();
-                const rocketMinipoolQueueOld = await RocketMinipoolQueueOld.deployed();
-                const rocketDepositPool = await RocketDepositPool.deployed();
+                const rocketMinipoolQueue = await PoolseaMinipoolQueue.deployed();
+                const rocketMinipoolQueueOld = await PoolseaMinipoolQueueOld.deployed();
+                const rocketDepositPool = await PoolseaDepositPool.deployed();
 
                 // Stake enough RPL to run a few minipools
                 let rplStake = '1600'.ether.mul('10'.BN);
@@ -763,7 +763,7 @@ export default function() {
 
             it('Handles a legacy minipool that has been upgraded and dissolved', async () => {
                 // Get contracts
-                const rocketNodeStaking = await RocketNodeStaking.deployed();
+                const rocketNodeStaking = await PoolseaNodeStaking.deployed();
 
                 // 1. Create 16 ETH minipool and progress to prelaunch
                 let rplStake = '1600'.ether;
@@ -778,7 +778,7 @@ export default function() {
                 await upgradeOneDotTwo(owner);
 
                 // 3. Upgrade delegate
-                const minipoolBase = await RocketMinipoolBase.at(minipool.address);
+                const minipoolBase = await PoolseaMinipoolBase.at(minipool.address);
                 await minipoolBase.delegateUpgrade({from: node});
 
                 // 4. Dissolve

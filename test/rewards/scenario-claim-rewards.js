@@ -1,8 +1,8 @@
 import {
-    RocketMerkleDistributorMainnet,
-    RocketNodeManager,
-    RocketRewardsPool,
-    RocketStorage, RocketTokenRPL
+    PoolseaMerkleDistributorMainnet,
+    PoolseaNodeManager,
+    PoolseaRewardsPool,
+    PoolseaStorage, PoolseaTokenRPL
 } from '../_utils/artifacts';
 import { parseRewardsMap } from '../_utils/merkle-tree';
 import { assertBN } from '../_helpers/bn';
@@ -19,11 +19,11 @@ export async function claimRewards(nodeAddress, indices, rewards, txOptions) {
         rocketStorage,
         rocketTokenRPL,
     ] = await Promise.all([
-        RocketRewardsPool.deployed(),
-        RocketNodeManager.deployed(),
-        RocketMerkleDistributorMainnet.deployed(),
-        RocketStorage.deployed(),
-        RocketTokenRPL.deployed(),
+        PoolseaRewardsPool.deployed(),
+        PoolseaNodeManager.deployed(),
+        PoolseaMerkleDistributorMainnet.deployed(),
+        PoolseaStorage.deployed(),
+        PoolseaTokenRPL.deployed(),
     ]);
 
     // Get node withdrawal address

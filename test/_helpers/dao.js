@@ -1,4 +1,4 @@
-import { RocketDAONodeTrusted, RocketDAONodeTrustedActions, RocketDAONodeTrustedSettingsMembers } from '../_utils/artifacts';
+import { PoolseaDAONodeTrusted, PoolseaDAONodeTrustedActions, PoolseaDAONodeTrustedSettingsMembers } from '../_utils/artifacts';
 import { mintRPL, approveRPL } from './tokens';
 
 
@@ -9,8 +9,8 @@ export async function mintRPLBond(owner, node) {
         rocketDAONodeTrustedActions,
         rocketDAONodeTrustedSettings,
     ] = await Promise.all([
-        RocketDAONodeTrustedActions.deployed(),
-        RocketDAONodeTrustedSettingsMembers.deployed(),
+        PoolseaDAONodeTrustedActions.deployed(),
+        PoolseaDAONodeTrustedSettingsMembers.deployed(),
     ]);
 
     // Get RPL bond amount
@@ -24,13 +24,13 @@ export async function mintRPLBond(owner, node) {
 
 
 export async function bootstrapMember(address, id, url, txOptions) {
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
+    const rocketDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
     await rocketDAONodeTrusted.bootstrapMember(id, url, address, txOptions);
 }
 
 
 export async function memberJoin(txOptions) {
-    const rocketDAONodeTrustedActions = await RocketDAONodeTrustedActions.deployed();
+    const rocketDAONodeTrustedActions = await PoolseaDAONodeTrustedActions.deployed();
     await rocketDAONodeTrustedActions.actionJoin(txOptions);
 }
 

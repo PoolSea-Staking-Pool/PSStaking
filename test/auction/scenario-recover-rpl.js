@@ -1,4 +1,4 @@
-import { RocketAuctionManager } from '../_utils/artifacts';
+import { PoolseaAuctionManager } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -6,7 +6,7 @@ import { assertBN } from '../_helpers/bn';
 export async function recoverUnclaimedRPL(lotIndex, txOptions) {
 
     // Load contracts
-    const rocketAuctionManager = await RocketAuctionManager.deployed();
+    const rocketAuctionManager = await PoolseaAuctionManager.deployed();
 
     // Get auction contract details
     function getContractDetails() {

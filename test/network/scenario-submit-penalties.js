@@ -1,8 +1,8 @@
 import {
-    RocketDAONodeTrusted, RocketDAOProtocolSettingsNetwork,
-    RocketMinipoolPenalty,
-    RocketNetworkPenalties,
-    RocketStorage
+    PoolseaDAONodeTrusted, PoolseaDAOProtocolSettingsNetwork,
+    PoolseaMinipoolPenalty,
+    PoolseaNetworkPenalties,
+    PoolseaStorage
 } from '../_utils/artifacts';
 import { shouldRevert } from '../_utils/testing';
 import { assertBN } from '../_helpers/bn';
@@ -19,11 +19,11 @@ export async function submitPenalty(minipoolAddress, block, txOptions) {
         rocketStorage,
         rocketDAOProtocolSettingsNetwork
     ] = await Promise.all([
-        RocketDAONodeTrusted.deployed(),
-        RocketNetworkPenalties.deployed(),
-        RocketMinipoolPenalty.deployed(),
-        RocketStorage.deployed(),
-        RocketDAOProtocolSettingsNetwork.deployed()
+        PoolseaDAONodeTrusted.deployed(),
+        PoolseaNetworkPenalties.deployed(),
+        PoolseaMinipoolPenalty.deployed(),
+        PoolseaStorage.deployed(),
+        PoolseaDAOProtocolSettingsNetwork.deployed()
     ]);
 
     // Get parameters

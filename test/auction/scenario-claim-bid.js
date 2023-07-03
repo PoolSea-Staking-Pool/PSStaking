@@ -1,4 +1,4 @@
-import { RocketAuctionManager, RocketTokenRPL, RocketVault } from '../_utils/artifacts';
+import { PoolseaAuctionManager, PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -11,9 +11,9 @@ export async function claimBid(lotIndex, txOptions) {
         rocketTokenRPL,
         rocketVault,
     ] = await Promise.all([
-        RocketAuctionManager.deployed(),
-        RocketTokenRPL.deployed(),
-        RocketVault.deployed(),
+        PoolseaAuctionManager.deployed(),
+        PoolseaTokenRPL.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Get auction contract details

@@ -1,4 +1,4 @@
-import { RocketAuctionManager, RocketDAOProtocolSettingsAuction, RocketNetworkPrices } from '../_utils/artifacts';
+import { PoolseaAuctionManager, PoolseaDAOProtocolSettingsAuction, PoolseaNetworkPrices } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -11,9 +11,9 @@ export async function createLot(txOptions) {
         rocketAuctionSettings,
         rocketNetworkPrices,
     ] = await Promise.all([
-        RocketAuctionManager.deployed(),
-        RocketDAOProtocolSettingsAuction.deployed(),
-        RocketNetworkPrices.deployed(),
+        PoolseaAuctionManager.deployed(),
+        PoolseaDAOProtocolSettingsAuction.deployed(),
+        PoolseaNetworkPrices.deployed(),
     ]);
 
     // Get parameters

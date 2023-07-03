@@ -7,7 +7,7 @@ import {
 } from './scenario-dao-protocol-bootstrap'
 
 // Contracts
-import { RocketDAOProtocolSettingsAuction, RocketDAOProtocolSettingsDeposit, RocketDAOProtocolSettingsInflation, RocketDAOProtocolSettingsMinipool, RocketDAOProtocolSettingsNetwork, RocketDAOProtocolSettingsRewards } from '../_utils/artifacts';
+import { PoolseaDAOProtocolSettingsAuction, PoolseaDAOProtocolSettingsDeposit, PoolseaDAOProtocolSettingsInflation, PoolseaDAOProtocolSettingsMinipool, PoolseaDAOProtocolSettingsNetwork, PoolseaDAOProtocolSettingsRewards } from '../_utils/artifacts';
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 
 
@@ -34,7 +34,7 @@ export default function() {
         // Update a setting
         it(printTitle('userOne', 'fails to update a setting as they are not the guardian'), async () => {
             // Fails to change a setting
-            await shouldRevert(setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
+            await shouldRevert(setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
                 from: userOne,
             }), "User updated bootstrap setting", "Account is not a temporary guardian");
 
@@ -44,9 +44,9 @@ export default function() {
         it(printTitle('userOne', 'fails to update multiple settings as they are not the guardian'), async () => {
           // Fails to change multiple settings
           await shouldRevert(setDAOProtocolBootstrapSettingMulti([
-                RocketDAOProtocolSettingsAuction,
-                RocketDAOProtocolSettingsDeposit,
-                RocketDAOProtocolSettingsInflation
+                PoolseaDAOProtocolSettingsAuction,
+                PoolseaDAOProtocolSettingsDeposit,
+                PoolseaDAOProtocolSettingsInflation
               ],
               [
                 'auction.lot.create.enabled',
@@ -66,25 +66,25 @@ export default function() {
         // Verify each setting contract is enabled correctly. These settings are tested in greater detail in the relevent contracts
         it(printTitle('guardian', 'updates a setting in each settings contract while bootstrap mode is enabled'), async () => {
             // Set via bootstrapping
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
                 from: guardian
             });
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.minimum', web3.utils.toWei('2'), {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.minimum', web3.utils.toWei('2'), {
                 from: guardian
             });
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsInflation, 'rpl.inflation.interval.blocks', 400, {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsInflation, 'rpl.inflation.interval.blocks', 400, {
                 from: guardian
             });
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.submit.withdrawable.enabled', true, {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.submit.withdrawable.enabled', true, {
                 from: guardian
             });
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.submit.prices.enabled', true, {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.submit.prices.enabled', true, {
                 from: guardian
             });
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsRewards, 'rpl.rewards.claim.period.blocks', 100, {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsRewards, 'rpl.rewards.claim.period.blocks', 100, {
                 from: guardian
             });
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsInflation, 'network.reth.deposit.delay', 500, {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsInflation, 'network.reth.deposit.delay', 500, {
                 from: guardian
             });
         });
@@ -93,9 +93,9 @@ export default function() {
       it(printTitle('guardian', 'updates multiple settings at once while bootstrap mode is enabled'), async () => {
         // Set via bootstrapping
         await setDAOProtocolBootstrapSettingMulti([
-            RocketDAOProtocolSettingsAuction,
-            RocketDAOProtocolSettingsDeposit,
-            RocketDAOProtocolSettingsInflation
+            PoolseaDAOProtocolSettingsAuction,
+            PoolseaDAOProtocolSettingsDeposit,
+            PoolseaDAOProtocolSettingsInflation
           ],
           [
             'auction.lot.create.enabled',
@@ -115,7 +115,7 @@ export default function() {
       // Update a setting, then try again
       it(printTitle('guardian', 'updates a setting, then fails to update a setting again after bootstrap mode is disabled'), async () => {
             // Set via bootstrapping
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
                 from: guardian
             });
             // Disable bootstrap mode
@@ -123,7 +123,7 @@ export default function() {
                 from: guardian
             });
             // Attempt to change a setting again
-            await shouldRevert(setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
+            await shouldRevert(setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsAuction, 'auction.lot.create.enabled', true, {
                 from: guardian,
             }), "Guardian updated bootstrap setting after mode disabled", "Bootstrap mode not engaged");
 
@@ -133,9 +133,9 @@ export default function() {
         it(printTitle('guardian', 'updates multiple settings, then fails to update multiple settings again after bootstrap mode is disabled'), async () => {
           // Set via bootstrapping
           await setDAOProtocolBootstrapSettingMulti([
-              RocketDAOProtocolSettingsAuction,
-              RocketDAOProtocolSettingsDeposit,
-              RocketDAOProtocolSettingsInflation
+              PoolseaDAOProtocolSettingsAuction,
+              PoolseaDAOProtocolSettingsDeposit,
+              PoolseaDAOProtocolSettingsInflation
             ],
             [
               'auction.lot.create.enabled',
@@ -156,9 +156,9 @@ export default function() {
             });
             // Attempt to change a setting again
             await shouldRevert(setDAOProtocolBootstrapSettingMulti([
-                RocketDAOProtocolSettingsAuction,
-                RocketDAOProtocolSettingsDeposit,
-                RocketDAOProtocolSettingsInflation
+                PoolseaDAOProtocolSettingsAuction,
+                PoolseaDAOProtocolSettingsDeposit,
+                PoolseaDAOProtocolSettingsInflation
               ],
               [
                 'auction.lot.create.enabled',

@@ -1,11 +1,11 @@
-import { RocketTokenDummyRPL } from '../_utils/artifacts';
+import { PoolseaTokenDummyRPL } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 // Allow RPL from the fixed contract to be spent
 export async function allowDummyRPL(to, amount, txOptions) {
     // Load contracts
-    const rocketTokenDummyRPL = await RocketTokenDummyRPL.deployed();
+    const rocketTokenDummyRPL = await PoolseaTokenDummyRPL.deployed();
 
     // Get balances
     function getBalances() {

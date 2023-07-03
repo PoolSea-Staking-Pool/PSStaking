@@ -1,11 +1,11 @@
-import { RocketTokenDummyRPL } from '../_utils/artifacts';
+import { PoolseaTokenDummyRPL } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 // Mint RPL from the dummy RPL contract to simulate a user having existing fixed supply RPL
 export async function mintDummyRPL(to, amount, txOptions) {
     // Load contracts
-    const rocketTokenDummyRPL = await RocketTokenDummyRPL.deployed();
+    const rocketTokenDummyRPL = await PoolseaTokenDummyRPL.deployed();
 
     // Get balances
     function getBalances() {
