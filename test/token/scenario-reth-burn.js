@@ -5,13 +5,13 @@ import { assertBN } from '../_helpers/bn';
 // Burn rETH for ETH
 export async function burnReth(amount, txOptions) {
     // Load contracts
-    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
+    const poolseaTokenRETH = await PoolseaTokenRETH.deployed();
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketTokenRETH.totalSupply.call(),
-            rocketTokenRETH.balanceOf.call(txOptions.from),
+            poolseaTokenRETH.totalSupply.call(),
+            poolseaTokenRETH.balanceOf.call(txOptions.from),
             web3.eth.getBalance(txOptions.from).then(value => web3.utils.toBN(value)),
         ]).then(
             ([tokenSupply, userTokenBalance, userEthBalance]) =>
@@ -27,7 +27,7 @@ export async function burnReth(amount, txOptions) {
     txOptions.gasPrice = gasPrice;
 
     // Burn tokens & get tx fee
-    let txReceipt = await rocketTokenRETH.burn(amount, txOptions);
+    let txReceipt = await poolseaTokenRETH.burn(amount, txOptions);
     let txFee = gasPrice.mul(web3.utils.toBN(txReceipt.receipt.gasUsed));
 
     // Get updated balances
@@ -35,7 +35,7 @@ export async function burnReth(amount, txOptions) {
 
     // Calculate values
     let burnAmount = web3.utils.toBN(amount);
-    let expectedEthTransferred = await rocketTokenRETH.getEthValue(burnAmount);
+    let expectedEthTransferred = await poolseaTokenRETH.getEthValue(burnAmount);
 
     // Check balances
     assertBN.equal(balances2.tokenSupply, balances1.tokenSupply.sub(burnAmount), 'Incorrect updated token supply');

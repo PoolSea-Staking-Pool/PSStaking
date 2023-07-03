@@ -5,13 +5,13 @@ import { assertBN } from '../_helpers/bn';
 // Transfer rETH between accounts
 export async function transferReth(to, amount, txOptions) {
     // Load contracts
-    const rocketTokenRETH = await PoolseaTokenRETH.deployed();
+    const poolseaTokenRETH = await PoolseaTokenRETH.deployed();
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketTokenRETH.balanceOf.call(txOptions.from),
-            rocketTokenRETH.balanceOf.call(to)
+            poolseaTokenRETH.balanceOf.call(txOptions.from),
+            poolseaTokenRETH.balanceOf.call(to)
         ]).then(
             ([userFromTokenBalance, userToTokenBalance]) =>
             ({userFromTokenBalance, userToTokenBalance})
@@ -22,7 +22,7 @@ export async function transferReth(to, amount, txOptions) {
     let balances1 = await getBalances();
 
     // Transfer tokens
-    await rocketTokenRETH.transfer(to, amount, txOptions);
+    await poolseaTokenRETH.transfer(to, amount, txOptions);
 
     // Get updated balances
     let balances2 = await getBalances();

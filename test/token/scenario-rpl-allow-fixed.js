@@ -5,12 +5,12 @@ import { assertBN } from '../_helpers/bn';
 // Allow RPL from the fixed contract to be spent
 export async function allowDummyRPL(to, amount, txOptions) {
     // Load contracts
-    const rocketTokenDummyRPL = await PoolseaTokenDummyRPL.deployed();
+    const poolseaTokenDummyRPL = await PoolseaTokenDummyRPL.deployed();
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketTokenDummyRPL.allowance.call(txOptions.from, to),
+            poolseaTokenDummyRPL.allowance.call(txOptions.from, to),
         ]).then(
             ([tokenAllowance]) =>
             ({tokenAllowance})
@@ -21,7 +21,7 @@ export async function allowDummyRPL(to, amount, txOptions) {
     let balances1 = await getBalances();
 
     // Mint tokens
-    await rocketTokenDummyRPL.approve(to, amount, txOptions);
+    await poolseaTokenDummyRPL.approve(to, amount, txOptions);
 
     // Get updated balances
     let balances2 = await getBalances();

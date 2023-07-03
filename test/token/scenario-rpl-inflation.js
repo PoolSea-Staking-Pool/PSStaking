@@ -21,26 +21,26 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
     }
 
     // Load contracts
-    const rocketTokenRPL = await PoolseaTokenRPL.deployed();
-    const rocketVault = await PoolseaVault.deployed();
+    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaVault = await PoolseaVault.deployed();
 
     // Get the previously last inflation calculated block
-    const timeIntervalLastCalc = web3.utils.toBN(await rocketTokenRPL.getInflationCalcTime.call());
+    const timeIntervalLastCalc = web3.utils.toBN(await poolseaTokenRPL.getInflationCalcTime.call());
 
     // Get data about the current inflation
     function getInflationData() {
         return Promise.all([
             getCurrentTime(web3),
-            rocketTokenRPL.totalSupply.call(),
-            rocketTokenRPL.getInflationIntervalStartTime.call(),
-            rocketTokenRPL.getInflationIntervalsPassed.call(),
-            rocketTokenRPL.getInflationCalcTime.call(),
-            rocketTokenRPL.getInflationIntervalTime.call(),
-            rocketTokenRPL.balanceOf(rocketVault.address),
-            rocketVault.balanceOfToken('rocketRewardsPool', rocketTokenRPL.address),
+            poolseaTokenRPL.totalSupply.call(),
+            poolseaTokenRPL.getInflationIntervalStartTime.call(),
+            poolseaTokenRPL.getInflationIntervalsPassed.call(),
+            poolseaTokenRPL.getInflationCalcTime.call(),
+            poolseaTokenRPL.getInflationIntervalTime.call(),
+            poolseaTokenRPL.balanceOf(poolseaVault.address),
+            poolseaVault.balanceOfToken('poolseaRewardsPool', poolseaTokenRPL.address),
         ]).then(
-            ([currentTime, tokenTotalSupply, inflationStartTime, inflationIntervalsPassed, inflationCalcTime, intervalTime, rocketVaultBalanceRPL, rocketVaultInternalBalanceRPL]) =>
-            ({currentTime, tokenTotalSupply, inflationStartTime, inflationIntervalsPassed, inflationCalcTime, intervalTime, rocketVaultBalanceRPL, rocketVaultInternalBalanceRPL})
+            ([currentTime, tokenTotalSupply, inflationStartTime, inflationIntervalsPassed, inflationCalcTime, intervalTime, poolseaVaultBalanceRPL, poolseaVaultInternalBalanceRPL]) =>
+            ({currentTime, tokenTotalSupply, inflationStartTime, inflationIntervalsPassed, inflationCalcTime, intervalTime, poolseaVaultBalanceRPL, poolseaVaultInternalBalanceRPL})
         );
     }
 
@@ -54,7 +54,7 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
 
     // Get initial data
     let inflationData1 = await getInflationData();
-    //console.log(inflationData1.currentBlock, web3.utils.fromWei(inflationData1.tokenTotalSupply), inflationData1.inflationStartBlock.toString(), web3.utils.fromWei(inflationData1.rocketVaultBalanceRPL), web3.utils.fromWei(inflationData1.rocketVaultInternalBalanceRPL));
+    //console.log(inflationData1.currentBlock, web3.utils.fromWei(inflationData1.tokenTotalSupply), inflationData1.inflationStartBlock.toString(), web3.utils.fromWei(inflationData1.poolseaVaultBalanceRPL), web3.utils.fromWei(inflationData1.poolseaVaultInternalBalanceRPL));
 
     // Starting amount of total supply
     let totalSupplyStart = web3.utils.toBN(inflationData1.tokenTotalSupply);
@@ -103,7 +103,7 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
 
 
     // Claim tokens now
-    await rocketTokenRPL.inflationMintTokens(txOptions);
+    await poolseaTokenRPL.inflationMintTokens(txOptions);
 
     // Get inflation data
     let inflationData2 = await getInflationData();
@@ -112,7 +112,7 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
     // console.log('Current time', await getCurrentTime(web3));
     // console.log('Inflation calc time', Number(inflationData2.inflationCalcTime));
 
-    //console.log(inflationData2.currentBlock, web3.utils.fromWei(inflationData2.tokenTotalSupply), inflationData2.inflationStartBlock.toString(), web3.utils.fromWei(inflationData2.rocketVaultBalanceRPL), web3.utils.fromWei(inflationData2.rocketVaultInternalBalanceRPL));
+    //console.log(inflationData2.currentBlock, web3.utils.fromWei(inflationData2.tokenTotalSupply), inflationData2.inflationStartBlock.toString(), web3.utils.fromWei(inflationData2.poolseaVaultBalanceRPL), web3.utils.fromWei(inflationData2.poolseaVaultInternalBalanceRPL));
 
     // Ending amount of total supply
     let totalSupplyEnd = web3.utils.toBN(inflationData2.tokenTotalSupply);
@@ -122,8 +122,8 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
 
     // Verify the minted amount is correct based on inflation rate etc
     assertBN.equal(expectedTokensMinted, totalSupplyEnd.sub(totalSupplyStart), 'Incorrect amount of minted tokens expected');
-    // Verify the minted tokens are now stored in Rocket Vault on behalf of Rocket Rewards Pool
-    assertBN.equal(inflationData2.rocketVaultInternalBalanceRPL, inflationData2.rocketVaultBalanceRPL, 'Incorrect amount of tokens stored in Rocket Vault for Rocket Rewards Pool');
+    // Verify the minted tokens are now stored in poolsea Vault on behalf of poolsea Rewards Pool
+    assertBN.equal(inflationData2.poolseaVaultInternalBalanceRPL, inflationData2.poolseaVaultBalanceRPL, 'Incorrect amount of tokens stored in Poolsea Vault for Poolsea Rewards Pool');
     // Are we verifying an exact amount of tokens given as a required parameter on this pass?
     if (tokenAmountToMatch) {
         tokenAmountToMatch = web3.utils.toBN(tokenAmountToMatch);

@@ -20,7 +20,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketTokenRETH', async (accounts) => {
+    contract('PoolseaTokenRETH', async (accounts) => {
 
         // Accounts
         const [
@@ -238,9 +238,9 @@ export default function() {
 
         it(printTitle('random', 'can deposit excess collateral into the deposit pool'), async () => {
             // Get rETH contract
-            const rocketTokenRETH = await PoolseaTokenRETH.deployed();
+            const poolseaTokenRETH = await PoolseaTokenRETH.deployed();
             // Send enough ETH to rETH contract to exceed target collateralisation rate
-            await web3.eth.sendTransaction({from: random, to: rocketTokenRETH.address, value: web3.utils.toWei('32')});
+            await web3.eth.sendTransaction({from: random, to: poolseaTokenRETH.address, value: web3.utils.toWei('32')});
             // Call the deposit excess function
             await depositExcessCollateral({from: random});
             // Collateral should now be at the target rate

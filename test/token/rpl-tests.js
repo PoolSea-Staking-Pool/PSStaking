@@ -14,7 +14,7 @@ import { assertBN } from '../_helpers/bn';
 
 
 export default function() {
-    contract('RocketTokenRPL', async (accounts) => {
+    contract('PoolseaTokenRPL', async (accounts) => {
 
 
         // Accounts
@@ -41,9 +41,9 @@ export default function() {
 
         it(printTitle('userOne', 'burn all their current fixed supply RPL for new RPL'), async () => {
             // Load contracts
-            const rocketTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
             // Give allowance for all to be sent
-            await allowDummyRPL(rocketTokenRPL.address, userOneRPLBalance, {
+            await allowDummyRPL(poolseaTokenRPL.address, userOneRPLBalance, {
                 from: userOne,
             });
             // Burn existing fixed supply RPL for new RPL
@@ -55,11 +55,11 @@ export default function() {
 
         it(printTitle('userOne', 'burn less fixed supply RPL than they\'ve given an allowance for'), async () => {
             // Load contracts
-            const rocketTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
             // The allowance
             let allowance = userOneRPLBalance.div('2'.BN);
             // Give allowance for half to be spent
-            await allowDummyRPL(rocketTokenRPL.address, allowance, {
+            await allowDummyRPL(poolseaTokenRPL.address, allowance, {
                 from: userOne,
             });
             // Burn existing fixed supply RPL for new RPL
@@ -71,11 +71,11 @@ export default function() {
 
         it(printTitle('userOne', 'fails to burn more fixed supply RPL than they\'ve given an allowance for'), async () => {
              // Load contracts
-            const rocketTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
             // The allowance
             let allowance = userOneRPLBalance.sub('0.000001'.ether);
             // Give allowance for all to be sent
-            await allowDummyRPL(rocketTokenRPL.address, allowance, {
+            await allowDummyRPL(poolseaTokenRPL.address, allowance, {
                 from: userOne,
             });
             // Burn existing fixed supply RPL for new RPL
@@ -87,11 +87,11 @@ export default function() {
 
         it(printTitle('userOne', 'fails to burn more fixed supply RPL than they have'), async () => {
             // Load contracts
-           const rocketTokenRPL = await PoolseaTokenRPL.deployed();
+           const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
            // The allowance
            let allowance = userOneRPLBalance;
            // Give allowance for all to be sent
-           await allowDummyRPL(rocketTokenRPL.address, allowance, {
+           await allowDummyRPL(poolseaTokenRPL.address, allowance, {
                from: userOne,
            });
            // Burn existing fixed supply RPL for new RPL
