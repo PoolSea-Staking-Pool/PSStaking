@@ -13,11 +13,11 @@ import { assertBN } from '../_helpers/bn';
 export async function assignDepositsV2(txOptions) {
     // Load contracts
     const [
-        rocketDepositPool,
-        rocketDAOProtocolSettingsDeposit,
-        rocketMinipoolQueue,
-        rocketDAOProtocolSettingsMinipool,
-        rocketVault,
+        poolseaDepositPool,
+        poolseaDAOProtocolSettingsDeposit,
+        poolseaMinipoolQueue,
+        poolseaDAOProtocolSettingsMinipool,
+        poolseaVault,
     ] = await Promise.all([
         PoolseaDepositPool.deployed(),
         PoolseaDAOProtocolSettingsDeposit.deployed(),
@@ -35,12 +35,12 @@ export async function assignDepositsV2(txOptions) {
         fullMinipoolQueueLength, halfMinipoolQueueLength, emptyMinipoolQueueLength,
         fullDepositUserAmount, halfDepositUserAmount, emptyDepositUserAmount,
     ] = await Promise.all([
-        rocketVault.balanceOf.call("rocketDepositPool"),
-        rocketDAOProtocolSettingsDeposit.getMaximumDepositAssignments.call(),
-        rocketDAOProtocolSettingsDeposit.getMaximumDepositSocialisedAssignments.call(),
-        rocketMinipoolQueue.getLength.call(),
-        rocketMinipoolQueue.getLengthLegacy.call(1), rocketMinipoolQueue.getLengthLegacy.call(2), rocketMinipoolQueue.getLengthLegacy.call(3),
-        rocketDAOProtocolSettingsMinipool.getDepositUserAmount(1), rocketDAOProtocolSettingsMinipool.getDepositUserAmount(2), rocketDAOProtocolSettingsMinipool.getDepositUserAmount(3),
+        poolseaVault.balanceOf.call("poolseaDepositPool"),
+        poolseaDAOProtocolSettingsDeposit.getMaximumDepositAssignments.call(),
+        poolseaDAOProtocolSettingsDeposit.getMaximumDepositSocialisedAssignments.call(),
+        poolseaMinipoolQueue.getLength.call(),
+        poolseaMinipoolQueue.getLengthLegacy.call(1), poolseaMinipoolQueue.getLengthLegacy.call(2), poolseaMinipoolQueue.getLengthLegacy.call(3),
+        poolseaDAOProtocolSettingsMinipool.getDepositUserAmount(1), poolseaDAOProtocolSettingsMinipool.getDepositUserAmount(2), poolseaDAOProtocolSettingsMinipool.getDepositUserAmount(3),
     ]);
 
     // Get queued minipool capacities
@@ -72,7 +72,7 @@ export async function assignDepositsV2(txOptions) {
         expectedEthAssigned = '31'.ether.mul(expectedDepositAssignments.BN);
 
         let indices = [...Array(expectedDepositAssignments).keys()];
-        let addressesInQueue = await Promise.all(indices.map(i => rocketMinipoolQueue.getMinipoolAt(i)));
+        let addressesInQueue = await Promise.all(indices.map(i => poolseaMinipoolQueue.getMinipoolAt(i)));
         let minipoolsInQueue = await Promise.all(addressesInQueue.map(a => PoolseaMinipoolDelegate.at(a)));
         let topUpValues = await Promise.all(minipoolsInQueue.map(m => m.getNodeTopUpValue()))
         expectedNodeBalanceUsed = topUpValues.reduce((p, c) => p.add(c), expectedNodeBalanceUsed);
@@ -81,9 +81,9 @@ export async function assignDepositsV2(txOptions) {
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketDepositPool.getBalance.call(),
-            rocketDepositPool.getNodeBalance.call(),
-            web3.eth.getBalance(rocketVault.address).then(value => value.BN),
+            poolseaDepositPool.getBalance.call(),
+            poolseaDepositPool.getNodeBalance.call(),
+            web3.eth.getBalance(poolseaVault.address).then(value => value.BN),
         ]).then(
             ([depositPoolEth, depositPoolNodeEth, vaultEth]) =>
             ({depositPoolEth, depositPoolNodeEth, vaultEth})
@@ -93,8 +93,8 @@ export async function assignDepositsV2(txOptions) {
     // Get minipool queue details
     function getMinipoolQueueDetails() {
         return Promise.all([
-            rocketMinipoolQueue.getTotalLength.call(),
-            rocketMinipoolQueue.getTotalCapacity.call(),
+            poolseaMinipoolQueue.getTotalLength.call(),
+            poolseaMinipoolQueue.getTotalCapacity.call(),
         ]).then(
             ([totalLength, totalCapacity]) =>
             ({totalLength, totalCapacity})
@@ -108,7 +108,7 @@ export async function assignDepositsV2(txOptions) {
     ]);
 
     // Assign deposits
-    await rocketDepositPool.assignDeposits(txOptions);
+    await poolseaDepositPool.assignDeposits(txOptions);
 
     // Get updated balances & minipool queue details
     let [balances2, queue2] = await Promise.all([

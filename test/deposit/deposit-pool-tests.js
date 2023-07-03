@@ -18,7 +18,7 @@ import { assignDepositsV2 } from './scenario-assign-deposits-v2';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketDepositPool', async (accounts) => {
+    contract('PoolseaDepositPool', async (accounts) => {
 
 
         // Accounts
@@ -198,17 +198,17 @@ export default function() {
 
 
         it(printTitle('random address', 'can check maximum deposit amount'), async () => {
-            const rocketDepositPool = await PoolseaDepositPool.deployed();
+            const poolseaDepositPool = await PoolseaDepositPool.deployed();
 
             // Disable deposits
             await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.enabled', false, {from: owner});
-            assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), 0, 'Invalid maximum deposit amount');
+            assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), 0, 'Invalid maximum deposit amount');
 
             // Enable deposits
             await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.enabled', true, {from: owner});
             const depositPoolMaximum = '100'.ether;
             await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', depositPoolMaximum, {from: owner});
-            assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), depositPoolMaximum, 'Invalid maximum deposit amount');
+            assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), depositPoolMaximum, 'Invalid maximum deposit amount');
 
             // Create a 16 ETH minipool
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
@@ -217,7 +217,7 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
             const minipoolBondAmount = '16'.ether;
             await createMinipool({from: node, value: minipoolBondAmount});
-            assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), depositPoolMaximum.add(minipoolBondAmount), 'Invalid maximum deposit amount');
+            assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), depositPoolMaximum.add(minipoolBondAmount), 'Invalid maximum deposit amount');
         });
     });
 }
