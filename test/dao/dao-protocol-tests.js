@@ -12,7 +12,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 
 
 export default function() {
-    contract('RocketDAOProtocol', async (accounts) => {
+    contract('PoolseaDAOProtocol', async (accounts) => {
 
         // Accounts
         const [
