@@ -37,7 +37,7 @@ import { assertBN } from '../_helpers/bn';
 
 
 export default function() {
-    contract('RocketRewardsPool', async (accounts) => {
+    contract('PoolseaRewardsPool', async (accounts) => {
 
         // One day in seconds
         const ONE_DAY = 24 * 60 * 60;
@@ -118,8 +118,8 @@ export default function() {
         before(async () => {
             await upgradeOneDotTwo(owner);
 
-            // Disable RocketClaimNode claims contract
-            await setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', '0'.ether, {from: owner});
+            // Disable poolseaClaimNode claims contract
+            await setDAONetworkBootstrapRewardsClaimer('poolseaClaimNode', '0'.ether, {from: owner});
 
             // Set settings
             await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
@@ -204,15 +204,15 @@ export default function() {
 
         it(printTitle('guardian', 'set contract claimer percentage for rewards, then update it'), async () => {
             // Set the amount this contract can claim
-            await setDAONetworkBootstrapRewardsClaimer('rocketClaimDAO', '0.0001'.ether, {
+            await setDAONetworkBootstrapRewardsClaimer('poolseaClaimDAO', '0.0001'.ether, {
                 from: owner,
             });
             // Set the amount this contract can claim, then update it
-            await setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', '0.01'.ether, {
+            await setDAONetworkBootstrapRewardsClaimer('poolseaClaimNode', '0.01'.ether, {
                 from: owner,
             });
             // Update now
-            await setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', '0.02'.ether, {
+            await setDAONetworkBootstrapRewardsClaimer('poolseaClaimNode', '0.02'.ether, {
                 from: owner,
             });
         });
@@ -222,11 +222,11 @@ export default function() {
             // Get the total current claims amounts
             let totalClaimersPerc = await rewardsClaimersPercTotalGet();
             // Set the amount this contract can claim, then update it
-            await setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', '0.01'.ether, {
+            await setDAONetworkBootstrapRewardsClaimer('poolseaClaimNode', '0.01'.ether, {
                 from: owner,
             });
             // Update now
-            await setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', '0'.ether, {
+            await setDAONetworkBootstrapRewardsClaimer('poolseaClaimNode', '0'.ether, {
                 from: owner,
             }, totalClaimersPerc);
         });
@@ -239,7 +239,7 @@ export default function() {
             // Get the total % needed to make 100%
             let claimAmount = '1'.ether.sub(totalClaimersPerc);
             // Set the amount this contract can claim and expect total claimers amount to equal 1 ether (100%)
-            await setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', claimAmount, {
+            await setDAONetworkBootstrapRewardsClaimer('poolseaClaimNode', claimAmount, {
                 from: owner,
             }, '1'.ether);
         });
@@ -251,7 +251,7 @@ export default function() {
             // Get the total % needed to make 100%
             let claimAmount = '1'.ether.sub(totalClaimersPerc).add('0.001'.ether);
             // Set the amount this contract can claim and expect total claimers amount to equal 1 ether (100%)
-            await shouldRevert(setDAONetworkBootstrapRewardsClaimer('rocketClaimNode', claimAmount, {
+            await shouldRevert(setDAONetworkBootstrapRewardsClaimer('poolseaClaimNode', claimAmount, {
                 from: owner,
             }), "Total claimers percentrage over 100%");
         });
@@ -263,7 +263,7 @@ export default function() {
         it(printTitle('node', 'can claim RPL and ETH'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -271,11 +271,11 @@ export default function() {
             await increaseTime(web3, rplInflationStartTime - currentTime + claimIntervalTime);
 
             // Send ETH to rewards pool
-            const rocketSmoothingPool = await PoolseaSmoothingPool.deployed();
-            await web3.eth.sendTransaction({ from: owner, to: rocketSmoothingPool.address, value: '20'.ether});
+            const poolseaSmoothingPool = await PoolseaSmoothingPool.deployed();
+            await web3.eth.sendTransaction({ from: owner, to: poolseaSmoothingPool.address, value: '20'.ether});
 
-            const rocketRewardsPool = await PoolseaRewardsPool.deployed();
-            const pendingRewards = await rocketRewardsPool.getPendingETHRewards.call();
+            const poolseaRewardsPool = await PoolseaRewardsPool.deployed();
+            const pendingRewards = await poolseaRewardsPool.getPendingETHRewards.call();
 
             // Submit rewards snapshot
             const rewards = [
@@ -342,7 +342,7 @@ export default function() {
         it(printTitle('node', 'can claim from withdrawal address'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -350,8 +350,8 @@ export default function() {
             await increaseTime(web3, rplInflationStartTime - currentTime + claimIntervalTime);
 
             // Send ETH to rewards pool
-            const rocketSmoothingPool = await PoolseaSmoothingPool.deployed();
-            await web3.eth.sendTransaction({ from: owner, to: rocketSmoothingPool.address, value: '20'.ether});
+            const poolseaSmoothingPool = await PoolseaSmoothingPool.deployed();
+            await web3.eth.sendTransaction({ from: owner, to: poolseaSmoothingPool.address, value: '20'.ether});
 
             // Submit rewards snapshot
             const rewards = [
@@ -376,7 +376,7 @@ export default function() {
         it(printTitle('node', 'can not claim with invalid proof'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -404,17 +404,17 @@ export default function() {
             let amountsETH = [proof.amountETH];
             let proofs = [proof.proof];
 
-            let rocketMerkleDistributorMainnet = await PoolseaMerkleDistributorMainnet.deployed();
+            let poolseaMerkleDistributorMainnet = await PoolseaMerkleDistributorMainnet.deployed();
 
             // Attempt to claim reward for registeredNode1 with registeredNode2
-            await shouldRevert(rocketMerkleDistributorMainnet.claim(registeredNode2, [0], amountsRPL, amountsETH, proofs, {from: registeredNode2}), 'Was able to claim with invalid proof', 'Invalid proof');
+            await shouldRevert(poolseaMerkleDistributorMainnet.claim(registeredNode2, [0], amountsRPL, amountsETH, proofs, {from: registeredNode2}), 'Was able to claim with invalid proof', 'Invalid proof');
         });
 
 
         it(printTitle('node', 'can not claim same interval twice'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -462,7 +462,7 @@ export default function() {
         it(printTitle('node', 'can claim mulitiple periods in a single tx'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -511,7 +511,7 @@ export default function() {
         it(printTitle('node', 'can claim RPL and stake'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -563,7 +563,7 @@ export default function() {
         it(printTitle('node', 'can not stake amount greater than claim'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -593,7 +593,7 @@ export default function() {
         it(printTitle('node', 'can claim RPL and stake multiple snapshots'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -628,7 +628,7 @@ export default function() {
         it(printTitle('random', 'can execute reward period if consensus is reached'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -667,7 +667,7 @@ export default function() {
         it(printTitle('misc', 'claim bitmap is correct'), async () => {
             // Initialize RPL inflation & claims contract
             let rplInflationStartTime = await rplInflationSetup();
-            await rewardsContractSetup('rocketClaimNode', '0.5'.ether);
+            await rewardsContractSetup('poolseaClaimNode', '0.5'.ether);
 
             // Move to inflation start plus one claim interval
             let currentTime = await getCurrentTime(web3);
@@ -699,13 +699,13 @@ export default function() {
             });
 
             // Retrieve the bitmap of claims
-            const rocketStorage = await PoolseaStorage.deployed();
+            const poolseaStorage = await PoolseaStorage.deployed();
             const key = web3.utils.soliditySha3(
                 {type: 'string', value: 'rewards.interval.claimed'},
                 {type: 'address', value: registeredNode1},
                 {type: 'uint256', value: 0}
             )
-            const bitmap = (await rocketStorage.getUint.call(key)).toNumber();
+            const bitmap = (await poolseaStorage.getUint.call(key)).toNumber();
 
             // Construct the expected bitmap and compare
             let expected = 0;

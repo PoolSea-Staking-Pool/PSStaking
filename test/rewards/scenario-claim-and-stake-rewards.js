@@ -13,12 +13,12 @@ export async function claimAndStakeRewards(nodeAddress, indices, rewards, stakeA
 
     // Load contracts
     const [
-        rocketRewardsPool,
-        rocketNodeManager,
-        rocketNodeStaking,
-        rocketMerkleDistributorMainnet,
-        rocketStorage,
-        rocketTokenRPL,
+        poolseaRewardsPool,
+        poolseaNodeManager,
+        poolseaNodeStaking,
+        poolseaMerkleDistributorMainnet,
+        poolseaStorage,
+        poolseaTokenRPL,
     ] = await Promise.all([
         PoolseaRewardsPool.deployed(),
         PoolseaNodeManager.deployed(),
@@ -29,14 +29,14 @@ export async function claimAndStakeRewards(nodeAddress, indices, rewards, stakeA
     ]);
 
     // Get node withdrawal address
-    let nodeWithdrawalAddress = await rocketNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketRewardsPool.getClaimIntervalTimeStart(),
-            rocketTokenRPL.balanceOf.call(nodeWithdrawalAddress),
-            rocketNodeStaking.getNodeRPLStake(nodeAddress),
+            poolseaRewardsPool.getClaimIntervalTimeStart(),
+            poolseaTokenRPL.balanceOf.call(nodeWithdrawalAddress),
+            poolseaNodeStaking.getNodeRPLStake(nodeAddress),
             web3.eth.getBalance(nodeWithdrawalAddress)
         ]).then(
           ([claimIntervalTimeStart, nodeRpl, rplStake, nodeEth]) =>
@@ -74,7 +74,7 @@ export async function claimAndStakeRewards(nodeAddress, indices, rewards, stakeA
         totalAmountRPL = totalAmountRPL.add(web3.utils.toBN(proof.amountRPL));
     }
 
-    const tx = await rocketMerkleDistributorMainnet.claimAndStake(nodeAddress, indices, amountsRPL, amountsETH, proofs, stakeAmount, txOptions);
+    const tx = await poolseaMerkleDistributorMainnet.claimAndStake(nodeAddress, indices, amountsRPL, amountsETH, proofs, stakeAmount, txOptions);
     let gasUsed = '0'.BN;
 
     if(nodeWithdrawalAddress.toLowerCase() === txOptions.from.toLowerCase()) {

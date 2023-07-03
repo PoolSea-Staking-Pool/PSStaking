@@ -13,11 +13,11 @@ export async function claimRewards(nodeAddress, indices, rewards, txOptions) {
 
     // Load contracts
     const [
-        rocketRewardsPool,
-        rocketNodeManager,
-        rocketMerkleDistributorMainnet,
-        rocketStorage,
-        rocketTokenRPL,
+        poolseaRewardsPool,
+        poolseaNodeManager,
+        poolseaMerkleDistributorMainnet,
+        poolseaStorage,
+        poolseaTokenRPL,
     ] = await Promise.all([
         PoolseaRewardsPool.deployed(),
         PoolseaNodeManager.deployed(),
@@ -27,13 +27,13 @@ export async function claimRewards(nodeAddress, indices, rewards, txOptions) {
     ]);
 
     // Get node withdrawal address
-    let nodeWithdrawalAddress = await rocketNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketRewardsPool.getClaimIntervalTimeStart(),
-            rocketTokenRPL.balanceOf.call(nodeWithdrawalAddress),
+            poolseaRewardsPool.getClaimIntervalTimeStart(),
+            poolseaTokenRPL.balanceOf.call(nodeWithdrawalAddress),
             web3.eth.getBalance(nodeWithdrawalAddress)
         ]).then(
           ([claimIntervalTimeStart, nodeRpl, nodeEth]) =>
@@ -70,7 +70,7 @@ export async function claimRewards(nodeAddress, indices, rewards, txOptions) {
         totalAmountETH = totalAmountETH.add(proof.amountETH.BN);
     }
 
-    const tx = await rocketMerkleDistributorMainnet.claim(nodeAddress, indices, amountsRPL, amountsETH, proofs, txOptions);
+    const tx = await poolseaMerkleDistributorMainnet.claim(nodeAddress, indices, amountsRPL, amountsETH, proofs, txOptions);
     let gasUsed = '0'.BN;
 
     if(nodeWithdrawalAddress.toLowerCase() === txOptions.from.toLowerCase()) {
