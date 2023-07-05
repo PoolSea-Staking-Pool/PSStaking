@@ -51,6 +51,7 @@ module.exports = {
             chainId: 943,
             forking: {
                 url: 'https://rpc.v4.testnet.pulsechain.com',
+                gasPrice: 0
             },
         },
         localhost: {

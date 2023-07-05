@@ -60,8 +60,8 @@ before(async function() {
 // Run tests
 // daoProtocolTests();
 // daoNodeTrustedTests();
-auctionTests();
-// depositPoolTests();
+// auctionTests();
+depositPoolTests();
 // minipoolScrubTests();
 // minipoolTests();
 // minipoolVacantTests();

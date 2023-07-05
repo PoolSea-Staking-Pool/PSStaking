@@ -157,13 +157,18 @@ export async function deployPoolseaPool() {
         });
         const balance = await $web3.eth.getBalance(impAddress);
         console.log('Impersonated account balance:', $web3.utils.fromWei(balance));
-        await Promise.all([accounts[0], accounts[1], accounts[2], accounts[3], accounts[4], accounts[5]].map(addr => (
+        await Promise.all([accounts[0], accounts[1], accounts[2], accounts[4], accounts[5]].map(addr => (
             $web3.eth.sendTransaction({
                 from: impAddress,
                 to: addr,
                 value: '64000000'.ether
             })
         )))
+        await $web3.eth.sendTransaction({
+            from: impAddress,
+            to: accounts[3],
+            value: '100000000'.ether
+        })
         console.log('Owner account balance:', $web3.utils.fromWei(accounts[0]));
         console.log('Node account balance:', $web3.utils.fromWei(accounts[1]));
     }
