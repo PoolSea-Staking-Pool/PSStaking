@@ -147,7 +147,7 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
         let depositData = {
             pubkey: getValidatorPubkey(),
             withdrawalCredentials: Buffer.from(withdrawalCredentials.substr(2), 'hex'),
-            amount: BigInt(16000000000), // gwei
+            amount: BigInt(16000000000000000), // gwei
             signature: getValidatorSignature(),
         };
 
@@ -176,7 +176,7 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
         const ethMatched2 = await poolseaNodeStaking.getNodeETHMatched(txOptions.from);
 
         // Expect node's ETH matched to be increased by (32 - bondAmount)
-        assertBN.equal(ethMatched2.sub(ethMatched1), '32'.ether.sub(bondAmount), 'Incorrect ETH matched');
+        assertBN.equal(ethMatched2.sub(ethMatched1), '32000000'.ether.sub(bondAmount), 'Incorrect ETH matched');
     }
 
     return PoolseaMinipoolDelegate.at('0x' + minipoolAddress);
@@ -213,7 +213,7 @@ export async function createVacantMinipool(bondAmount, txOptions, salt = null, c
     const ethMatched2 = await poolseaNodeStaking.getNodeETHMatched(txOptions.from);
 
     // Expect node's ETH matched to be increased by (32 - bondAmount)
-    assertBN.equal(ethMatched2.sub(ethMatched1), '32'.ether.sub(bondAmount), 'Incorrect ETH matched');
+    assertBN.equal(ethMatched2.sub(ethMatched1), '32000000'.ether.sub(bondAmount), 'Incorrect ETH matched');
 
     return PoolseaMinipoolDelegate.at('0x' + minipoolAddress);
 }
@@ -256,7 +256,7 @@ export async function stakeMinipool(minipool, txOptions) {
         depositData = {
             pubkey: Buffer.from(validatorPubkey.substr(2), 'hex'),
             withdrawalCredentials: Buffer.from(withdrawalCredentials.substr(2), 'hex'),
-            amount: BigInt(31000000000), // gwei
+            amount: BigInt(31999999000000000), // gwei
             signature: getValidatorSignature(),
         };
     }

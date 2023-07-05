@@ -21,7 +21,7 @@ contract PoolseaTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface
     /**** Properties ***********/
 
     // How many RPL tokens minted to date (18m from fixed supply)
-    uint256 constant totalInitialSupply = 18000000000000000000000000;
+    uint256 constant totalInitialSupply = 18000000000000000000000000000000;
     // The RPL inflation interval
     uint256 constant inflationInterval = 1 days;
     // How many RPL tokens have been swapped for new ones
