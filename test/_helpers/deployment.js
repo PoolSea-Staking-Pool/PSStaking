@@ -150,32 +150,20 @@ export async function deployPoolseaPool() {
         return result;
     });
     if(hre.network.name === 'hardhat'){
-        const impAddress = '0x64A95fbe790125C69F4ef5446d1a53635041a30d'
+        const impAddress = '0xA592ED65885bcbCeb30442F4902a0D1Cf3AcB8fC'
         await hre.network.provider.request({
             method: 'hardhat_impersonateAccount',
             params: [impAddress],
         });
         const balance = await $web3.eth.getBalance(impAddress);
         console.log('Impersonated account balance:', $web3.utils.fromWei(balance));
-        await Promise.all([accounts[0], accounts[1], accounts[2], accounts[4], accounts[5]].map(addr => (
+        await Promise.all([accounts[0], accounts[1], accounts[3], accounts[2], accounts[4], accounts[5], accounts[6]].map(addr => (
             $web3.eth.sendTransaction({
                 from: impAddress,
                 to: addr,
-                value: '64000000'.ether
+                value: '640000000'.ether
             })
         )))
-        await $web3.eth.sendTransaction({
-            from: impAddress,
-            to: accounts[3],
-            value: '100000000'.ether
-        })
-        await $web3.eth.sendTransaction({
-            from: impAddress,
-            to: accounts[6],
-            value: '32000000'.ether
-        })
-        console.log('Owner account balance:', $web3.utils.fromWei(accounts[0]));
-        console.log('Node account balance:', $web3.utils.fromWei(accounts[1]));
     }
 
     console.log(`Using network: ${network.name}`);

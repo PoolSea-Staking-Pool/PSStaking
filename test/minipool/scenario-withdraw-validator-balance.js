@@ -104,7 +104,7 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
     const penaltyRate = await poolseaMinipoolPenalty.getPenaltyRate(minipool.address);
 
     // Calculate rewards
-    let depositBalance = '32'.ether;
+    let depositBalance = '32000000'.ether;
     if (withdrawalBalance.gte(depositBalance)) {
         let depositType = await minipool.getDepositType();
         let userAmount = minipoolBalances1.userDepositBalance;
