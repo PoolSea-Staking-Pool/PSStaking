@@ -169,6 +169,11 @@ export async function deployPoolseaPool() {
             to: accounts[3],
             value: '100000000'.ether
         })
+        await $web3.eth.sendTransaction({
+            from: impAddress,
+            to: accounts[6],
+            value: '32000000'.ether
+        })
         console.log('Owner account balance:', $web3.utils.fromWei(accounts[0]));
         console.log('Node account balance:', $web3.utils.fromWei(accounts[1]));
     }

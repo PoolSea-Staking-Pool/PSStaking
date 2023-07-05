@@ -61,8 +61,8 @@ before(async function() {
 // daoProtocolTests();
 // daoNodeTrustedTests();
 // auctionTests();
-depositPoolTests();
-// minipoolScrubTests();
+// depositPoolTests();
+minipoolScrubTests();
 // minipoolTests();
 // minipoolVacantTests();
 // minipoolStatusTests();
