@@ -2,7 +2,7 @@ import {
     PoolseaMerkleDistributorMainnet,
     PoolseaNodeManager, PoolseaNodeStaking,
     PoolseaRewardsPool,
-    PoolseaStorage, PoolseaTokenRPL
+    PoolseaStorage, PoolseaTokenPOOL
 } from '../_utils/artifacts';
 import { parseRewardsMap } from '../_utils/merkle-tree';
 import { assertBN } from '../_helpers/bn';
@@ -25,7 +25,7 @@ export async function claimAndStakeRewards(nodeAddress, indices, rewards, stakeA
         PoolseaNodeStaking.deployed(),
         PoolseaMerkleDistributorMainnet.deployed(),
         PoolseaStorage.deployed(),
-        PoolseaTokenRPL.deployed(),
+        PoolseaTokenPOOL.deployed(),
     ]);
 
     // Get node withdrawal address

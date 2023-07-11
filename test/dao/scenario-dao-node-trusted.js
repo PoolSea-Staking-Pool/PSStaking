@@ -3,7 +3,7 @@ import {
     PoolseaDAONodeTrustedProposals,
     PoolseaDAONodeTrustedActions,
     PoolseaDAOProposal,
-    PoolseaTokenRPL,
+    PoolseaTokenPOOL,
     PoolseaVault,
 } from '../_utils/artifacts';
 import { proposalStates, getDAOProposalState } from './scenario-dao-proposal';
@@ -153,7 +153,7 @@ export async function daoNodeTrustedMemberJoin(txOptions) {
     const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
     const poolseaDAONodeTrustedActions = await PoolseaDAONodeTrustedActions.deployed()
     const poolseaVault = await PoolseaVault.deployed();
-    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
 
     // Get data about the tx
     function getTxData() {
@@ -188,7 +188,7 @@ export async function daoNodeTrustedMemberLeave(_rplRefundAddress, txOptions) {
     const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
     const poolseaDAONodeTrustedActions = await PoolseaDAONodeTrustedActions.deployed();
     const poolseaVault = await PoolseaVault.deployed();
-    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
 
     // Get data about the tx
     function getTxData() {

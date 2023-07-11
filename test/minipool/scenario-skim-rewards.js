@@ -1,7 +1,7 @@
 import {
     PoolseaDepositPool,
     PoolseaNodeManager,
-    PoolseaTokenRETH
+    PoolseaTokenRPLS
 } from '../_utils/artifacts'
 import { assertBN } from '../_helpers/bn';
 
@@ -11,7 +11,7 @@ export async function skimRewards(minipool, txOptions) {
         poolseaTokenRETH,
         poolseaNodeManager
     ] = await Promise.all([
-        PoolseaTokenRETH.deployed(),
+        PoolseaTokenRPLS.deployed(),
         PoolseaNodeManager.deployed(),
     ]);
 

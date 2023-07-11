@@ -21,8 +21,8 @@ import nodeStakingTests from './node/node-staking-tests';
 import nodeDistributorTests from './node/node-distributor-tests';
 import daoProtocolTests from './dao/dao-protocol-tests';
 import daoNodeTrustedTests from './dao/dao-node-trusted-tests';
-import rethTests from './token/reth-tests';
-import rplTests from './token/rpl-tests';
+import rplsTests from './token/rpls-tests';
+import poolTests from './token/pool-tests';
 import rewardsPoolTests from './rewards/rewards-tests';
 import upgradeTests from './upgrade/upgrade-tests';
 import { injectBNHelpers } from './_helpers/bn';
@@ -78,9 +78,9 @@ before(async function() {
 // nodeDepositTests();
 // nodeManagerTests();
 
-nodeStakingTests();
+// nodeStakingTests();
 // nodeDistributorTests();
-// rethTests();
-// rplTests();
+rplsTests();
+// poolTests();
 // rewardsPoolTests();
 // upgradeTests();

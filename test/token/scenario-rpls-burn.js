@@ -1,11 +1,11 @@
-import { PoolseaTokenRETH } from '../_utils/artifacts';
+import { PoolseaTokenRPLS } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
 // Burn rETH for ETH
 export async function burnReth(amount, txOptions) {
     // Load contracts
-    const poolseaTokenRETH = await PoolseaTokenRETH.deployed();
+    const poolseaTokenRETH = await PoolseaTokenRPLS.deployed();
 
     // Get balances
     function getBalances() {

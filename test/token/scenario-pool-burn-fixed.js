@@ -1,11 +1,11 @@
-import { PoolseaTokenRPL } from '../_utils/artifacts';
+import { PoolseaTokenPOOL } from '../_utils/artifacts';
 import { PoolseaTokenDummyRPL } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 // Burn current fixed supply RPL for new RPL
 export async function burnFixedRPL(amount, txOptions) {
     // Load contracts
-    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
     const poolseaTokenDummyRPL = await PoolseaTokenDummyRPL.deployed();
 
     // Get balances

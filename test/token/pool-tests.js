@@ -1,14 +1,14 @@
 import { getCurrentTime, increaseTime } from '../_utils/evm'
 import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
-import { mintDummyRPL } from './scenario-rpl-mint-fixed';
-import { burnFixedRPL } from './scenario-rpl-burn-fixed';
-import { allowDummyRPL } from './scenario-rpl-allow-fixed';
-import { rplClaimInflation, rplSetInflationConfig } from './scenario-rpl-inflation'
+import { mintDummyRPL } from './scenario-pool-mint-fixed';
+import { burnFixedRPL } from './scenario-pool-burn-fixed';
+import { allowDummyRPL } from './scenario-pool-allow-fixed';
+import { rplClaimInflation, rplSetInflationConfig } from './scenario-pool-inflation'
 import { setRPLInflationIntervalRate, setRPLInflationStartTime } from '../dao/scenario-dao-protocol-bootstrap';
 
 // Contracts
-import { PoolseaTokenRPL } from '../_utils/artifacts';
+import { PoolseaTokenPOOL } from '../_utils/artifacts';
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
@@ -41,7 +41,7 @@ export default function() {
 
         it(printTitle('userOne', 'burn all their current fixed supply RPL for new RPL'), async () => {
             // Load contracts
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             // Give allowance for all to be sent
             await allowDummyRPL(poolseaTokenRPL.address, userOneRPLBalance, {
                 from: userOne,
@@ -55,7 +55,7 @@ export default function() {
 
         it(printTitle('userOne', 'burn less fixed supply RPL than they\'ve given an allowance for'), async () => {
             // Load contracts
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             // The allowance
             let allowance = userOneRPLBalance.div('2'.BN);
             // Give allowance for half to be spent
@@ -71,7 +71,7 @@ export default function() {
 
         it(printTitle('userOne', 'fails to burn more fixed supply RPL than they\'ve given an allowance for'), async () => {
              // Load contracts
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             // The allowance
             let allowance = userOneRPLBalance.sub('0.000001'.ether);
             // Give allowance for all to be sent
@@ -87,7 +87,7 @@ export default function() {
 
         it(printTitle('userOne', 'fails to burn more fixed supply RPL than they have'), async () => {
             // Load contracts
-           const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+           const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
            // The allowance
            let allowance = userOneRPLBalance;
            // Give allowance for all to be sent

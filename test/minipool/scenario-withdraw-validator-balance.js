@@ -2,7 +2,7 @@ import {
     PoolseaDepositPool,
     PoolseaMinipoolPenalty,
     PoolseaNodeManager,
-    PoolseaTokenRETH
+    PoolseaTokenRPLS
 } from '../_utils/artifacts'
 import { assertBN } from '../_helpers/bn';
 
@@ -14,7 +14,7 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
         poolseaNodeManager
     ] = await Promise.all([
         PoolseaDepositPool.deployed(),
-        PoolseaTokenRETH.deployed(),
+        PoolseaTokenRPLS.deployed(),
         PoolseaNodeManager.deployed(),
     ]);
 

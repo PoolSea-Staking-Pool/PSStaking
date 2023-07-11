@@ -3,7 +3,7 @@ import {
     PoolseaNodeManager,
     PoolseaNodeStaking,
     PoolseaNodeStakingOld,
-    PoolseaTokenRPL,
+    PoolseaTokenPOOL,
     PoolseaDAONodeTrustedActions,
     PoolseaDAONodeTrustedSettingsMembers,
     PoolseaStorage,
@@ -12,9 +12,9 @@ import {
 } from '../_utils/artifacts';
 import { setDaoNodeTrustedBootstrapMember } from '../dao/scenario-dao-node-trusted-bootstrap';
 import { daoNodeTrustedMemberJoin } from '../dao/scenario-dao-node-trusted';
-import { mintDummyRPL } from '../token/scenario-rpl-mint-fixed';
-import { burnFixedRPL } from '../token/scenario-rpl-burn-fixed';
-import { allowDummyRPL } from '../token/scenario-rpl-allow-fixed';
+import { mintDummyRPL } from '../token/scenario-pool-mint-fixed';
+import { burnFixedRPL } from '../token/scenario-pool-burn-fixed';
+import { allowDummyRPL } from '../token/scenario-pool-allow-fixed';
 import { getDepositDataRoot, getValidatorPubkey, getValidatorSignature } from '../_utils/beacon';
 import { upgradeExecuted } from '../_utils/upgrade';
 import { assertBN } from './bn';
@@ -57,7 +57,7 @@ export async function setNodeTrusted(_account, _id, _url, owner) {
     // Mints fixed supply RPL, burns that for new RPL and gives it to the account
     let rplMint = async function(_account, _amount) {
         // Load contracts
-        const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+        const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
         // Convert
         _amount = web3.utils.toWei(_amount.toString(), 'ether');
         // Mint RPL fixed supply for the users to simulate current users having RPL
@@ -71,7 +71,7 @@ export async function setNodeTrusted(_account, _id, _url, owner) {
     // Allow the given account to spend this users RPL
     let rplAllowanceDAO = async function(_account, _amount) {
         // Load contracts
-        const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+        const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
         const poolseaDAONodeTrustedActions = await PoolseaDAONodeTrustedActions.deployed()
         // Convert
         _amount = web3.utils.toWei(_amount.toString(), 'ether');
@@ -117,7 +117,7 @@ export async function nodeStakeRPL(amount, txOptions) {
 
     const [poolseaNodeStaking, poolseaTokenRPL] = await Promise.all([
         preUpdate ? PoolseaNodeStakingOld.deployed() : PoolseaNodeStaking.deployed(),
-        PoolseaTokenRPL.deployed(),
+        PoolseaTokenPOOL.deployed(),
     ]);
     await poolseaTokenRPL.approve(poolseaNodeStaking.address, amount, txOptions);
     const before = await poolseaNodeStaking.getNodeRPLStake(txOptions.from);
@@ -133,7 +133,7 @@ export async function nodeStakeRPLFor(nodeAddress, amount, txOptions) {
 
     const [poolseaNodeStaking, poolseaTokenRPL] = await Promise.all([
         preUpdate ? PoolseaNodeStakingOld.deployed() : PoolseaNodeStaking.deployed(),
-        PoolseaTokenRPL.deployed(),
+        PoolseaTokenPOOL.deployed(),
     ]);
     await poolseaTokenRPL.approve(poolseaNodeStaking.address, amount, txOptions);
     const before = await poolseaNodeStaking.getNodeRPLStake(nodeAddress);

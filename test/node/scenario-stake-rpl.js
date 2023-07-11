@@ -1,4 +1,4 @@
-import { PoolseaMinipoolManager, PoolseaDAOProtocolSettingsMinipool, PoolseaNetworkPrices, PoolseaDAOProtocolSettingsNode, PoolseaNodeStaking, PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
+import { PoolseaMinipoolManager, PoolseaDAOProtocolSettingsMinipool, PoolseaNetworkPrices, PoolseaDAOProtocolSettingsNode, PoolseaNodeStaking, PoolseaTokenPOOL, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -20,7 +20,7 @@ export async function stakeRpl(amount, txOptions) {
         PoolseaNetworkPrices.deployed(),
         PoolseaDAOProtocolSettingsNode.deployed(),
         PoolseaNodeStaking.deployed(),
-        PoolseaTokenRPL.deployed(),
+        PoolseaTokenPOOL.deployed(),
         PoolseaVault.deployed(),
     ]);
 

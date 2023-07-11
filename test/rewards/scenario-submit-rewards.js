@@ -2,7 +2,7 @@ import {
     PoolseaClaimDAO,
     PoolseaDAONodeTrusted,
     PoolseaRewardsPool,
-    PoolseaTokenRETH, PoolseaTokenRPL,
+    PoolseaTokenRPLS, PoolseaTokenPOOL,
 } from '../_utils/artifacts';
 import { parseRewardsMap } from '../_utils/merkle-tree';
 import { assertBN } from '../_helpers/bn';
@@ -21,8 +21,8 @@ export async function submitRewards(index, rewards, treasuryRPL, userETH, txOpti
     ] = await Promise.all([
         PoolseaDAONodeTrusted.deployed(),
         PoolseaRewardsPool.deployed(),
-        PoolseaTokenRETH.deployed(),
-        PoolseaTokenRPL.deployed(),
+        PoolseaTokenRPLS.deployed(),
+        PoolseaTokenPOOL.deployed(),
         PoolseaClaimDAO.deployed()
     ]);
 

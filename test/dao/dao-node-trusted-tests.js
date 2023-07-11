@@ -3,14 +3,14 @@ import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
 import { compressABI } from '../_utils/contract';
 import { registerNode, setNodeTrusted } from '../_helpers/node';
-import { mintDummyRPL } from '../token/scenario-rpl-mint-fixed';
-import { burnFixedRPL } from '../token/scenario-rpl-burn-fixed';
-import { allowDummyRPL } from '../token/scenario-rpl-allow-fixed';
+import { mintDummyRPL } from '../token/scenario-pool-mint-fixed';
+import { burnFixedRPL } from '../token/scenario-pool-burn-fixed';
+import { allowDummyRPL } from '../token/scenario-pool-allow-fixed';
 import { setDaoNodeTrustedBootstrapMember, setDAONodeTrustedBootstrapSetting, setDaoNodeTrustedBootstrapModeDisabled, setDaoNodeTrustedBootstrapUpgrade, setDaoNodeTrustedMemberRequired } from './scenario-dao-node-trusted-bootstrap';
 import { daoNodeTrustedExecute, getDAOMemberIsValid, daoNodeTrustedPropose, daoNodeTrustedVote, daoNodeTrustedCancel, daoNodeTrustedMemberJoin, daoNodeTrustedMemberLeave, daoNodeTrustedMemberChallengeMake, daoNodeTrustedMemberChallengeDecide } from './scenario-dao-node-trusted';
 import { proposalStates, getDAOProposalState, getDAOProposalStartTime, getDAOProposalEndTime, getDAOProposalExpires } from './scenario-dao-proposal';
 import { assertBN } from '../_helpers/bn';
-import { PoolseaDAONodeTrusted, PoolseaDAONodeTrustedActions, PoolseaDAONodeTrustedSettingsMembers, PoolseaDAONodeTrustedSettingsProposals, PoolseaTokenRPL, PoolseaMinipoolManager, PoolseaDAONodeTrustedUpgrade, PoolseaStorage } from '../_utils/artifacts';
+import { PoolseaDAONodeTrusted, PoolseaDAONodeTrustedActions, PoolseaDAONodeTrustedSettingsMembers, PoolseaDAONodeTrustedSettingsProposals, PoolseaTokenPOOL, PoolseaMinipoolManager, PoolseaDAONodeTrustedUpgrade, PoolseaStorage } from '../_utils/artifacts';
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 
 
@@ -34,7 +34,7 @@ export default function() {
         // Mints fixed supply RPL, burns that for new RPL and gives it to the account
         let rplMint = async function(_account, _amount) {
             // Load contracts
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
 
             // Convert
             _amount = web3.utils.toWei(_amount.toString(), 'ether');
@@ -50,7 +50,7 @@ export default function() {
         // Allow the given account to spend this users RPL
         let rplAllowanceDAO = async function(_account, _amount) {
             // Load contracts
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             const poolseaDAONodeTrustedActions = await PoolseaDAONodeTrustedActions.deployed();
             // Convert
             _amount = web3.utils.toWei(_amount.toString(), 'ether');
@@ -478,7 +478,7 @@ export default function() {
             await increaseTime(web3, 60);
             // Get the DAO settings
             const daoNode = await PoolseaDAONodeTrusted.deployed();
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             // Add our 3rd member
             await bootstrapMemberAdd(registeredNode1, 'poolseapool', 'node@home.com');
             await increaseTime(web3, 60);

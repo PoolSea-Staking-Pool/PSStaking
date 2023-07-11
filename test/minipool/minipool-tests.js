@@ -4,7 +4,7 @@ import {
     PoolseaMinipoolManager,
     RevertOnTransfer,
     PoolseaVault,
-    PoolseaTokenRPL,
+    PoolseaTokenPOOL,
     PoolseaDAONodeTrustedSettingsMinipool,
     PoolseaMinipoolBase,
     PoolseaMinipoolBondReducer,
@@ -340,7 +340,7 @@ export default function() {
             assert(slashed, "Slashed flag not set");
             // Auction house should now have slashed 8 ETH worth of RPL (which is 800 RPL at starting price)
             const poolseaVault = await PoolseaVault.deployed();
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             const balance = await poolseaVault.balanceOfToken('poolseaAuctionManager', poolseaTokenRPL.address);
             assertBN.equal(balance, '800000000'.ether);
         });
@@ -356,7 +356,7 @@ export default function() {
             assert(slashed, "Slashed flag not set");
             // Auction house should now have slashed 8 ETH worth of RPL (which is 800 RPL at starting price)
             const poolseaVault = await PoolseaVault.deployed();
-            const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             const balance = await poolseaVault.balanceOfToken('poolseaAuctionManager', poolseaTokenRPL.address);
             assertBN.equal(balance, '800000000'.ether);
         });

@@ -1,4 +1,4 @@
-import { PoolseaDAONodeTrusted, PoolseaStorage, PoolseaVault, PoolseaTokenRPL } from '../_utils/artifacts';
+import { PoolseaDAONodeTrusted, PoolseaStorage, PoolseaVault, PoolseaTokenPOOL } from '../_utils/artifacts';
 import { compressABI, decompressABI } from '../_utils/contract';
 import { assertBN } from '../_helpers/bn';
 
@@ -195,7 +195,7 @@ export async function setDaoNodeTrustedMemberRequired(_id, _url, txOptions) {
     // Load contracts
     const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
     const poolseaVault = await PoolseaVault.deployed();
-    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
 
     // Get data about the tx
     function getTxData() {
