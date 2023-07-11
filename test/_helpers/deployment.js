@@ -36,8 +36,8 @@ const contracts = {
     poolseaVault:                              artifacts.require('PoolseaVault.sol'),
     // Tokens
     poolseaTokenRPLFixedSupply:                artifacts.require('PoolseaTokenDummyRPL.sol'),
-    poolseaTokenRETH:                          artifacts.require('PoolseaTokenRETH.sol'),
-    poolseaTokenRPL:                           artifacts.require('PoolseaTokenRPL.sol'),
+    poolseaTokenRETH:                          artifacts.require('PoolseaTokenRPLS.sol'),
+    poolseaTokenRPL:                           artifacts.require('PoolseaTokenPOOL.sol'),
     // Auction
     poolseaAuctionManager:                     artifacts.require('PoolseaAuctionManager.sol'),
     // Deposit

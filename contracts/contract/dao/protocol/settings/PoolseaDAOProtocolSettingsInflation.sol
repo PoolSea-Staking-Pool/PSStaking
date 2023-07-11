@@ -4,7 +4,7 @@ pragma solidity 0.7.6;
 
 import "./PoolseaDAOProtocolSettings.sol";
 import "../../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInflationInterface.sol";
-import "../../../../interface/token/PoolseaTokenRPLInterface.sol";
+import "../../../../interface/token/PoolseaTokenPOOLInterface.sol";
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
@@ -46,7 +46,7 @@ contract PoolseaDAOProtocolSettingsInflation is PoolseaDAOProtocolSettings, Pool
             address rplContractAddress = getContractAddressUnsafe("poolseaTokenRPL");
             if(rplContractAddress != address(0x0)) {
                 // Force inflation at old rate before updating inflation rate
-                PoolseaTokenRPLInterface rplContract = PoolseaTokenRPLInterface(rplContractAddress);
+                PoolseaTokenPOOLInterface rplContract = PoolseaTokenPOOLInterface(rplContractAddress);
                 // Mint any new tokens from the RPL inflation
                 rplContract.inflationMintTokens();
             }

@@ -7,13 +7,13 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../PoolseaBase.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInflationInterface.sol";
-import "../../interface/token/PoolseaTokenRPLInterface.sol";
+import "../../interface/token/PoolseaTokenPOOLInterface.sol";
 import "../../interface/PoolseaVaultInterface.sol";
 
 // RPL Governance and utility token
 // Inlfationary with rate determined by DAO
 
-contract PoolseaTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface {
+contract PoolseaTokenPOOL is PoolseaBase, ERC20Burnable, PoolseaTokenPOOLInterface {
 
     // Libs
     using SafeMath for uint;

@@ -18,7 +18,7 @@ import "../../../interface/dao/node/settings/PoolseaDAONodeTrustedSettingsMinipo
 import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNodeInterface.sol";
 import "../../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
 import "../../../interface/network/PoolseaNetworkFeesInterface.sol";
-import "../../../interface/token/PoolseaTokenRETHInterface.sol";
+import "../../../interface/token/PoolseaTokenRPLSInterface.sol";
 import "../../../types/MinipoolDeposit.sol";
 import "../../../types/MinipoolStatus.sol";
 import "../../../interface/old/PoolseaMinipoolInterfaceOld.sol";
@@ -328,7 +328,7 @@ contract PoolseaMinipoolDelegateOld is PoolseaMinipoolStorageLayoutOld, PoolseaM
             payable(poolseaTokenRETH).transfer(address(this).balance);
         }
         // Trigger a deposit of excess collateral from rETH contract to deposit pool
-        PoolseaTokenRETHInterface(poolseaTokenRETH).depositExcessCollateral();
+        PoolseaTokenRPLSInterface(poolseaTokenRETH).depositExcessCollateral();
         // Unlock node operator's RPL
         poolseaMinipoolManager.incrementNodeFinalisedMinipoolCount(nodeAddress);
         // Update unbonded validator count if minipool is unbonded

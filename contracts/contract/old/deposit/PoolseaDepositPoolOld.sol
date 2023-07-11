@@ -13,7 +13,7 @@ import "../../../interface/old/PoolseaMinipoolQueueInterfaceOld.sol";
 import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsDepositInterface.sol";
 import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
 import "../../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
-import "../../../interface/token/PoolseaTokenRETHInterface.sol";
+import "../../../interface/token/PoolseaTokenRPLSInterface.sol";
 import "../../../types/MinipoolDeposit.sol";
 
 // The main entry point for deposits into the RP network
@@ -82,7 +82,7 @@ contract PoolseaDepositPoolOld is PoolseaBase, PoolseaDepositPoolInterfaceOld, P
         uint256 depositFee = msg.value.mul(poolseaDAOProtocolSettingsDeposit.getDepositFee()).div(calcBase);
         uint256 depositNet = msg.value.sub(depositFee);
         // Mint rETH to user account
-        PoolseaTokenRETHInterface poolseaTokenRETH = PoolseaTokenRETHInterface(getContractAddress("poolseaTokenRETH"));
+        PoolseaTokenRPLSInterface poolseaTokenRETH = PoolseaTokenRPLSInterface(getContractAddress("poolseaTokenRETH"));
         poolseaTokenRETH.mint(depositNet, msg.sender);
         // Emit deposit received event
         emit DepositReceived(msg.sender, msg.value, block.timestamp);
@@ -193,7 +193,7 @@ contract PoolseaDepositPoolOld is PoolseaBase, PoolseaDepositPoolInterfaceOld, P
     // Withdraw excess deposit pool balance for rETH collateral
     function withdrawExcessBalance(uint256 _amount) override external onlyThisLatestContract onlyLatestContract("poolseaTokenRETH", msg.sender) {
         // Load contracts
-        PoolseaTokenRETHInterface poolseaTokenRETH = PoolseaTokenRETHInterface(getContractAddress("poolseaTokenRETH"));
+        PoolseaTokenRPLSInterface poolseaTokenRETH = PoolseaTokenRPLSInterface(getContractAddress("poolseaTokenRETH"));
         PoolseaVaultInterface poolseaVault = PoolseaVaultInterface(getContractAddress("poolseaVault"));
         // Check amount
         require(_amount <= getExcessBalance(), "Insufficient excess balance for withdrawal");

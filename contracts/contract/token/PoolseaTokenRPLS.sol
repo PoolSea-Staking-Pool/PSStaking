@@ -7,13 +7,13 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../PoolseaBase.sol";
 import "../../interface/deposit/PoolseaDepositPoolInterface.sol";
 import "../../interface/network/PoolseaNetworkBalancesInterface.sol";
-import "../../interface/token/PoolseaTokenRETHInterface.sol";
+import "../../interface/token/PoolseaTokenRPLSInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
 // rETH is a tokenised stake in the Poolsea Pool network
 // rETH is backed by ETH (subject to liquidity) at a variable exchange rate
 
-contract PoolseaTokenRETH is PoolseaBase, ERC20, PoolseaTokenRETHInterface {
+contract PoolseaTokenRPLS is PoolseaBase, ERC20, PoolseaTokenRPLSInterface {
 
     // Libs
     using SafeMath for uint;

@@ -4,7 +4,7 @@ pragma abicoder v2;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../PoolseaBase.sol";
-import "../../interface/token/PoolseaTokenRPLInterface.sol";
+import "../../interface/token/PoolseaTokenPOOLInterface.sol";
 import "../../interface/PoolseaVaultInterface.sol";
 import "../../interface/node/PoolseaNodeStakingInterface.sol";
 import "../../interface/rewards/PoolseaRewardsRelayInterface.sol";
@@ -103,7 +103,7 @@ contract PoolseaMerkleDistributorMainnet is PoolseaBase, PoolseaRewardsRelayInte
         }
         // Restake requested amount
         if (_stakeAmount > 0) {
-            PoolseaTokenRPLInterface poolseaTokenRPL = PoolseaTokenRPLInterface(poolseaTokenRPLAddress);
+            PoolseaTokenPOOLInterface poolseaTokenRPL = PoolseaTokenPOOLInterface(poolseaTokenRPLAddress);
             PoolseaNodeStakingInterface poolseaNodeStaking = PoolseaNodeStakingInterface(getContractAddress("poolseaNodeStaking"));
             poolseaVault.withdrawToken(address(this), IERC20(poolseaTokenRPLAddress), _stakeAmount);
             poolseaTokenRPL.approve(address(poolseaNodeStaking), _stakeAmount);
