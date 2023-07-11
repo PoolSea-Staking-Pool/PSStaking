@@ -80,6 +80,6 @@ before(async function() {
 // nodeStakingTests();
 // nodeDistributorTests();
 // rplsTests();
-poolTests();
-// rewardsPoolTests();
+// poolTests();
+rewardsPoolTests();
 // upgradeTests();
