@@ -65,8 +65,8 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create a minipool
-            await userDeposit({from: random, value: '16'.ether})
-            minipool = await createMinipool({from: node, value: '16'.ether}, 0);
+            await userDeposit({from: random, value: '16000000'.ether})
+            minipool = await createMinipool({from: node, value: '16000000'.ether}, 0);
         });
 
 
