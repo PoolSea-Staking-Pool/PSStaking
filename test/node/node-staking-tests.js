@@ -65,7 +65,7 @@ export default function() {
         });
 
 
-        it(printTitle('node operator', 'can stake RPL'), async () => {
+        it(printTitle('node operator', 'can stake POOL'), async () => {
             // Set parameters
             const rplAmount = '320000000'.ether;
 
@@ -86,7 +86,7 @@ export default function() {
         });
 
 
-        it(printTitle('random address', 'cannot stake RPL'), async () => {
+        it(printTitle('random address', 'cannot stake POOL'), async () => {
             // Set parameters
             const rplAmount = '10000'.ether;
 
@@ -98,7 +98,7 @@ export default function() {
         });
 
 
-        it(printTitle('node operator', 'can withdraw staked RPL'), async () => {
+        it(printTitle('node operator', 'can withdraw staked POOL'), async () => {
             // Set parameters
             const rplAmount = '10000'.ether;
 
@@ -115,7 +115,7 @@ export default function() {
         });
 
 
-        it(printTitle('node operator', 'cannot withdraw staked RPL during the cooldown period'), async () => {
+        it(printTitle('node operator', 'cannot withdraw staked POOL during the cooldown period'), async () => {
             // Set parameters
             const rplAmount = '10000'.ether;
 
@@ -129,7 +129,7 @@ export default function() {
         });
 
 
-        it(printTitle('node operator', 'cannot withdraw more RPL than they have staked'), async () => {
+        it(printTitle('node operator', 'cannot withdraw more POOL than they have staked'), async () => {
             // Set parameters
             const stakeAmount = '10000'.ether;
             const withdrawAmount = '20000'.ether;
@@ -143,11 +143,11 @@ export default function() {
             // Withdraw staked RPL
             await shouldRevert(withdrawRpl(withdrawAmount, {
                 from: node,
-            }), 'Withdrew more RPL than was staked');
+            }), 'Withdrew more POOL than was staked');
         });
 
 
-        it(printTitle('node operator', 'cannot withdraw RPL leaving the node undercollateralised'), async () => {
+        it(printTitle('node operator', 'cannot withdraw POOL leaving the node undercollateralised'), async () => {
             // Set parameters
             const rplAmount = '320000000'.ether;
 
@@ -163,11 +163,11 @@ export default function() {
             // Withdraw staked RPL
             await shouldRevert(withdrawRpl(rplAmount, {
                 from: node,
-            }), 'Withdrew RPL leaving the node undercollateralised');
+            }), 'Withdrew POOL leaving the node undercollateralised');
         });
 
 
-        it(printTitle('node operator', 'can withdraw RPL after finalising their minipool'), async () => {
+        it(printTitle('node operator', 'can withdraw POOL after finalising their minipool'), async () => {
             // Set parameters
             const rplAmount = '320000000'.ether;
 
@@ -186,12 +186,12 @@ export default function() {
             // Cannot withdraw RPL yet
             await shouldRevert(withdrawRpl(rplAmount, {
                 from: node,
-            }), 'Withdrew RPL leaving the node undercollateralised');
+            }), 'Withdrew POOL leaving the node undercollateralised');
 
             // Still cannot withdraw RPL yet
             await shouldRevert(withdrawRpl(rplAmount, {
                 from: node,
-            }), 'Withdrew RPL leaving the node undercollateralised');
+            }), 'Withdrew POOL leaving the node undercollateralised');
 
             // Withdraw and finalise
             await withdrawValidatorBalance(minipool, '32000000'.ether, node, true);
@@ -203,7 +203,7 @@ export default function() {
         });
 
 
-        it(printTitle('node operator', 'cannot withdraw RPL if random distributes balance on their minipool until they finalise'), async () => {
+        it(printTitle('node operator', 'cannot withdraw POOL if random distributes balance on their minipool until they finalise'), async () => {
             // Set parameters
             const rplAmount = '320000000'.ether;
 
@@ -236,7 +236,7 @@ export default function() {
             // Cannot withdraw RPL yet
             await shouldRevert(withdrawRpl(rplAmount, {
                 from: node,
-            }), 'Withdrew RPL leaving the node undercollateralised');
+            }), 'Withdrew POOL leaving the node undercollateralised');
 
             // Finalise the pool
             await minipool.finalise({from: node});
@@ -248,7 +248,7 @@ export default function() {
         });
 
 
-        it(printTitle('random address', 'cannot withdraw staked RPL'), async () => {
+        it(printTitle('random address', 'cannot withdraw staked POOL'), async () => {
             // Set parameters
             const rplAmount = '10000'.ether;
 
@@ -261,7 +261,7 @@ export default function() {
             // Withdraw staked RPL
             await shouldRevert(withdrawRpl(rplAmount, {
                 from: random,
-            }), 'Random address withdrew staked RPL');
+            }), 'Random address withdrew staked POOL');
         });
 
 

@@ -78,7 +78,7 @@ before(async function() {
 // nodeDepositTests();
 // nodeManagerTests();
 
-// nodeStakingTests();
+nodeStakingTests();
 // nodeDistributorTests();
 // rethTests();
 // rplTests();
