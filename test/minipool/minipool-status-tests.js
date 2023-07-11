@@ -61,14 +61,14 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create minipools
-            stakingMinipool1 = await createMinipool({from: node, value: '16'.ether});
-            stakingMinipool2 = await createMinipool({from: node, value: '16'.ether});
-            stakingMinipool3 = await createMinipool({from: node, value: '16'.ether});
+            stakingMinipool1 = await createMinipool({from: node, value: '16000000'.ether});
+            stakingMinipool2 = await createMinipool({from: node, value: '16000000'.ether});
+            stakingMinipool3 = await createMinipool({from: node, value: '16000000'.ether});
 
             // Make and assign deposits to minipools
-            await userDeposit({from: staker, value: '16'.ether});
-            await userDeposit({from: staker, value: '16'.ether});
-            await userDeposit({from: staker, value: '16'.ether});
+            await userDeposit({from: staker, value: '16000000'.ether});
+            await userDeposit({from: staker, value: '16000000'.ether});
+            await userDeposit({from: staker, value: '16000000'.ether});
 
             // Wait required scrub period
             await increaseTime(web3, scrubPeriod + 1);

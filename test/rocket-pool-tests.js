@@ -67,10 +67,11 @@ before(async function() {
 // auctionTests();
 // depositPoolTests();
 // minipoolScrubTests();
+// @todo: complete fix minipool tests V
 // minipoolTests();
-minipoolVacantTests();
+// minipoolVacantTests();
 // minipoolStatusTests();
-// minipoolWithdrawalTests();
+minipoolWithdrawalTests();
 // networkBalancesTests();
 // networkPenaltiesTests();
 // networkFeesTests();

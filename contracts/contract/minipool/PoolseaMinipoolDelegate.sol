@@ -378,7 +378,7 @@ contract PoolseaMinipoolDelegate is PoolseaMinipoolStorageLayout, PoolseaMinipoo
         uint256 totalBalance = address(this).balance.sub(nodeRefundBalance);
         if (totalBalance >= 8 ether) {
             // Prevent funding front runs of distribute balance
-            require(!_rewardsOnly, "Balance exceeds 8 ether");
+            require(!_rewardsOnly, "Balance exceeds 8 mln ether");
             // Consider this a full withdrawal
             _distributeBalance(totalBalance);
             if (ownerCalling) {
