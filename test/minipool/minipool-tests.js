@@ -826,7 +826,7 @@ export default function() {
             await increaseTime(web3, rewardClaimPeriodTime + 1);
 
             // Signal wanting to reduce again
-            await poolseaMinipoolBondReducer.beginReduceBondAmount(stakingMinipool.address, '8000000'.ether, {from: node});
+            await poolseaMinipoolBondReducer.beginReduceBondAmount(stakingMinipool.address, '4000000'.ether, {from: node});
             await increaseTime(web3, bondReductionWindowStart + 1);
             // Reduction from 16 ETH to 8 ETH should be valid
             await reduceBond(stakingMinipool, {from: node});

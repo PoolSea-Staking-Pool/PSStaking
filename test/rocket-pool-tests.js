@@ -67,7 +67,6 @@ before(async function() {
 // auctionTests();
 // depositPoolTests();
 // minipoolScrubTests();
-// @todo: complete fix minipool tests V
 // minipoolTests();
 // minipoolVacantTests();
 // minipoolStatusTests();
@@ -76,8 +75,9 @@ before(async function() {
 // networkPenaltiesTests();
 // networkFeesTests();
 // networkPricesTests();
-nodeDepositTests();
+// nodeDepositTests();
 // nodeManagerTests();
+
 // nodeStakingTests();
 // nodeDistributorTests();
 // rethTests();

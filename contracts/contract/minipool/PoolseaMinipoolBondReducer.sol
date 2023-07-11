@@ -13,7 +13,6 @@ import "../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsRewardsInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
 import "../../interface/minipool/PoolseaMinipoolManagerInterface.sol";
-import "hardhat/console.sol";
 
 /// @notice Handles bond reduction window and trusted node cancellation
 contract PoolseaMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerInterface {
@@ -49,9 +48,7 @@ contract PoolseaMinipoolBondReducer is PoolseaBase, PoolseaMinipoolBondReducerIn
         require(!reductionCancelled, "This minipool is not allowed to reduce bond");
         require(minipool.getStatus() == MinipoolStatus.Staking, "Minipool must be staking");
         // Check if new bond amount is valid
-        console.log("Amount: ", _newBondAmount);
         require(poolseaNodeDeposit.isValidDepositAmount(_newBondAmount), "Invalid bond amount");
-        console.log("after bond require");
         uint256 existing = minipool.getNodeDepositBalance();
         require(_newBondAmount < existing, "Bond must be lower than current amount");
         // Check if enough time has elapsed since last reduction
