@@ -77,10 +77,9 @@ before(async function() {
 // networkPricesTests();
 // nodeDepositTests();
 // nodeManagerTests();
-
 // nodeStakingTests();
 // nodeDistributorTests();
-rplsTests();
-// poolTests();
+// rplsTests();
+poolTests();
 // rewardsPoolTests();
 // upgradeTests();

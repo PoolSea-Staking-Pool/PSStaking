@@ -14,7 +14,7 @@ import { assertBN } from '../_helpers/bn';
 
 
 export default function() {
-    contract('PoolseaTokenRPL', async (accounts) => {
+    contract('PoolseaTokenPOOL', async (accounts) => {
 
 
         // Accounts
@@ -28,7 +28,7 @@ export default function() {
 
 
         // Setup
-        let userOneRPLBalance = '100'.ether;
+        let userOneRPLBalance = '100000000'.ether;
 
 
         before(async () => {
@@ -39,7 +39,7 @@ export default function() {
         });
 
 
-        it(printTitle('userOne', 'burn all their current fixed supply RPL for new RPL'), async () => {
+        it(printTitle('userOne', 'burn all their current fixed supply POOL for new POOL'), async () => {
             // Load contracts
             const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             // Give allowance for all to be sent
@@ -53,7 +53,7 @@ export default function() {
         });
 
 
-        it(printTitle('userOne', 'burn less fixed supply RPL than they\'ve given an allowance for'), async () => {
+        it(printTitle('userOne', 'burn less fixed supply POOL than they\'ve given an allowance for'), async () => {
             // Load contracts
             const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             // The allowance
@@ -63,17 +63,17 @@ export default function() {
                 from: userOne,
             });
             // Burn existing fixed supply RPL for new RPL
-            await burnFixedRPL(allowance.sub('0.000001'.ether), {
+            await burnFixedRPL(allowance.sub('10'.ether), {
                 from: userOne,
             });
         });
 
 
-        it(printTitle('userOne', 'fails to burn more fixed supply RPL than they\'ve given an allowance for'), async () => {
+        it(printTitle('userOne', 'fails to burn more fixed supply POOL than they\'ve given an allowance for'), async () => {
              // Load contracts
             const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
             // The allowance
-            let allowance = userOneRPLBalance.sub('0.000001'.ether);
+            let allowance = userOneRPLBalance.sub('10'.ether);
             // Give allowance for all to be sent
             await allowDummyRPL(poolseaTokenRPL.address, allowance, {
                 from: userOne,
@@ -81,11 +81,11 @@ export default function() {
             // Burn existing fixed supply RPL for new RPL
             await shouldRevert(burnFixedRPL(userOneRPLBalance, {
                 from: userOne,
-            }), 'Burned more RPL than had gave allowance for');
+            }), 'Burned more POOL than had gave allowance for');
         });
 
 
-        it(printTitle('userOne', 'fails to burn more fixed supply RPL than they have'), async () => {
+        it(printTitle('userOne', 'fails to burn more fixed supply POOL than they have'), async () => {
             // Load contracts
            const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
            // The allowance
@@ -95,9 +95,9 @@ export default function() {
                from: userOne,
            });
            // Burn existing fixed supply RPL for new RPL
-           await shouldRevert(burnFixedRPL(userOneRPLBalance.add('0.000001'.ether), {
+           await shouldRevert(burnFixedRPL(userOneRPLBalance.add('10'.ether), {
                from: userOne,
-           }), 'Burned more RPL than had owned and had given allowance for');
+           }), 'Burned more POOL than had owned and had given allowance for');
         });
 
 
@@ -268,7 +268,7 @@ export default function() {
         });
 
 
-        it(printTitle('userOne', 'mint one years inflation after 365 days at 5% which would equal 18,900,000 tokens'), async () => {
+        it(printTitle('userOne', 'mint one years inflation after 365 days at 5% which would equal 18,900,000 mln tokens'), async () => {
             // Current time
             let currentTime = await getCurrentTime(web3);
 
@@ -285,11 +285,11 @@ export default function() {
             await rplSetInflationConfig(config, { from: owner });
 
             // Mint inflation now
-            await rplClaimInflation(config, { from: userOne }, '18900000');
+            await rplClaimInflation(config, { from: userOne }, '18900000000000');
         });
 
 
-        it(printTitle('userOne', 'mint one years inflation every quarter at 5% which would equal 18,900,000 tokens'), async () => {
+        it(printTitle('userOne', 'mint one years inflation every quarter at 5% which would equal 18,900,000 mln tokens'), async () => {
             // Current time
             let currentTime = await getCurrentTime(web3);
 
@@ -313,11 +313,11 @@ export default function() {
             config.timeClaim += QUARTER_YEAR
             await rplClaimInflation(config, { from: userOne });
             config.timeClaim += QUARTER_YEAR
-            await rplClaimInflation(config, { from: userOne }, '18900000');
+            await rplClaimInflation(config, { from: userOne }, '18900000000000');
         });
 
 
-        it(printTitle('userTwo', 'mint two years inflation every 6 months at 5% which would equal 19,845,000 tokens'), async () => {
+        it(printTitle('userTwo', 'mint two years inflation every 6 months at 5% which would equal 19,845,000 mln tokens'), async () => {
             // Current time
             let currentTime = await getCurrentTime(web3);
 
@@ -341,7 +341,7 @@ export default function() {
             config.timeClaim += HALF_YEAR
             await rplClaimInflation(config, { from: userOne });
             config.timeClaim += HALF_YEAR
-            await rplClaimInflation(config, { from: userOne }, '19845000');
+            await rplClaimInflation(config, { from: userOne }, '19845000000000');
         });
 
 
@@ -362,7 +362,7 @@ export default function() {
             await rplSetInflationConfig(config, { from: owner });
 
             // Mint inflation now
-            await rplClaimInflation(config, { from: userOne }, '18900000');
+            await rplClaimInflation(config, { from: userOne }, '18900000000000');
 
             // Now set inflation to 0
             await setRPLInflationIntervalRate(0, { from: owner });
@@ -392,19 +392,19 @@ export default function() {
             await rplSetInflationConfig(config, { from: owner });
 
             // Mint inflation now
-            await rplClaimInflation(config, { from: userOne }, '18900000');
+            await rplClaimInflation(config, { from: userOne }, '18900000000000');
 
             // Now set inflation to 0
             await setRPLInflationIntervalRate(0, { from: owner });
             config.yearlyInflationTarget = 0;
             config.timeClaim += (ONE_DAY * 365);
-            await rplClaimInflation(config, { from: userOne }, '18900000');
+            await rplClaimInflation(config, { from: userOne }, '18900000000000');
 
             // Now set inflation back to 5%
             await setRPLInflationIntervalRate(0.05, { from: owner });
             config.yearlyInflationTarget = 0.05;
             config.timeClaim += (ONE_DAY * 365);
-            await rplClaimInflation(config, { from: userOne }, '19845000');
+            await rplClaimInflation(config, { from: userOne }, '19845000000000');
         });
     });
 }
