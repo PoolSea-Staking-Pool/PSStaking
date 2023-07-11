@@ -49,7 +49,7 @@ async function getMinipoolsByNode(nodeAddress) {
 async function checkNodeInvariants(nodeAddress, minipools) {
     const poolseaMinipoolManager = await PoolseaMinipoolManager.deployed();
     const poolseaNodeManager = await PoolseaNodeManager.deployed();
-    const depositSizes = ['8'.ether, '16'.ether];
+    const depositSizes = ['8000000'.ether, '16000000'.ether];
     // Filter "staking" minipools
     const stakingMinipools = minipools.filter(minipool => minipool.status === '2' && minipool.finalised === false);
     // Check overall counts

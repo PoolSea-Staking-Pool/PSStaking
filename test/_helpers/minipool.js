@@ -184,7 +184,7 @@ export async function createMinipoolWithBondAmount(bondAmount, txOptions, salt =
 
 
 // Create a vacant minipool
-export async function createVacantMinipool(bondAmount, txOptions, salt = null, currentBalance = '32'.ether, pubkey = null) {
+export async function createVacantMinipool(bondAmount, txOptions, salt = null, currentBalance = '32000000'.ether, pubkey = null) {
     // Load contracts
     const [
         poolseaMinipoolFactory,

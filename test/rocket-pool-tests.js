@@ -29,13 +29,17 @@ import { injectBNHelpers } from './_helpers/bn';
 import { checkInvariants } from './_helpers/invariants';
 
 // Header
-console.log('\n');
-console.log('______           _        _    ______           _ ');
-console.log('| ___ \\         | |      | |   | ___ \\         | |');
-console.log('| |_/ /___   ___| | _____| |_  | |_/ /__   ___ | |');
-console.log('|    // _ \\ / __| |/ / _ \\ __| |  __/ _ \\ / _ \\| |');
-console.log('| |\\ \\ (_) | (__|   <  __/ |_  | | | (_) | (_) | |');
-console.log('\\_| \\_\\___/ \\___|_|\\_\\___|\\__| \\_|  \\___/ \\___/|_|');
+console.log("\n" +
+    " ________  ________  ________  ___       ________  _______   ________     \n" +
+    "|\\   __  \\|\\   __  \\|\\   __  \\|\\  \\     |\\   ____\\|\\  ___ \\ |\\   __  \\    \n" +
+    "\\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\    \\ \\  \\___|\\ \\   __/|\\ \\  \\|\\  \\   \n" +
+    " \\ \\   ____\\ \\  \\\\\\  \\ \\  \\\\\\  \\ \\  \\    \\ \\_____  \\ \\  \\_|/_\\ \\   __  \\  \n" +
+    "  \\ \\  \\___|\\ \\  \\\\\\  \\ \\  \\\\\\  \\ \\  \\____\\|____|\\  \\ \\  \\_|\\ \\ \\  \\ \\  \\ \n" +
+    "   \\ \\__\\    \\ \\_______\\ \\_______\\ \\_______\\____\\_\\  \\ \\_______\\ \\__\\ \\__\\\n" +
+    "    \\|__|     \\|_______|\\|_______|\\|_______|\\_________\\|_______|\\|__|\\|__|\n" +
+    "                                           \\|_________|                   \n" +
+    "                                                                          \n" +
+    "                                                                          \n")
 
 // BN helpers
 injectBNHelpers();
@@ -63,8 +67,8 @@ before(async function() {
 // auctionTests();
 // depositPoolTests();
 // minipoolScrubTests();
-minipoolTests();
-// minipoolVacantTests();
+// minipoolTests();
+minipoolVacantTests();
 // minipoolStatusTests();
 // minipoolWithdrawalTests();
 // networkBalancesTests();
