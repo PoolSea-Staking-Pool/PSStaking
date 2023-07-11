@@ -55,8 +55,8 @@ export default function() {
             await setNodeTrusted(trustedNode, 'saas_1', 'node@home.com', owner);
 
             // Get settings
-            lebDepositNodeAmount = '8'.ether
-            halfDepositNodeAmount = '16'.ether
+            lebDepositNodeAmount = '8000000'.ether
+            halfDepositNodeAmount = '16000000'.ether
         });
 
 
@@ -185,7 +185,7 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create a 16 ETH minipool
-            await userDeposit({ from: random, value: '24'.ether, });
+            await userDeposit({ from: random, value: '24000000'.ether, });
             const minipoolAddress = await depositV2(noMinimumNodeFee, halfDepositNodeAmount, {
                 from: node,
                 value: halfDepositNodeAmount,
@@ -198,7 +198,7 @@ export default function() {
 
             // Signal wanting to reduce and wait 7 days
             const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
-            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8000000'.ether, {from: node});
             await increaseTime(web3, bondReductionWindowStart + 1);
 
             // Reduce the bond to 8 ether to receive a deposit credit
@@ -219,7 +219,7 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create a 16 ETH minipool
-            await userDeposit({ from: random, value: '24'.ether, });
+            await userDeposit({ from: random, value: '24000000'.ether, });
             const minipoolAddress = await depositV2(noMinimumNodeFee, halfDepositNodeAmount, {
                 from: node,
                 value: halfDepositNodeAmount,
@@ -232,7 +232,7 @@ export default function() {
 
             // Signal wanting to reduce and wait 7 days
             const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
-            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8000000'.ether, {from: node});
             await increaseTime(web3, bondReductionWindowStart + 1);
 
             // Reduce the bond to 8 ether to receive a deposit credit

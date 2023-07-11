@@ -73,10 +73,10 @@ before(async function() {
 // minipoolStatusTests();
 // minipoolWithdrawalTests();
 // networkBalancesTests();
-networkPenaltiesTests();
+// networkPenaltiesTests();
 // networkFeesTests();
 // networkPricesTests();
-// nodeDepositTests();
+nodeDepositTests();
 // nodeManagerTests();
 // nodeStakingTests();
 // nodeDistributorTests();
