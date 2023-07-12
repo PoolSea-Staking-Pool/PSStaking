@@ -1,18 +1,18 @@
 import {
-    RocketDepositPool,
-    RocketNodeManager,
-    RocketTokenRETH
+    PoolseaDepositPool,
+    PoolseaNodeManager,
+    PoolseaTokenRPLS
 } from '../_utils/artifacts'
 import { assertBN } from '../_helpers/bn';
 
 export async function skimRewards(minipool, txOptions) {
     // Load contracts
     const [
-        rocketTokenRETH,
-        rocketNodeManager
+        poolseaTokenRETH,
+        poolseaNodeManager
     ] = await Promise.all([
-        RocketTokenRETH.deployed(),
-        RocketNodeManager.deployed(),
+        PoolseaTokenRPLS.deployed(),
+        PoolseaNodeManager.deployed(),
     ]);
 
     // Get parameters
@@ -29,12 +29,12 @@ export async function skimRewards(minipool, txOptions) {
     ]);
 
     // Get node parameters
-    let nodeWithdrawalAddress = await rocketNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            web3.eth.getBalance(rocketTokenRETH.address).then(value => value.BN),
+            web3.eth.getBalance(poolseaTokenRETH.address).then(value => value.BN),
             web3.eth.getBalance(nodeWithdrawalAddress).then(value => value.BN),
             web3.eth.getBalance(minipool.address).then(value => value.BN),
             minipool.getNodeRefundBalance.call(),

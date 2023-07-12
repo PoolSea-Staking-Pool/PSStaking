@@ -1,8 +1,8 @@
 import {
-    RocketMinipoolDelegate, RocketMinipoolFactory,
-    RocketMinipoolManager,
-    RocketNodeDeposit,
-    RocketStorage,
+    PoolseaMinipoolDelegate, PoolseaMinipoolFactory,
+    PoolseaMinipoolManager,
+    PoolseaNodeDeposit,
+    PoolseaStorage,
 } from '../_utils/artifacts';
 import { getDepositDataRoot, getValidatorPubkey, getValidatorSignature } from '../_utils/beacon';
 import { assertBN } from '../_helpers/bn';
@@ -19,10 +19,10 @@ export async function deposit(minimumNodeFee, txOptions) {
         rocketNodeDeposit,
         rocketStorage,
     ] = await Promise.all([
-        RocketMinipoolManager.deployed(),
-        RocketMinipoolFactory.deployed(),
-        RocketNodeDeposit.deployed(),
-        RocketStorage.deployed()
+        PoolseaMinipoolManager.deployed(),
+        PoolseaMinipoolFactory.deployed(),
+        PoolseaNodeDeposit.deployed(),
+        PoolseaStorage.deployed()
     ]);
 
     // Get minipool counts
@@ -38,7 +38,7 @@ export async function deposit(minimumNodeFee, txOptions) {
 
     // Get minipool details
     function getMinipoolDetails(minipoolAddress) {
-        return RocketMinipoolDelegate.at(minipoolAddress).then(minipool => Promise.all([
+        return PoolseaMinipoolDelegate.at(minipoolAddress).then(minipool => Promise.all([
             rocketMinipoolManager.getMinipoolExists.call(minipoolAddress),
             minipool.getNodeAddress.call(),
             minipool.getNodeDepositBalance.call(),

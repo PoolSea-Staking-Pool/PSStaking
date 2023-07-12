@@ -1,45 +1,45 @@
 import {
-    RocketDAOProtocolSettingsAuction,
-    RocketDAOProtocolSettingsDeposit,
-    RocketDAOProtocolSettingsMinipool,
-    RocketDAOProtocolSettingsMinipoolOld,
-    RocketDAOProtocolSettingsNetwork,
-    RocketDAOProtocolSettingsNode,
+    PoolseaDAOProtocolSettingsAuction,
+    PoolseaDAOProtocolSettingsDeposit,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaDAOProtocolSettingsMinipoolOld,
+    PoolseaDAOProtocolSettingsNetwork,
+    PoolseaDAOProtocolSettingsNode,
 } from '../_utils/artifacts';
 
 
 // Auction settings
 export async function getAuctionSetting(setting) {
-    const rocketAuctionSettings = await RocketDAOProtocolSettingsAuction.deployed();
-    let value = await rocketAuctionSettings['get' + setting].call();
+    const poolseaAuctionSettings = await PoolseaDAOProtocolSettingsAuction.deployed();
+    let value = await poolseaAuctionSettings['get' + setting].call();
     return value;
 }
 
 // Deposit settings
 export async function getDepositSetting(setting) {
-    const rocketDAOProtocolSettingsDeposit = await RocketDAOProtocolSettingsDeposit.deployed();
-    let value = await rocketDAOProtocolSettingsDeposit['get' + setting].call();
+    const poolseaDAOProtocolSettingsDeposit = await PoolseaDAOProtocolSettingsDeposit.deployed();
+    let value = await poolseaDAOProtocolSettingsDeposit['get' + setting].call();
     return value;
 }
 
 // Minipool settings
 export async function getMinipoolSetting(setting, preUpdate = false) {
-    const rocketDAOProtocolSettingsMinipool = preUpdate ? await RocketDAOProtocolSettingsMinipoolOld.deployed() : await RocketDAOProtocolSettingsMinipool.deployed();
-    let value = await rocketDAOProtocolSettingsMinipool['get' + setting].call();
+    const poolseaDAOProtocolSettingsMinipool = preUpdate ? await PoolseaDAOProtocolSettingsMinipoolOld.deployed() : await PoolseaDAOProtocolSettingsMinipool.deployed();
+    let value = await poolseaDAOProtocolSettingsMinipool['get' + setting].call();
     return value;
 }
 
 // Network settings
 export async function getNetworkSetting(setting) {
-    const rocketDAOProtocolSettingsNetwork = await RocketDAOProtocolSettingsNetwork.deployed();
-    let value = await rocketDAOProtocolSettingsNetwork['get' + setting].call();
+    const poolseaDAOProtocolSettingsNetwork = await PoolseaDAOProtocolSettingsNetwork.deployed();
+    let value = await poolseaDAOProtocolSettingsNetwork['get' + setting].call();
     return value;
 }
 
 // Node settings
 export async function getNodeSetting(setting) {
-    const rocketDAOProtocolSettingsNode = await RocketDAOProtocolSettingsNode.deployed();
-    let value = await rocketDAOProtocolSettingsNode['get' + setting].call();
+    const poolseaDAOProtocolSettingsNode = await PoolseaDAOProtocolSettingsNode.deployed();
+    let value = await poolseaDAOProtocolSettingsNode['get' + setting].call();
     return value;
 }
 

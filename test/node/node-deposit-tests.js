@@ -1,10 +1,10 @@
 import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
 import {
-    RocketDAONodeTrustedSettingsMinipool,
-    RocketDAOProtocolSettingsMinipool,
-    RocketDAOProtocolSettingsNode, RocketMinipoolBondReducer,
-    RocketMinipoolDelegate,
+    PoolseaDAONodeTrustedSettingsMinipool,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaDAOProtocolSettingsNode, PoolseaMinipoolBondReducer,
+    PoolseaMinipoolDelegate,
 } from '../_utils/artifacts';
 import { setDAOProtocolBootstrapSetting } from '../dao/scenario-dao-protocol-bootstrap';
 import { getMinipoolMinimumRPLStake, stakeMinipool } from '../_helpers/minipool';
@@ -20,7 +20,7 @@ import { setDAONodeTrustedBootstrapSetting } from '../dao/scenario-dao-node-trus
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketNodeDeposit', async (accounts) => {
+    contract('PoolseaNodeDeposit', async (accounts) => {
 
         // Accounts
         const [
@@ -43,9 +43,9 @@ export default function() {
             await upgradeOneDotTwo(owner)
 
             // Set settings
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.start', bondReductionWindowStart, {from: owner});
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.length', bondReductionWindowLength, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.start', bondReductionWindowStart, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.bond.reduction.window.length', bondReductionWindowLength, {from: owner});
 
             // Register node
             await registerNode({from: node});
@@ -55,8 +55,8 @@ export default function() {
             await setNodeTrusted(trustedNode, 'saas_1', 'node@home.com', owner);
 
             // Get settings
-            lebDepositNodeAmount = '8'.ether
-            halfDepositNodeAmount = '16'.ether
+            lebDepositNodeAmount = '8000000'.ether
+            halfDepositNodeAmount = '16000000'.ether
         });
 
 
@@ -82,7 +82,7 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Disable deposits
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNode, 'node.deposit.enabled', false, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNode, 'node.deposit.enabled', false, {from: owner});
 
             // Attempt deposit
             await shouldRevert(depositV2(noMinimumNodeFee, lebDepositNodeAmount, {
@@ -185,20 +185,20 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create a 16 ETH minipool
-            await userDeposit({ from: random, value: '24'.ether, });
+            await userDeposit({ from: random, value: '24000000'.ether, });
             const minipoolAddress = await depositV2(noMinimumNodeFee, halfDepositNodeAmount, {
                 from: node,
                 value: halfDepositNodeAmount,
             });
-            const minipool = await RocketMinipoolDelegate.at(minipoolAddress);
+            const minipool = await PoolseaMinipoolDelegate.at(minipoolAddress);
 
             // Stake the minipool
             await increaseTime(web3, launchTimeout + 1);
             await stakeMinipool(minipool, {from: node});
 
             // Signal wanting to reduce and wait 7 days
-            const rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
-            await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+            const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8000000'.ether, {from: node});
             await increaseTime(web3, bondReductionWindowStart + 1);
 
             // Reduce the bond to 8 ether to receive a deposit credit
@@ -219,20 +219,20 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create a 16 ETH minipool
-            await userDeposit({ from: random, value: '24'.ether, });
+            await userDeposit({ from: random, value: '24000000'.ether, });
             const minipoolAddress = await depositV2(noMinimumNodeFee, halfDepositNodeAmount, {
                 from: node,
                 value: halfDepositNodeAmount,
             });
-            const minipool = await RocketMinipoolDelegate.at(minipoolAddress);
+            const minipool = await PoolseaMinipoolDelegate.at(minipoolAddress);
 
             // Stake the minipool
             await increaseTime(web3, launchTimeout + 1);
             await stakeMinipool(minipool, {from: node});
 
             // Signal wanting to reduce and wait 7 days
-            const rocketMinipoolBondReducer = await RocketMinipoolBondReducer.deployed();
-            await rocketMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8'.ether, {from: node});
+            const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
+            await poolseaMinipoolBondReducer.beginReduceBondAmount(minipool.address, '8000000'.ether, {from: node});
             await increaseTime(web3, bondReductionWindowStart + 1);
 
             // Reduce the bond to 8 ether to receive a deposit credit

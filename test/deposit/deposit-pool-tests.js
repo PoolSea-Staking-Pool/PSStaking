@@ -8,8 +8,8 @@ import { getRethExchangeRate, getRethTotalSupply, mintRPL } from '../_helpers/to
 import { getDepositSetting } from '../_helpers/settings';
 import { deposit } from './scenario-deposit';
 import {
-    RocketDAONodeTrustedSettingsMembers,
-    RocketDAOProtocolSettingsDeposit, RocketDepositPool,
+    PoolseaDAONodeTrustedSettingsMembers,
+    PoolseaDAOProtocolSettingsDeposit, PoolseaDepositPool,
 } from '../_utils/artifacts';
 import { setDAOProtocolBootstrapSetting } from '../dao/scenario-dao-protocol-bootstrap';
 import { setDAONodeTrustedBootstrapSetting } from '../dao/scenario-dao-node-trusted-bootstrap'
@@ -18,7 +18,7 @@ import { assignDepositsV2 } from './scenario-assign-deposits-v2';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketDepositPool', async (accounts) => {
+    contract('PoolseaDepositPool', async (accounts) => {
 
 
         // Accounts
@@ -78,7 +78,7 @@ export default function() {
 
         it(printTitle('staker', 'cannot make a deposit while deposits are disabled'), async () => {
             // Disable deposits
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.enabled', false, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.enabled', false, {from: owner});
 
             // Attempt deposit
             await shouldRevert(deposit({
@@ -104,7 +104,7 @@ export default function() {
 
         it(printTitle('staker', 'cannot make a deposit which would exceed the maximum deposit pool size'), async () => {
             // Set max deposit pool size
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '100'.ether, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '100'.ether, {from: owner});
 
             // Attempt deposit
             await shouldRevert(deposit({
@@ -116,26 +116,26 @@ export default function() {
 
         it(printTitle('staker', 'can make a deposit which exceeds the maximum deposit pool if minipool queue is larger'), async () => {
             // Set max deposit pool size to 1 ETH
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '1'.ether, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '1'.ether, {from: owner});
             // Disable socialised assignments so the deposit pool balance check succeeds
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.assign.socialised.maximum', 0, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.socialised.maximum', 0, {from: owner});
 
             // Attempt deposit greater than maximum (fails)
             await shouldRevert(deposit({
                 from: staker,
-                value: '16'.ether,
+                value: '16000000'.ether,
             }), 'Made a deposit which exceeds the maximum deposit pool size');
 
             // Create a minipool to add to the queue
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
             await mintRPL(owner, node, minipoolRplStake);
             await nodeStakeRPL(minipoolRplStake, {from: node});
-            await createMinipool({from: node, value: '16'.ether});
+            await createMinipool({from: node, value: '16000000'.ether});
 
             // Attempt deposit
             await deposit({
                 from: staker,
-                value: '16'.ether,
+                value: '16000000'.ether,
             });
         });
 
@@ -152,27 +152,27 @@ export default function() {
             });
 
             // Disable deposit assignment
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.assign.enabled', false, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.enabled', false, {from: owner});
 
             // Disable minimum unbonded commission threshold
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMembers, 'members.minipool.unbonded.min.fee', '0', {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMembers, 'members.minipool.unbonded.min.fee', '0', {from: owner});
 
             // Stake RPL to cover minipools
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
-            let rplStake = minipoolRplStake.mul('3'.BN);
+            let rplStake = minipoolRplStake.mul('3000'.BN);
             await mintRPL(owner, trustedNode, rplStake);
             await nodeStakeRPL(rplStake, {from: trustedNode});
 
             // Make user & node deposits
-            await userDeposit({from: staker, value: '100'.ether});
-            await nodeDeposit({from: trustedNode, value: '16'.ether});
-            await nodeDeposit({from: trustedNode, value: '16'.ether});
-            await nodeDeposit({from: trustedNode, value: '16'.ether});
+            await userDeposit({from: staker, value: '100000000'.ether});
+            await nodeDeposit({from: trustedNode, value: '16000000'.ether});
+            await nodeDeposit({from: trustedNode, value: '16000000'.ether});
+            await nodeDeposit({from: trustedNode, value: '16000000'.ether});
 
             // Re-enable deposit assignment & set limit
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.assign.enabled', true, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.assign.maximum', 3, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.assign.socialised.maximum', 3, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.enabled', true, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.maximum', 3, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.socialised.maximum', 3, {from: owner});
 
             // Assign deposits with assignable deposits
             await assignDepositsV2({
@@ -183,7 +183,7 @@ export default function() {
 
         it(printTitle('random address', 'cannot assign deposits while deposit assignment is disabled'), async () => {
             // Disable deposit assignment
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.assign.enabled', false, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.enabled', false, {from: owner});
 
             // Attempt to assign deposits
             await shouldRevert(assignDepositsV2({
@@ -198,26 +198,26 @@ export default function() {
 
 
         it(printTitle('random address', 'can check maximum deposit amount'), async () => {
-            const rocketDepositPool = await RocketDepositPool.deployed();
+            const poolseaDepositPool = await PoolseaDepositPool.deployed();
 
             // Disable deposits
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.enabled', false, {from: owner});
-            assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), 0, 'Invalid maximum deposit amount');
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.enabled', false, {from: owner});
+            assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), 0, 'Invalid maximum deposit amount');
 
             // Enable deposits
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.enabled', true, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.enabled', true, {from: owner});
             const depositPoolMaximum = '100'.ether;
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsDeposit, 'deposit.pool.maximum', depositPoolMaximum, {from: owner});
-            assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), depositPoolMaximum, 'Invalid maximum deposit amount');
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', depositPoolMaximum, {from: owner});
+            assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), depositPoolMaximum, 'Invalid maximum deposit amount');
 
             // Create a 16 ETH minipool
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
             let rplStake = minipoolRplStake.mul('1'.BN);
             await mintRPL(owner, node, rplStake);
             await nodeStakeRPL(rplStake, {from: node});
-            const minipoolBondAmount = '16'.ether;
+            const minipoolBondAmount = '16000000'.ether;
             await createMinipool({from: node, value: minipoolBondAmount});
-            assertBN.equal(await rocketDepositPool.getMaximumDepositAmount(), depositPoolMaximum.add(minipoolBondAmount), 'Invalid maximum deposit amount');
+            assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), depositPoolMaximum.add(minipoolBondAmount), 'Invalid maximum deposit amount');
         });
     });
 }

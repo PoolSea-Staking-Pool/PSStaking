@@ -1,4 +1,4 @@
-import { RocketDAONodeTrusted, RocketStorage, RocketVault, RocketTokenRPL } from '../_utils/artifacts';
+import { PoolseaDAONodeTrusted, PoolseaStorage, PoolseaVault, PoolseaTokenPOOL } from '../_utils/artifacts';
 import { compressABI, decompressABI } from '../_utils/contract';
 import { assertBN } from '../_helpers/bn';
 
@@ -6,12 +6,12 @@ import { assertBN } from '../_helpers/bn';
 // The trusted node DAO can be bootstrapped with several nodes
 export async function setDaoNodeTrustedBootstrapMember(_id, _url, _nodeAddress, txOptions) {
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
+    const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
 
     // Get data about the tx
     function getTxData() {
         return Promise.all([
-            rocketDAONodeTrusted.getMemberID.call(_nodeAddress),
+            poolseaDAONodeTrusted.getMemberID.call(_nodeAddress),
         ]).then(
             ([memberID]) =>
             ({memberID})
@@ -19,7 +19,7 @@ export async function setDaoNodeTrustedBootstrapMember(_id, _url, _nodeAddress, 
     }
 
     // Set as a bootstrapped member
-    await rocketDAONodeTrusted.bootstrapMember(_id, _url, _nodeAddress, txOptions);
+    await poolseaDAONodeTrusted.bootstrapMember(_id, _url, _nodeAddress, txOptions);
 
     // Capture data
     let ds2 = await getTxData();
@@ -37,14 +37,14 @@ export async function setDAONodeTrustedBootstrapSetting(_settingContractInstance
     }
 
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
-    const rocketDAONodeTrustedSettingsContract = await _settingContractInstance.deployed();
+    const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
+    const poolseaDAONodeTrustedSettingsContract = await _settingContractInstance.deployed();
 
     // Get data about the tx
     function getTxData() {
         return Promise.all([
-            rocketDAONodeTrustedSettingsContract.getSettingUint.call(_settingPath),
-            rocketDAONodeTrustedSettingsContract.getSettingBool.call(_settingPath)
+            poolseaDAONodeTrustedSettingsContract.getSettingUint.call(_settingPath),
+            poolseaDAONodeTrustedSettingsContract.getSettingBool.call(_settingPath)
         ]).then(
             ([settingUintValue, settingBoolValue]) =>
             ({settingUintValue, settingBoolValue})
@@ -53,12 +53,12 @@ export async function setDAONodeTrustedBootstrapSetting(_settingContractInstance
 
     // Set as a bootstrapped setting. detect type first, can be a number, string or bn object
     if(typeof(_value) == 'number' || typeof(_value) == 'string' || typeof(_value) == 'object') {
-        await rocketDAONodeTrusted.bootstrapSettingUint(_settingContractInstance._json.contractName.lowerCaseFirstLetter(), _settingPath, _value, txOptions)
+        await poolseaDAONodeTrusted.bootstrapSettingUint(_settingContractInstance._json.contractName.lowerCaseFirstLetter(), _settingPath, _value, txOptions)
     }
     if(typeof(_value) == 'boolean') {
-        await rocketDAONodeTrusted.bootstrapSettingBool(_settingContractInstance._json.contractName.lowerCaseFirstLetter(), _settingPath, _value, txOptions);
+        await poolseaDAONodeTrusted.bootstrapSettingBool(_settingContractInstance._json.contractName.lowerCaseFirstLetter(), _settingPath, _value, txOptions);
     }
-    
+
     // Capture data
     let ds2 = await getTxData();
 
@@ -75,12 +75,12 @@ export async function setDAONodeTrustedBootstrapSetting(_settingContractInstance
 // Disable bootstrap mode
 export async function setDaoNodeTrustedBootstrapModeDisabled(txOptions) {
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
+    const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
 
     // Get data about the tx
     function getTxData() {
         return Promise.all([
-            rocketDAONodeTrusted.getBootstrapModeDisabled.call(),
+            poolseaDAONodeTrusted.getBootstrapModeDisabled.call(),
         ]).then(
             ([bootstrapmodeDisabled]) =>
             ({bootstrapmodeDisabled})
@@ -88,7 +88,7 @@ export async function setDaoNodeTrustedBootstrapModeDisabled(txOptions) {
     }
 
     // Set as a bootstrapped member
-    await rocketDAONodeTrusted.bootstrapDisable(true, txOptions);
+    await poolseaDAONodeTrusted.bootstrapDisable(true, txOptions);
 
     // Capture data
     let ds2 = await getTxData();
@@ -98,15 +98,15 @@ export async function setDaoNodeTrustedBootstrapModeDisabled(txOptions) {
 }
 
 
-// The trusted node DAO can also upgrade contracts + abi if consensus is reached 
+// The trusted node DAO can also upgrade contracts + abi if consensus is reached
 export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _contractAddress, txOptions) {
     // Load contracts
     const [
-        rocketStorage,
-        rocketDAONodeTrusted,
+        poolseaStorage,
+        poolseaDAONodeTrusted,
     ] = await Promise.all([
-        RocketStorage.deployed(),
-        RocketDAONodeTrusted.deployed(),
+        PoolseaStorage.deployed(),
+        PoolseaDAONodeTrusted.deployed(),
     ]);
 
     // Add test method to ABI
@@ -131,8 +131,8 @@ export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _con
     // Get contract data
     function getContractData() {
         return Promise.all([
-            rocketStorage.getAddress.call(web3.utils.soliditySha3('contract.address', _name)),
-            rocketStorage.getString.call(web3.utils.soliditySha3('contract.abi', _name)),
+            poolseaStorage.getAddress.call(web3.utils.soliditySha3('contract.address', _name)),
+            poolseaStorage.getString.call(web3.utils.soliditySha3('contract.abi', _name)),
         ]).then(
             ([address, abi]) =>
             ({address, abi})
@@ -140,8 +140,8 @@ export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _con
     }
     function getContractAddressData(_contractAddress) {
         return Promise.all([
-            rocketStorage.getBool.call(web3.utils.soliditySha3('contract.exists', _contractAddress)),
-            rocketStorage.getString.call(web3.utils.soliditySha3('contract.name', _contractAddress)),
+            poolseaStorage.getBool.call(web3.utils.soliditySha3('contract.exists', _contractAddress)),
+            poolseaStorage.getString.call(web3.utils.soliditySha3('contract.name', _contractAddress)),
         ]).then(
             ([exists, name]) =>
             ({exists, name})
@@ -152,7 +152,7 @@ export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _con
     let contract1 = await getContractData();
 
     // Upgrade contract
-    await rocketDAONodeTrusted.bootstrapUpgrade(_type, _name, compressedAbi, _contractAddress, txOptions);
+    await poolseaDAONodeTrusted.bootstrapUpgrade(_type, _name, compressedAbi, _contractAddress, txOptions);
 
     // Get updated contract data
     let contract2 = await getContractData();
@@ -183,7 +183,7 @@ export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _con
     }
     if(_type === 'upgradeABI' || _type === 'addABI') {
         // Check ABI details
-        let contractAbi = await rocketStorage.getString.call(web3.utils.soliditySha3('contract.abi', _name));
+        let contractAbi = await poolseaStorage.getString.call(web3.utils.soliditySha3('contract.abi', _name));
         let contract = new web3.eth.Contract(decompressABI(contractAbi), '0x0000000000000000000000000000000000000000');
         assert.notEqual(contract.methods.testMethod, undefined, 'Contract ABI was not set');
     }
@@ -193,16 +193,16 @@ export async function setDaoNodeTrustedBootstrapUpgrade(_type, _name, _abi, _con
 // A registered node attempting to join as a member due to low DAO member count
 export async function setDaoNodeTrustedMemberRequired(_id, _url, txOptions) {
     // Load contracts
-    const rocketDAONodeTrusted = await RocketDAONodeTrusted.deployed();
-    const rocketVault = await RocketVault.deployed();
-    const rocketTokenRPL = await RocketTokenRPL.deployed();
+    const poolseaDAONodeTrusted = await PoolseaDAONodeTrusted.deployed();
+    const poolseaVault = await PoolseaVault.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
 
     // Get data about the tx
     function getTxData() {
         return Promise.all([
-            rocketDAONodeTrusted.getMemberCount.call(),
-            rocketTokenRPL.balanceOf(txOptions.from),
-            rocketVault.balanceOfToken('rocketDAONodeTrustedActions', rocketTokenRPL.address),
+            poolseaDAONodeTrusted.getMemberCount.call(),
+            poolseaTokenRPL.balanceOf(txOptions.from),
+            poolseaVault.balanceOfToken('poolseaDAONodeTrustedActions', poolseaTokenRPL.address),
         ]).then(
             ([memberTotal, rplBalanceBond, rplBalanceVault]) =>
             ({memberTotal, rplBalanceBond, rplBalanceVault})
@@ -213,12 +213,12 @@ export async function setDaoNodeTrustedMemberRequired(_id, _url, txOptions) {
     let ds1 = await getTxData();
 
     // Add a new proposal
-    await rocketDAONodeTrusted.memberJoinRequired(_id, _url, txOptions);
+    await poolseaDAONodeTrusted.memberJoinRequired(_id, _url, txOptions);
 
     // Capture data
     let ds2 = await getTxData();
 
     // Check member count has increased
     assertBN.equal(ds2.memberTotal, ds1.memberTotal.add('1'.BN), 'Member count has not increased');
-    assertBN.equal(ds2.rplBalanceVault, ds1.rplBalanceVault.add(ds1.rplBalanceBond), 'RocketVault address does not contain the correct RPL bond amount');
+    assertBN.equal(ds2.rplBalanceVault, ds1.rplBalanceVault.add(ds1.rplBalanceBond), 'PoolseaVault address does not contain the correct RPL bond amount');
 }

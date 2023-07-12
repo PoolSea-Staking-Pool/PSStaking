@@ -4,8 +4,8 @@ import { getMinipoolMinimumRPLStake, createMinipool, stakeMinipool, minipoolStat
 import { registerNode, setNodeTrusted, nodeStakeRPL } from '../_helpers/node';
 import { mintRPL } from '../_helpers/tokens';
 import {
-    RocketDAONodeTrustedSettingsMinipool,
-    RocketDAONodeTrustedSettingsProposals,
+    PoolseaDAONodeTrustedSettingsMinipool,
+    PoolseaDAONodeTrustedSettingsProposals,
 } from '../_utils/artifacts';
 import { daoNodeTrustedExecute, daoNodeTrustedMemberLeave, daoNodeTrustedPropose, daoNodeTrustedVote } from '../dao/scenario-dao-node-trusted'
 import { getDAOProposalEndTime, getDAOProposalStartTime } from '../dao/scenario-dao-proposal'
@@ -14,7 +14,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketMinipoolStatus', async (accounts) => {
+    contract('PoolseaMinipoolStatus', async (accounts) => {
 
         // Accounts
         const [
@@ -52,7 +52,7 @@ export default function() {
             await setNodeTrusted(trustedNode1, 'saas_1', 'node1@home.com', owner);
             await setNodeTrusted(trustedNode2, 'saas_2', 'node2@home.com', owner);
             await setNodeTrusted(trustedNode3, 'saas_3', 'node3@home.com', owner);
-     
+
 
             // Stake RPL to cover minipools
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
@@ -61,14 +61,14 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create minipools
-            stakingMinipool1 = await createMinipool({from: node, value: '16'.ether});
-            stakingMinipool2 = await createMinipool({from: node, value: '16'.ether});
-            stakingMinipool3 = await createMinipool({from: node, value: '16'.ether});
+            stakingMinipool1 = await createMinipool({from: node, value: '16000000'.ether});
+            stakingMinipool2 = await createMinipool({from: node, value: '16000000'.ether});
+            stakingMinipool3 = await createMinipool({from: node, value: '16000000'.ether});
 
             // Make and assign deposits to minipools
-            await userDeposit({from: staker, value: '16'.ether});
-            await userDeposit({from: staker, value: '16'.ether});
-            await userDeposit({from: staker, value: '16'.ether});
+            await userDeposit({from: staker, value: '16000000'.ether});
+            await userDeposit({from: staker, value: '16000000'.ether});
+            await userDeposit({from: staker, value: '16000000'.ether});
 
             // Wait required scrub period
             await increaseTime(web3, scrubPeriod + 1);
@@ -87,11 +87,11 @@ export default function() {
             assertBN.equal(stakingStatus3, minipoolStates.Staking, 'Incorrect staking minipool status');
 
             // Set a small proposal cooldown
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.cooldown', proposalCooldown, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.blocks', proposalVoteBlocks, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
             // Set a small vote delay
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
 
         });
 

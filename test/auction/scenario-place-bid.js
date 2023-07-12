@@ -1,4 +1,4 @@
-import { RocketAuctionManager, RocketDAOProtocolSettingsAuction, RocketVault } from '../_utils/artifacts';
+import { PoolseaAuctionManager, PoolseaDAOProtocolSettingsAuction, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -7,13 +7,13 @@ export async function placeBid(lotIndex, txOptions) {
 
     // Load contracts
     const [
-        rocketAuctionManager,
-        rocketAuctionSettings,
-        rocketVault,
+        poolseaAuctionManager,
+        poolseaAuctionSettings,
+        poolseaVault,
     ] = await Promise.all([
-        RocketAuctionManager.deployed(),
-        RocketDAOProtocolSettingsAuction.deployed(),
-        RocketVault.deployed(),
+        PoolseaAuctionManager.deployed(),
+        PoolseaDAOProtocolSettingsAuction.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Calculation base value
@@ -22,13 +22,13 @@ export async function placeBid(lotIndex, txOptions) {
     // Get lot details
     function getLotDetails(bidderAddress) {
         return Promise.all([
-            rocketAuctionManager.getLotTotalRPLAmount.call(lotIndex),
-            rocketAuctionManager.getLotTotalBidAmount.call(lotIndex),
-            rocketAuctionManager.getLotAddressBidAmount.call(lotIndex, bidderAddress),
-            rocketAuctionManager.getLotPriceByTotalBids.call(lotIndex),
-            rocketAuctionManager.getLotCurrentPrice.call(lotIndex),
-            rocketAuctionManager.getLotClaimedRPLAmount.call(lotIndex),
-            rocketAuctionManager.getLotRemainingRPLAmount.call(lotIndex),
+            poolseaAuctionManager.getLotTotalRPLAmount.call(lotIndex),
+            poolseaAuctionManager.getLotTotalBidAmount.call(lotIndex),
+            poolseaAuctionManager.getLotAddressBidAmount.call(lotIndex, bidderAddress),
+            poolseaAuctionManager.getLotPriceByTotalBids.call(lotIndex),
+            poolseaAuctionManager.getLotCurrentPrice.call(lotIndex),
+            poolseaAuctionManager.getLotClaimedRPLAmount.call(lotIndex),
+            poolseaAuctionManager.getLotRemainingRPLAmount.call(lotIndex),
         ]).then(
             ([totalRplAmount, totalBidAmount, addressBidAmount, priceByTotalBids, currentPrice, claimedRplAmount, remainingRplAmount]) =>
             ({totalRplAmount, totalBidAmount, addressBidAmount, priceByTotalBids, currentPrice, claimedRplAmount, remainingRplAmount})
@@ -39,8 +39,8 @@ export async function placeBid(lotIndex, txOptions) {
     function getBalances(bidderAddress) {
         return Promise.all([
             web3.eth.getBalance(bidderAddress).then(value => value.BN),
-            web3.eth.getBalance(rocketVault.address).then(value => value.BN),
-            rocketVault.balanceOf.call('rocketDepositPool'),
+            web3.eth.getBalance(poolseaVault.address).then(value => value.BN),
+            poolseaVault.balanceOf.call('poolseaDepositPool'),
         ]).then(
             ([bidderEth, vaultEth, depositPoolEth]) =>
             ({bidderEth, vaultEth, depositPoolEth})
@@ -50,7 +50,7 @@ export async function placeBid(lotIndex, txOptions) {
     // Get lot price at block
     function getLotPriceAtBlock() {
         return web3.eth.getBlock('latest')
-            .then(block => rocketAuctionManager.getLotPriceAtBlock.call(lotIndex, block.number));
+            .then(block => poolseaAuctionManager.getLotPriceAtBlock.call(lotIndex, block.number));
     }
 
     // Get initial lot details & balances
@@ -64,7 +64,7 @@ export async function placeBid(lotIndex, txOptions) {
     txOptions.gasPrice = gasPrice;
 
     // Place bid
-    let txReceipt = await rocketAuctionManager.placeBid(lotIndex, txOptions);
+    let txReceipt = await poolseaAuctionManager.placeBid(lotIndex, txOptions);
     let txFee = gasPrice.mul(txReceipt.receipt.gasUsed.BN);
 
     // Get updated lot details & balances

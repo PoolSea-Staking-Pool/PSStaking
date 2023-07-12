@@ -1,4 +1,4 @@
-import { RocketMinipoolManager, RocketDAOProtocolSettingsMinipool, RocketNetworkPrices, RocketDAOProtocolSettingsNode, RocketNodeStaking, RocketTokenRPL, RocketVault } from '../_utils/artifacts';
+import { PoolseaMinipoolManager, PoolseaDAOProtocolSettingsMinipool, PoolseaNetworkPrices, PoolseaDAOProtocolSettingsNode, PoolseaNodeStaking, PoolseaTokenPOOL, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -7,21 +7,21 @@ export async function stakeRpl(amount, txOptions) {
 
     // Load contracts
     const [
-        rocketMinipoolManager,
-        rocketDAOProtocolSettingsMinipool,
-        rocketNetworkPrices,
-        rocketDAOProtocolSettingsNode,
-        rocketNodeStaking,
-        rocketTokenRPL,
-        rocketVault,
+        poolseaMinipoolManager,
+        poolseaDAOProtocolSettingsMinipool,
+        poolseaNetworkPrices,
+        poolseaDAOProtocolSettingsNode,
+        poolseaNodeStaking,
+        poolseaTokenRPL,
+        poolseaVault,
     ] = await Promise.all([
-        RocketMinipoolManager.deployed(),
-        RocketDAOProtocolSettingsMinipool.deployed(),
-        RocketNetworkPrices.deployed(),
-        RocketDAOProtocolSettingsNode.deployed(),
-        RocketNodeStaking.deployed(),
-        RocketTokenRPL.deployed(),
-        RocketVault.deployed(),
+        PoolseaMinipoolManager.deployed(),
+        PoolseaDAOProtocolSettingsMinipool.deployed(),
+        PoolseaNetworkPrices.deployed(),
+        PoolseaDAOProtocolSettingsNode.deployed(),
+        PoolseaNodeStaking.deployed(),
+        PoolseaTokenPOOL.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Get parameters
@@ -31,18 +31,18 @@ export async function stakeRpl(amount, txOptions) {
         maxPerMinipoolStake,
         rplPrice,
     ] = await Promise.all([
-        rocketDAOProtocolSettingsMinipool.getHalfDepositUserAmount.call(),
-        rocketDAOProtocolSettingsNode.getMinimumPerMinipoolStake.call(),
-        rocketDAOProtocolSettingsNode.getMaximumPerMinipoolStake.call(),
-        rocketNetworkPrices.getRPLPrice.call(),
+        poolseaDAOProtocolSettingsMinipool.getHalfDepositUserAmount.call(),
+        poolseaDAOProtocolSettingsNode.getMinimumPerMinipoolStake.call(),
+        poolseaDAOProtocolSettingsNode.getMaximumPerMinipoolStake.call(),
+        poolseaNetworkPrices.getRPLPrice.call(),
     ]);
 
     // Get token balances
     function getTokenBalances(nodeAddress) {
         return Promise.all([
-            rocketTokenRPL.balanceOf.call(nodeAddress),
-            rocketTokenRPL.balanceOf.call(rocketVault.address),
-            rocketVault.balanceOfToken.call('rocketNodeStaking', rocketTokenRPL.address),
+            poolseaTokenRPL.balanceOf.call(nodeAddress),
+            poolseaTokenRPL.balanceOf.call(poolseaVault.address),
+            poolseaVault.balanceOfToken.call('poolseaNodeStaking', poolseaTokenRPL.address),
         ]).then(
             ([nodeRpl, vaultRpl, stakingRpl]) =>
             ({nodeRpl, vaultRpl, stakingRpl})
@@ -52,12 +52,12 @@ export async function stakeRpl(amount, txOptions) {
     // Get staking details
     function getStakingDetails(nodeAddress) {
         return Promise.all([
-            rocketNodeStaking.getTotalRPLStake.call(),
-            rocketNodeStaking.getNodeRPLStake.call(nodeAddress),
-            rocketNodeStaking.getNodeEffectiveRPLStake.call(nodeAddress),
-            rocketNodeStaking.getNodeETHMatched.call(nodeAddress),
-            rocketNodeStaking.getNodeETHMatchedLimit.call(nodeAddress),
-            rocketNodeStaking.getNodeETHProvided.call(nodeAddress),
+            poolseaNodeStaking.getTotalRPLStake.call(),
+            poolseaNodeStaking.getNodeRPLStake.call(nodeAddress),
+            poolseaNodeStaking.getNodeEffectiveRPLStake.call(nodeAddress),
+            poolseaNodeStaking.getNodeETHMatched.call(nodeAddress),
+            poolseaNodeStaking.getNodeETHMatchedLimit.call(nodeAddress),
+            poolseaNodeStaking.getNodeETHProvided.call(nodeAddress),
         ]).then(
             ([totalStake, nodeStake, nodeEffectiveStake, nodeEthMatched, nodeEthMatchedLimit, nodeEthProvided]) =>
             ({totalStake, nodeStake, nodeEffectiveStake, nodeEthMatched, nodeEthMatchedLimit, nodeEthProvided})
@@ -71,7 +71,7 @@ export async function stakeRpl(amount, txOptions) {
     ]);
 
     // Stake RPL
-    await rocketNodeStaking.stakeRPL(amount, txOptions);
+    await poolseaNodeStaking.stakeRPL(amount, txOptions);
 
     // Get updated token balances, staking details & minipool counts
     let [balances2, details2] = await Promise.all([
@@ -87,7 +87,7 @@ export async function stakeRpl(amount, txOptions) {
     // Check token balances
     assertBN.equal(balances2.nodeRpl, balances1.nodeRpl.sub(web3.utils.toBN(amount)), 'Incorrect updated node RPL balance');
     assertBN.equal(balances2.vaultRpl, balances1.vaultRpl.add(web3.utils.toBN(amount)), 'Incorrect updated vault RPL balance');
-    assertBN.equal(balances2.stakingRpl, balances1.stakingRpl.add(web3.utils.toBN(amount)), 'Incorrect updated RocketNodeStaking contract RPL vault balance');
+    assertBN.equal(balances2.stakingRpl, balances1.stakingRpl.add(web3.utils.toBN(amount)), 'Incorrect updated PoolseaNodeStaking contract RPL vault balance');
 
     // Check staking details
     assertBN.equal(details2.totalStake, details1.totalStake.add(web3.utils.toBN(amount)), 'Incorrect updated total RPL stake');

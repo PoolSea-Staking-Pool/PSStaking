@@ -1,9 +1,9 @@
 import {
-    RocketDAOProtocolSettingsDeposit,
-    RocketDepositPool,
-    RocketDepositPoolOld,
-    RocketTokenRETH,
-    RocketVault,
+    PoolseaDAOProtocolSettingsDeposit,
+    PoolseaDepositPool,
+    PoolseaDepositPoolOld,
+    PoolseaTokenRPLS,
+    PoolseaVault,
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
@@ -12,27 +12,27 @@ import { assertBN } from '../_helpers/bn';
 export async function deposit(txOptions, preUpdate = false) {
     // Load contracts
     const [
-        rocketDAOProtocolSettingsDeposit,
-        rocketDepositPool,
-        rocketTokenRETH,
-        rocketVault,
+        poolseaDAOProtocolSettingsDeposit,
+        poolseaDepositPool,
+        poolseaTokenRETH,
+        poolseaVault,
     ] = await Promise.all([
-        RocketDAOProtocolSettingsDeposit.deployed(),
-        preUpdate ? RocketDepositPoolOld.deployed() : RocketDepositPool.deployed(),
-        RocketTokenRETH.deployed(),
-        RocketVault.deployed(),
+        PoolseaDAOProtocolSettingsDeposit.deployed(),
+        preUpdate ? PoolseaDepositPoolOld.deployed() : PoolseaDepositPool.deployed(),
+        PoolseaTokenRPLS.deployed(),
+        PoolseaVault.deployed(),
     ]);
 
     // Get parameters
-    let depositFeePerc = await rocketDAOProtocolSettingsDeposit.getDepositFee();
+    let depositFeePerc = await poolseaDAOProtocolSettingsDeposit.getDepositFee();
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketDepositPool.getBalance.call(),
-            rocketDepositPool.getNodeBalance.call(),
-            web3.eth.getBalance(rocketVault.address).then(value => value.BN),
-            rocketTokenRETH.balanceOf.call(txOptions.from),
+            poolseaDepositPool.getBalance.call(),
+            poolseaDepositPool.getNodeBalance.call(),
+            web3.eth.getBalance(poolseaVault.address).then(value => value.BN),
+            poolseaTokenRETH.balanceOf.call(txOptions.from),
         ]).then(
             ([depositPoolEth, depositPoolNodeEth, vaultEth, userReth]) =>
             ({depositPoolEth, depositPoolNodeEth, vaultEth, userReth})
@@ -43,7 +43,7 @@ export async function deposit(txOptions, preUpdate = false) {
     let balances1 = await getBalances();
 
     // Deposit
-    await rocketDepositPool.deposit(txOptions);
+    await poolseaDepositPool.deposit(txOptions);
 
     // Get updated balances
     let balances2 = await getBalances();
@@ -52,7 +52,7 @@ export async function deposit(txOptions, preUpdate = false) {
     let txValue = txOptions.value;
     let calcBase = '1'.ether;
     let depositFee = txValue.mul(depositFeePerc).div(calcBase);
-    let expectedRethMinted = await rocketTokenRETH.getRethValue(txValue.sub(depositFee));
+    let expectedRethMinted = await poolseaTokenRETH.getRethValue(txValue.sub(depositFee));
 
     // Check balances
     assertBN.equal(balances2.depositPoolEth, balances1.depositPoolEth.add(txValue), 'Incorrect updated deposit pool ETH balance');

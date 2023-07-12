@@ -1,10 +1,10 @@
 import {
-    RocketDAOProtocolSettingsMinipool,
-    RocketDAOProtocolSettingsNetwork,
-    RocketMinipoolPenalty,
-    RocketStorage,
+    PoolseaDAOProtocolSettingsMinipool,
+    PoolseaDAOProtocolSettingsNetwork,
+    PoolseaMinipoolPenalty,
+    PoolseaStorage,
     PenaltyTest,
-    RocketNodeStaking, RocketDAONodeTrustedSettingsMinipool,
+    PoolseaNodeStaking, PoolseaDAONodeTrustedSettingsMinipool,
 } from '../_utils/artifacts';
 import { printTitle } from '../_utils/formatting';
 import { shouldRevert } from '../_utils/testing';
@@ -24,7 +24,7 @@ import { upgradeOneDotTwo } from '../_utils/upgrade';
 import { assertBN } from '../_helpers/bn';
 
 export default function() {
-    contract('RocketMinipool', async (accounts) => {
+    contract('PoolseaMinipool', async (accounts) => {
 
         // Accounts
         const [
@@ -58,38 +58,38 @@ export default function() {
             await setNodeTrusted(trustedNode, 'saas_1', 'node@home.com', owner);
 
             // Set settings
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.start', userDistributeStartTime, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.length', userDistributeLength, {from: owner});
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.launch.timeout', launchTimeout, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.withdrawal.delay', withdrawalDelay, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.start', userDistributeStartTime, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.user.distribute.window.length', userDistributeLength, {from: owner});
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsMinipool, 'minipool.scrub.period', scrubPeriod, {from: owner});
 
             // Set rETH collateralisation target to a value high enough it won't cause excess ETH to be funneled back into deposit pool and mess with our calcs
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.reth.collateral.target', '50'.ether, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.reth.collateral.target', '50'.ether, {from: owner});
 
             // Set RPL price
             let block = await web3.eth.getBlockNumber();
             await submitPrices(block, '1'.ether, {from: trustedNode});
 
             // Add penalty helper contract
-            const rocketStorage = await RocketStorage.deployed();
-            penaltyTestContract = await PenaltyTest.new(rocketStorage.address, {from: owner});
-            await setDaoNodeTrustedBootstrapUpgrade('addContract', 'rocketPenaltyTest', penaltyTestContract.abi, penaltyTestContract.address, {
+            const poolseaStorage = await PoolseaStorage.deployed();
+            penaltyTestContract = await PenaltyTest.new(poolseaStorage.address, {from: owner});
+            await setDaoNodeTrustedBootstrapUpgrade('addContract', 'poolseaPenaltyTest', penaltyTestContract.abi, penaltyTestContract.address, {
                 from: owner,
             });
 
             // Enable penalties
-            const rocketMinipoolPenalty = await RocketMinipoolPenalty.deployed();
-            await rocketMinipoolPenalty.setMaxPenaltyRate(maxPenaltyRate, {from: owner})
+            const poolseaMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
+            await poolseaMinipoolPenalty.setMaxPenaltyRate(maxPenaltyRate, {from: owner})
 
             // Hard code fee to 50%
             const fee = '0.5'.ether;
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.minimum', fee, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.target', fee, {from: owner});
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.node.fee.maximum', fee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.minimum', fee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.target', fee, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.maximum', fee, {from: owner});
 
             // Deposit some user funds to assign to pools
-            let userDepositAmount = '16'.ether;
+            let userDepositAmount = '16000000'.ether;
             await userDeposit({from: random, value: userDepositAmount});
 
             // Stake RPL to cover minipools
@@ -101,7 +101,7 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: trustedNode});
 
             // Create minipools
-            minipool = await createMinipool({from: node, value: '16'.ether});
+            minipool = await createMinipool({from: node, value: '16000000'.ether});
 
             // Wait required scrub period
             await increaseTime(web3, scrubPeriod + 1);
@@ -144,50 +144,50 @@ export default function() {
 
         async function slashAndCheck(from, expectedSlash) {
             // Get contracts
-            const rocketNodeStaking = await RocketNodeStaking.deployed()
-            const rplStake1 = await rocketNodeStaking.getNodeRPLStake(node)
+            const poolseaNodeStaking = await PoolseaNodeStaking.deployed()
+            const rplStake1 = await poolseaNodeStaking.getNodeRPLStake(node)
             await minipool.slash({from: from})
-            const rplStake2 = await rocketNodeStaking.getNodeRPLStake(node)
+            const rplStake2 = await poolseaNodeStaking.getNodeRPLStake(node)
             const slashedAmount = rplStake1.sub(rplStake2)
             assertBN.equal(expectedSlash, slashedAmount, 'Slashed amount was incorrect')
         }
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, false, '17', '19');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, false, '17000000', '19000000');
         });
 
 
-        it(printTitle('random user', 'can process withdrawal when balance is greater than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('random user', 'can process withdrawal when balance is greater than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '36', random, false, '17', '19', true);
+            await withdrawAndCheck(minipool, '36000000', random, false, '17000000', '19000000', true);
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 ETH and less than 32 ETH'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 mln PLS and less than 32 mln PLS'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', nodeWithdrawalAddress, true, '16', '12');
+            await withdrawAndCheck(minipool, '28000000', nodeWithdrawalAddress, true, '16000000', '12000000');
         });
 
 
-        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 ETH and less than 32 ETH'), async () => {
+        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 mln PLS and less than 32 mln PLS'), async () => {
             // Wait 14 days
             await increaseTime(web3, userDistributeStartTime + 1)
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', random, false, '16', '12', true);
+            await withdrawAndCheck(minipool, '28000000', random, false, '16000000', '12000000', true);
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 ETH, less than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 mln PLS, less than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', nodeWithdrawalAddress, false, '16', '12');
+            await withdrawAndCheck(minipool, '28000000', nodeWithdrawalAddress, false, '16000000', '12000000');
         });
 
 
-        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 ETH, less than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 mln PLS, less than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', random, false, '16', '12', true);
+            await withdrawAndCheck(minipool, '28000000', random, false, '16000000', '12000000', true);
         });
 
 
@@ -196,7 +196,7 @@ export default function() {
             await web3.eth.sendTransaction({
                 from: random,
                 to: minipool.address,
-                value: '32'.ether
+                value: '32000000'.ether
             });
             await beginUserDistribute(minipool, {from: random});
             await shouldRevert(beginUserDistribute(minipool, {from: random}), 'Was able to begin user distribution again', 'User distribution already pending');
@@ -208,7 +208,7 @@ export default function() {
             await web3.eth.sendTransaction({
                 from: random,
                 to: minipool.address,
-                value: '32'.ether
+                value: '32000000'.ether
             });
             await beginUserDistribute(minipool, {from: random});
             await increaseTime(web3, userDistributeLength + userDistributeStartTime + 1)
@@ -216,42 +216,42 @@ export default function() {
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 ETH'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 mln PLS'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '15', nodeWithdrawalAddress, true, '15', '0');
+            await withdrawAndCheck(minipool, '15000000', nodeWithdrawalAddress, true, '15000000', '0');
         });
 
 
-        it(printTitle('random address', 'cannot slash a node operator by sending 4 ETH and distribute after 14 days'), async () => {
+        it(printTitle('random address', 'cannot slash a node operator by sending 4 mln PLS and distribute after 14 days'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', nodeWithdrawalAddress, true, '16', '12');
+            await withdrawAndCheck(minipool, '28000000', nodeWithdrawalAddress, true, '16000000', '12000000');
             // Wait 14 days and mine enough blocks to pass cooldown
             await increaseTime(web3, 60 * 60 * 24 * 14 + 1)
             await mineBlocks(web3, 101)
             // Process withdraw and attempt to slash
-            await withdrawAndCheck(minipool, '8', random, false, '8', '0', true);
+            await withdrawAndCheck(minipool, '8000000', random, false, '8000000', '0', true);
             await shouldRevert(minipool.slash(), 'Was able to slash minipool', 'No balance to slash')
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 ETH'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 mln PLS'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '15', nodeWithdrawalAddress, false, '15', '0');
+            await withdrawAndCheck(minipool, '15000000', nodeWithdrawalAddress, false, '15000000', '0');
         });
 
 
-        it(printTitle('node operator withdrawal address', 'should fail when trying to distribute rewards with greater than 8 ETH balance'), async () => {
+        it(printTitle('node operator withdrawal address', 'should fail when trying to distribute rewards with greater than 8 mln PLS balance'), async () => {
             // Process withdraw
             await web3.eth.sendTransaction({
                 from: random,
                 to: minipool.address,
                 gas: 12450000,
-                value: '8.001'.ether
+                value: '8001000'.ether
             });
 
             await shouldRevert(minipool.distributeBalance(true, {
                 from: nodeWithdrawalAddress
-            }), 'Distribute succeeded', 'Balance exceeds 8 ether');
+            }), 'Distribute succeeded', 'Balance exceeds 8 mln ether');
         });
 
         // ETH penalty events
@@ -261,7 +261,7 @@ export default function() {
             // Penalise the minipool 50% of it's ETH
             await penaltyTestContract.setPenaltyRate(minipool.address, maxPenaltyRate);
             // Process withdraw - 36 ETH would normally give node operator 19 and user 17 but with a 50% penalty, and extra 9.5 goes to the user
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, true, '26.5', '9.5');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, true, '26500000', '9500000');
         });
 
 
@@ -269,18 +269,18 @@ export default function() {
             // Try to penalise the minipool 75% of it's ETH (max is 50%)
             await penaltyTestContract.setPenaltyRate(minipool.address, web3.utils.toWei('0.75'));
             // Process withdraw - 36 ETH would normally give node operator 19 and user 17 but with a 50% penalty, and extra 9.5 goes to the user
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, true, '26.5', '9.5');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, true, '26500000', '9500000');
         });
 
 
         it(printTitle('guardian', 'can disable penalising all together'), async () => {
             // Disable penalising by setting rate to 0
-            const rocketMinipoolPenalty = await RocketMinipoolPenalty.deployed();
-            await rocketMinipoolPenalty.setMaxPenaltyRate('0', {from: owner})
+            const poolseaMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
+            await poolseaMinipoolPenalty.setMaxPenaltyRate('0', {from: owner})
             // Try to penalise the minipool 50%
             await penaltyTestContract.setPenaltyRate(minipool.address, web3.utils.toWei('0.5'));
             // Process withdraw
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, true, '17', '19');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, true, '17000000', '19000000');
         });
     })
 }

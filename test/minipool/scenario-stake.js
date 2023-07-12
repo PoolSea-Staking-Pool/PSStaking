@@ -1,4 +1,4 @@
-import { RocketMinipoolManager, RocketDAOProtocolSettingsMinipool } from '../_utils/artifacts';
+import { PoolseaMinipoolManager, PoolseaDAOProtocolSettingsMinipool } from '../_utils/artifacts';
 import { getValidatorSignature, getDepositDataRoot, getValidatorPubkey } from '../_utils/beacon';
 import { assertBN } from '../_helpers/bn';
 import { minipoolStates } from '../_helpers/minipool';
@@ -8,22 +8,22 @@ import { minipoolStates } from '../_helpers/minipool';
 export async function stake(minipool, withdrawalCredentials, txOptions, validatorPubkey = null) {
     // Load contracts
     const [
-        rocketMinipoolManager,
+        poolseaMinipoolManager,
     ] = await Promise.all([
-        RocketMinipoolManager.deployed(),
+        PoolseaMinipoolManager.deployed(),
     ]);
 
     // Get minipool validator pubkey
-    if (!validatorPubkey) validatorPubkey = await rocketMinipoolManager.getMinipoolPubkey(minipool.address);
+    if (!validatorPubkey) validatorPubkey = await poolseaMinipoolManager.getMinipoolPubkey(minipool.address);
 
     // Get minipool withdrawal credentials
-    if (!withdrawalCredentials) withdrawalCredentials = await rocketMinipoolManager.getMinipoolWithdrawalCredentials.call(minipool.address);
+    if (!withdrawalCredentials) withdrawalCredentials = await poolseaMinipoolManager.getMinipoolWithdrawalCredentials.call(minipool.address);
 
     // Get validator deposit data
     let depositData = {
         pubkey: Buffer.from(validatorPubkey.substr(2), 'hex'),
         withdrawalCredentials: Buffer.from(withdrawalCredentials.substr(2), 'hex'),
-        amount: BigInt(31000000000), // 31 ETH in gwei
+        amount: BigInt(31999999000000000), // 31999999 ETH in gwei
         signature: getValidatorSignature(),
     };
     let depositDataRoot = getDepositDataRoot(depositData);
@@ -42,7 +42,7 @@ export async function stake(minipool, withdrawalCredentials, txOptions, validato
     // Get initial minipool details & minipool by validator pubkey
     let [details1, validatorMinipool1] = await Promise.all([
         getMinipoolDetails(),
-        rocketMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
+        poolseaMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
     ]);
 
     // Stake
@@ -51,13 +51,13 @@ export async function stake(minipool, withdrawalCredentials, txOptions, validato
     // Get updated minipool details & minipool by validator pubkey
     let [details2, validatorMinipool2] = await Promise.all([
         getMinipoolDetails(),
-        rocketMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
+        poolseaMinipoolManager.getMinipoolByPubkey.call(validatorPubkey),
     ]);
 
     // Check minpool details
     assertBN.notEqual(details1.status, minipoolStates.Staking, 'Incorrect initial minipool status');
     assertBN.equal(details2.status, minipoolStates.Staking, 'Incorrect updated minipool status');
-    assertBN.equal(details2.balance, details1.balance.sub('31'.ether), 'Incorrect updated minipool ETH balance');
+    assertBN.equal(details2.balance, details1.balance.sub('31999999'.ether), 'Incorrect updated minipool ETH balance');
 
     // Check minipool by validator pubkey
     assert.strictEqual(validatorMinipool2, minipool.address, 'Incorrect updated minipool by validator pubkey');

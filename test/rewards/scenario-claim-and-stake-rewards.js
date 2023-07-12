@@ -1,8 +1,8 @@
 import {
-    RocketMerkleDistributorMainnet,
-    RocketNodeManager, RocketNodeStaking,
-    RocketRewardsPool,
-    RocketStorage, RocketTokenRPL
+    PoolseaMerkleDistributorMainnet,
+    PoolseaNodeManager, PoolseaNodeStaking,
+    PoolseaRewardsPool,
+    PoolseaStorage, PoolseaTokenPOOL
 } from '../_utils/artifacts';
 import { parseRewardsMap } from '../_utils/merkle-tree';
 import { assertBN } from '../_helpers/bn';
@@ -13,30 +13,30 @@ export async function claimAndStakeRewards(nodeAddress, indices, rewards, stakeA
 
     // Load contracts
     const [
-        rocketRewardsPool,
-        rocketNodeManager,
-        rocketNodeStaking,
-        rocketMerkleDistributorMainnet,
-        rocketStorage,
-        rocketTokenRPL,
+        poolseaRewardsPool,
+        poolseaNodeManager,
+        poolseaNodeStaking,
+        poolseaMerkleDistributorMainnet,
+        poolseaStorage,
+        poolseaTokenRPL,
     ] = await Promise.all([
-        RocketRewardsPool.deployed(),
-        RocketNodeManager.deployed(),
-        RocketNodeStaking.deployed(),
-        RocketMerkleDistributorMainnet.deployed(),
-        RocketStorage.deployed(),
-        RocketTokenRPL.deployed(),
+        PoolseaRewardsPool.deployed(),
+        PoolseaNodeManager.deployed(),
+        PoolseaNodeStaking.deployed(),
+        PoolseaMerkleDistributorMainnet.deployed(),
+        PoolseaStorage.deployed(),
+        PoolseaTokenPOOL.deployed(),
     ]);
 
     // Get node withdrawal address
-    let nodeWithdrawalAddress = await rocketNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaNodeManager.getNodeWithdrawalAddress.call(nodeAddress);
 
     // Get balances
     function getBalances() {
         return Promise.all([
-            rocketRewardsPool.getClaimIntervalTimeStart(),
-            rocketTokenRPL.balanceOf.call(nodeWithdrawalAddress),
-            rocketNodeStaking.getNodeRPLStake(nodeAddress),
+            poolseaRewardsPool.getClaimIntervalTimeStart(),
+            poolseaTokenRPL.balanceOf.call(nodeWithdrawalAddress),
+            poolseaNodeStaking.getNodeRPLStake(nodeAddress),
             web3.eth.getBalance(nodeWithdrawalAddress)
         ]).then(
           ([claimIntervalTimeStart, nodeRpl, rplStake, nodeEth]) =>
@@ -74,7 +74,7 @@ export async function claimAndStakeRewards(nodeAddress, indices, rewards, stakeA
         totalAmountRPL = totalAmountRPL.add(web3.utils.toBN(proof.amountRPL));
     }
 
-    const tx = await rocketMerkleDistributorMainnet.claimAndStake(nodeAddress, indices, amountsRPL, amountsETH, proofs, stakeAmount, txOptions);
+    const tx = await poolseaMerkleDistributorMainnet.claimAndStake(nodeAddress, indices, amountsRPL, amountsETH, proofs, stakeAmount, txOptions);
     let gasUsed = '0'.BN;
 
     if(nodeWithdrawalAddress.toLowerCase() === txOptions.from.toLowerCase()) {

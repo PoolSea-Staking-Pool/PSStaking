@@ -4,9 +4,9 @@ import { shouldRevert } from '../_utils/testing';
 import { registerNode, setNodeTrusted } from '../_helpers/node'
 import { executeUpdatePrices, submitPrices } from './scenario-submit-prices'
 import {
-    RocketDAONodeTrustedSettingsProposals,
-    RocketDAOProtocolSettingsNetwork,
-    RocketNetworkPrices
+    PoolseaDAONodeTrustedSettingsProposals,
+    PoolseaDAOProtocolSettingsNetwork,
+    PoolseaNetworkPrices
 } from '../_utils/artifacts'
 import { setDAOProtocolBootstrapSetting } from '../dao/scenario-dao-protocol-bootstrap';
 import { setDAONodeTrustedBootstrapSetting } from '../dao/scenario-dao-node-trusted-bootstrap'
@@ -15,7 +15,7 @@ import { getDAOProposalEndTime, getDAOProposalStartTime } from '../dao/scenario-
 import { upgradeOneDotTwo } from '../_utils/upgrade';
 
 export default function() {
-    contract('RocketNetworkPrices', async (accounts) => {
+    contract('PoolseaNetworkPrices', async (accounts) => {
 
 
         // Accounts
@@ -51,10 +51,10 @@ export default function() {
             await setNodeTrusted(trustedNode3, 'saas_3', 'node@home.com', owner);
 
             // Set a small proposal cooldown
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.cooldown.time', proposalCooldown, { from: owner });
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.time', proposalVoteTime, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.cooldown.time', proposalCooldown, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.time', proposalVoteTime, { from: owner });
             // Set a small vote delay
-            await setDAONodeTrustedBootstrapSetting(RocketDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
+            await setDAONodeTrustedBootstrapSetting(PoolseaDAONodeTrustedSettingsProposals, 'proposal.vote.delay.blocks', 4, { from: owner });
 
         });
 
@@ -130,7 +130,7 @@ export default function() {
             let rplPrice = '0.02'.ether;
 
             // Disable submissions
-            await setDAOProtocolBootstrapSetting(RocketDAOProtocolSettingsNetwork, 'network.submit.prices.enabled', false, {from: owner});
+            await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.submit.prices.enabled', false, {from: owner});
 
             // Attempt to submit prices
             await shouldRevert(submitPrices(block, rplPrice, {

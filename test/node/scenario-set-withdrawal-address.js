@@ -1,17 +1,17 @@
-import { RocketNodeManager, RocketStorage } from '../_utils/artifacts'
+import { PoolseaNodeManager, PoolseaStorage } from '../_utils/artifacts'
 
 
 // Set a node's withdrawal address
 export async function setWithdrawalAddress(nodeAddress, withdrawalAddress, confirm, txOptions) {
     // Load contracts
-    const rocketStorage = await RocketStorage.deployed();
+    const poolseaStorage = await PoolseaStorage.deployed();
 
     // Set withdrawal address
-    await rocketStorage.setWithdrawalAddress(nodeAddress, withdrawalAddress, confirm, txOptions);
+    await poolseaStorage.setWithdrawalAddress(nodeAddress, withdrawalAddress, confirm, txOptions);
 
     // Get current & pending withdrawal addresses
-    let nodeWithdrawalAddress = await rocketStorage.getNodeWithdrawalAddress.call(nodeAddress);
-    let nodePendingWithdrawalAddress = await rocketStorage.getNodePendingWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaStorage.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodePendingWithdrawalAddress = await poolseaStorage.getNodePendingWithdrawalAddress.call(nodeAddress);
 
     // Confirmed update check
     if (confirm) {
@@ -28,14 +28,14 @@ export async function setWithdrawalAddress(nodeAddress, withdrawalAddress, confi
 // Confirm a node's net withdrawal address
 export async function confirmWithdrawalAddress(nodeAddress, txOptions) {
     // Load contracts
-    const rocketStorage = await RocketStorage.deployed();
+    const poolseaStorage = await PoolseaStorage.deployed();
 
     // Confirm withdrawal address
-    await rocketStorage.confirmWithdrawalAddress(nodeAddress, txOptions);
+    await poolseaStorage.confirmWithdrawalAddress(nodeAddress, txOptions);
 
     // Get current & pending withdrawal addresses
-    let nodeWithdrawalAddress = await rocketStorage.getNodeWithdrawalAddress.call(nodeAddress);
-    let nodePendingWithdrawalAddress = await rocketStorage.getNodePendingWithdrawalAddress.call(nodeAddress);
+    let nodeWithdrawalAddress = await poolseaStorage.getNodeWithdrawalAddress.call(nodeAddress);
+    let nodePendingWithdrawalAddress = await poolseaStorage.getNodePendingWithdrawalAddress.call(nodeAddress);
 
     // Check
     assert.strictEqual(nodeWithdrawalAddress, txOptions.from, 'Incorrect updated withdrawal address');

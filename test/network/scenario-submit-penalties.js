@@ -1,8 +1,8 @@
 import {
-    RocketDAONodeTrusted, RocketDAOProtocolSettingsNetwork,
-    RocketMinipoolPenalty,
-    RocketNetworkPenalties,
-    RocketStorage
+    PoolseaDAONodeTrusted, PoolseaDAOProtocolSettingsNetwork,
+    PoolseaMinipoolPenalty,
+    PoolseaNetworkPenalties,
+    PoolseaStorage
 } from '../_utils/artifacts';
 import { shouldRevert } from '../_utils/testing';
 import { assertBN } from '../_helpers/bn';
@@ -13,21 +13,21 @@ export async function submitPenalty(minipoolAddress, block, txOptions) {
 
     // Load contracts
     const [
-        rocketDAONodeTrusted,
-        rocketNetworkPenalties,
-        rocketMinipoolPenalty,
-        rocketStorage,
-        rocketDAOProtocolSettingsNetwork
+        poolseaDAONodeTrusted,
+        poolseaNetworkPenalties,
+        poolseaMinipoolPenalty,
+        poolseaStorage,
+        poolseaDAOProtocolSettingsNetwork
     ] = await Promise.all([
-        RocketDAONodeTrusted.deployed(),
-        RocketNetworkPenalties.deployed(),
-        RocketMinipoolPenalty.deployed(),
-        RocketStorage.deployed(),
-        RocketDAOProtocolSettingsNetwork.deployed()
+        PoolseaDAONodeTrusted.deployed(),
+        PoolseaNetworkPenalties.deployed(),
+        PoolseaMinipoolPenalty.deployed(),
+        PoolseaStorage.deployed(),
+        PoolseaDAOProtocolSettingsNetwork.deployed()
     ]);
 
     // Get parameters
-    let trustedNodeCount = await rocketDAONodeTrusted.getMemberCount.call();
+    let trustedNodeCount = await poolseaDAONodeTrusted.getMemberCount.call();
 
     // Get submission keys
     let penaltyKey = web3.utils.soliditySha3('network.penalties.penalty', minipoolAddress)
@@ -35,15 +35,15 @@ export async function submitPenalty(minipoolAddress, block, txOptions) {
     let submissionCountKey = web3.utils.soliditySha3('network.penalties.submitted.count', minipoolAddress, block);
     let executionKey = web3.utils.soliditySha3('network.penalties.executed', minipoolAddress, block);
 
-    let maxPenaltyRate = await rocketMinipoolPenalty.getMaxPenaltyRate.call();
-    let penaltyThreshold = await rocketDAOProtocolSettingsNetwork.getNodePenaltyThreshold.call();
+    let maxPenaltyRate = await poolseaMinipoolPenalty.getMaxPenaltyRate.call();
+    let penaltyThreshold = await poolseaDAOProtocolSettingsNetwork.getNodePenaltyThreshold.call();
 
     // Get submission details
     function getSubmissionDetails() {
         return Promise.all([
-            rocketStorage.getBool.call(nodeSubmissionKey),
-            rocketStorage.getUint.call(submissionCountKey),
-            rocketStorage.getBool.call(executionKey),
+            poolseaStorage.getBool.call(nodeSubmissionKey),
+            poolseaStorage.getUint.call(submissionCountKey),
+            poolseaStorage.getBool.call(executionKey),
         ]).then(
             ([nodeSubmitted, count, executed]) =>
             ({nodeSubmitted, count, executed})
@@ -52,8 +52,8 @@ export async function submitPenalty(minipoolAddress, block, txOptions) {
 
     function getPenalty() {
         return Promise.all([
-            rocketMinipoolPenalty.getPenaltyRate.call(minipoolAddress),
-            rocketStorage.getUint.call(penaltyKey)
+            poolseaMinipoolPenalty.getPenaltyRate.call(minipoolAddress),
+            poolseaStorage.getUint.call(penaltyKey)
         ]).then(
           ([penaltyRate, penaltyCount]) =>
           ({penaltyRate, penaltyCount})
@@ -68,9 +68,9 @@ export async function submitPenalty(minipoolAddress, block, txOptions) {
 
     // Submit balances
     if (submission1.executed) {
-        await shouldRevert(rocketNetworkPenalties.submitPenalty(minipoolAddress, block, txOptions), "Did not revert on already executed penalty", "Penalty already applied for this block");
+        await shouldRevert(poolseaNetworkPenalties.submitPenalty(minipoolAddress, block, txOptions), "Did not revert on already executed penalty", "Penalty already applied for this block");
     } else {
-        await rocketNetworkPenalties.submitPenalty(minipoolAddress, block, txOptions);
+        await poolseaNetworkPenalties.submitPenalty(minipoolAddress, block, txOptions);
     }
 
     // Get updated submission details & balances
