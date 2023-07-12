@@ -91,8 +91,8 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node2});
             const distributorAddress2 = await poolseaNodeDistributorFactory.getProxyAddress(node2);
             // Create and stake a minipool
-            await userDeposit({from: random, value: '16'.ether})
-            let stakingMinipool = await createMinipool({from: node2, value: '16'.ether});
+            await userDeposit({from: random, value: '16000000'.ether})
+            let stakingMinipool = await createMinipool({from: node2, value: '16000000'.ether});
             await increaseTime(web3, scrubPeriod + 1);
             await stakeMinipool(stakingMinipool, {from: node2});
             // Distribute
@@ -109,9 +109,9 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node2});
             const distributorAddress2 = await poolseaNodeDistributorFactory.getProxyAddress(node2);
             // Create and stake a minipool
-            await userDeposit({from: random, value: '32'.ether})
-            let stakingMinipool1 = await createMinipool({from: node2, value: '16'.ether});
-            let stakingMinipool2 = await createMinipool({from: node2, value: '16'.ether});
+            await userDeposit({from: random, value: '32000000'.ether})
+            let stakingMinipool1 = await createMinipool({from: node2, value: '16000000'.ether});
+            let stakingMinipool2 = await createMinipool({from: node2, value: '16000000'.ether});
             await increaseTime(web3, scrubPeriod + 1);
             await stakeMinipool(stakingMinipool1, {from: node2});
             await stakeMinipool(stakingMinipool2, {from: node2});
@@ -129,9 +129,9 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node2});
             const distributorAddress2 = await poolseaNodeDistributorFactory.getProxyAddress(node2);
             // Create and stake a minipool
-            await userDeposit({from: random, value: '32'.ether})
-            let stakingMinipool1 = await createMinipool({from: node2, value: '16'.ether});
-            let stakingMinipool2 = await createMinipool({from: node2, value: '16'.ether});
+            await userDeposit({from: random, value: '32000000'.ether})
+            let stakingMinipool1 = await createMinipool({from: node2, value: '16000000'.ether});
+            let stakingMinipool2 = await createMinipool({from: node2, value: '16000000'.ether});
             await increaseTime(web3, scrubPeriod + 1);
             await stakeMinipool(stakingMinipool1, {from: node2});
             await stakeMinipool(stakingMinipool2, {from: node2});

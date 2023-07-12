@@ -7,13 +7,13 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../PoolseaBase.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsInflationInterface.sol";
-import "../../interface/token/PoolseaTokenRPLInterface.sol";
+import "../../interface/token/PoolseaTokenPOOLInterface.sol";
 import "../../interface/PoolseaVaultInterface.sol";
 
 // RPL Governance and utility token
 // Inlfationary with rate determined by DAO
 
-contract PoolseaTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface {
+contract PoolseaTokenPOOL is PoolseaBase, ERC20Burnable, PoolseaTokenPOOLInterface {
 
     // Libs
     using SafeMath for uint;
@@ -21,7 +21,7 @@ contract PoolseaTokenRPL is PoolseaBase, ERC20Burnable, PoolseaTokenRPLInterface
     /**** Properties ***********/
 
     // How many RPL tokens minted to date (18m from fixed supply)
-    uint256 constant totalInitialSupply = 18000000000000000000000000;
+    uint256 constant totalInitialSupply = 18000000000000000000000000000000;
     // The RPL inflation interval
     uint256 constant inflationInterval = 1 days;
     // How many RPL tokens have been swapped for new ones

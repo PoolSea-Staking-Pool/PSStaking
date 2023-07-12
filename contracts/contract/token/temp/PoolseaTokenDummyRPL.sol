@@ -15,7 +15,7 @@ contract PoolseaTokenDummyRPL is ERC20, Ownable {
 
     uint8 constant decimalPlaces = 18;
     uint256 constant public exponent = 10**uint256(decimalPlaces);
-    uint256 constant public totalSupplyCap = 18.5 * (10**6) * exponent;    // 18 Million tokens
+    uint256 constant public totalSupplyCap = 18500000 * (10**6) * exponent;    // 18 Million tokens
 
 
     /**** Libs *****************/

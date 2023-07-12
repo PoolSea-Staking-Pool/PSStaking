@@ -2,7 +2,7 @@ import {
     PoolseaDepositPool,
     PoolseaMinipoolPenalty,
     PoolseaNodeManager,
-    PoolseaTokenRETH
+    PoolseaTokenRPLS
 } from '../_utils/artifacts'
 import { assertBN } from '../_helpers/bn';
 
@@ -14,7 +14,7 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
         poolseaNodeManager
     ] = await Promise.all([
         PoolseaDepositPool.deployed(),
-        PoolseaTokenRETH.deployed(),
+        PoolseaTokenRPLS.deployed(),
         PoolseaNodeManager.deployed(),
     ]);
 
@@ -99,27 +99,12 @@ export async function withdrawValidatorBalance(minipool, withdrawalBalance, from
     let rethBalanceChange = balances2.rethContractEth.sub(balances1.rethContractEth);
     let depositPoolChange = balances2.depositPoolEth.sub(balances1.depositPoolEth);
 
-    // console.log('Node deposit balance:', web3.utils.fromWei(minipoolBalances1.nodeDepositBalance), web3.utils.fromWei(minipoolBalances2.nodeDepositBalance));
-    // console.log('Node refund balance:', web3.utils.fromWei(minipoolBalances1.nodeRefundBalance), web3.utils.fromWei(minipoolBalances2.nodeRefundBalance));
-    // console.log('User deposit balance:', web3.utils.fromWei(minipoolBalances1.userDepositBalance), web3.utils.fromWei(minipoolBalances2.userDepositBalance));
-    // console.log('Node fee:', web3.utils.fromWei(nodeFee));
-    // console.log('Minipool Amount:', web3.utils.fromWei(balances1.minipoolEth), web3.utils.fromWei(balances2.minipoolEth), web3.utils.fromWei(balances2.minipoolEth.sub(balances1.minipoolEth)));
-    // console.log('Node Withdrawal Address Amount:', web3.utils.fromWei(balances1.nodeWithdrawalEth), web3.utils.fromWei(balances2.nodeWithdrawalEth), web3.utils.fromWei(balances2.nodeWithdrawalEth.sub(balances1.nodeWithdrawalEth)));
-    // console.log('rETH Contract Amount:', web3.utils.fromWei(balances1.rethContractEth), web3.utils.fromWei(balances2.rethContractEth), web3.utils.fromWei(balances2.rethContractEth.sub(balances1.rethContractEth)));
-    //
-    // console.log('Node balance change: ', web3.utils.fromWei(nodeBalanceChange));
-    // console.log('User balance change: ', web3.utils.fromWei(rethBalanceChange));
-    // console.log('Deposit pool change: ', web3.utils.fromWei(depositPoolChange));
-    //
-    // const calculatedNodeShare = await minipool.calculateNodeShare(balances1.minipoolEth);
-    // console.log('Calculated node share: ' + web3.utils.fromWei(calculatedNodeShare));
-
     // Get penalty rate for this minipool
     const poolseaMinipoolPenalty = await PoolseaMinipoolPenalty.deployed();
     const penaltyRate = await poolseaMinipoolPenalty.getPenaltyRate(minipool.address);
 
     // Calculate rewards
-    let depositBalance = '32'.ether;
+    let depositBalance = '32000000'.ether;
     if (withdrawalBalance.gte(depositBalance)) {
         let depositType = await minipool.getDepositType();
         let userAmount = minipoolBalances1.userDepositBalance;

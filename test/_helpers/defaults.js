@@ -9,7 +9,7 @@ export async function setDefaultParameters() {
     const [guardian] = await web3.eth.getAccounts();
     await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.enabled', true, { from: guardian });
     await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.enabled', true, { from: guardian });
-    await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '1000'.ether, { from: guardian });
+    await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.pool.maximum', '1000000000'.ether, { from: guardian });
     await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNode, 'node.registration.enabled', true, { from: guardian });
     await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNode, 'node.deposit.enabled', true, { from: guardian });
     await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsMinipool, 'minipool.submit.withdrawable.enabled', true, { from: guardian });

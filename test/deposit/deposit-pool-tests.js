@@ -123,19 +123,19 @@ export default function() {
             // Attempt deposit greater than maximum (fails)
             await shouldRevert(deposit({
                 from: staker,
-                value: '16'.ether,
+                value: '16000000'.ether,
             }), 'Made a deposit which exceeds the maximum deposit pool size');
 
             // Create a minipool to add to the queue
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
             await mintRPL(owner, node, minipoolRplStake);
             await nodeStakeRPL(minipoolRplStake, {from: node});
-            await createMinipool({from: node, value: '16'.ether});
+            await createMinipool({from: node, value: '16000000'.ether});
 
             // Attempt deposit
             await deposit({
                 from: staker,
-                value: '16'.ether,
+                value: '16000000'.ether,
             });
         });
 
@@ -159,15 +159,15 @@ export default function() {
 
             // Stake RPL to cover minipools
             let minipoolRplStake = await getMinipoolMinimumRPLStake();
-            let rplStake = minipoolRplStake.mul('3'.BN);
+            let rplStake = minipoolRplStake.mul('3000'.BN);
             await mintRPL(owner, trustedNode, rplStake);
             await nodeStakeRPL(rplStake, {from: trustedNode});
 
             // Make user & node deposits
-            await userDeposit({from: staker, value: '100'.ether});
-            await nodeDeposit({from: trustedNode, value: '16'.ether});
-            await nodeDeposit({from: trustedNode, value: '16'.ether});
-            await nodeDeposit({from: trustedNode, value: '16'.ether});
+            await userDeposit({from: staker, value: '100000000'.ether});
+            await nodeDeposit({from: trustedNode, value: '16000000'.ether});
+            await nodeDeposit({from: trustedNode, value: '16000000'.ether});
+            await nodeDeposit({from: trustedNode, value: '16000000'.ether});
 
             // Re-enable deposit assignment & set limit
             await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsDeposit, 'deposit.assign.enabled', true, {from: owner});
@@ -215,7 +215,7 @@ export default function() {
             let rplStake = minipoolRplStake.mul('1'.BN);
             await mintRPL(owner, node, rplStake);
             await nodeStakeRPL(rplStake, {from: node});
-            const minipoolBondAmount = '16'.ether;
+            const minipoolBondAmount = '16000000'.ether;
             await createMinipool({from: node, value: minipoolBondAmount});
             assertBN.equal(await poolseaDepositPool.getMaximumDepositAmount(), depositPoolMaximum.add(minipoolBondAmount), 'Invalid maximum deposit amount');
         });

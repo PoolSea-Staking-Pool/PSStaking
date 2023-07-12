@@ -23,7 +23,7 @@ export async function stake(minipool, withdrawalCredentials, txOptions, validato
     let depositData = {
         pubkey: Buffer.from(validatorPubkey.substr(2), 'hex'),
         withdrawalCredentials: Buffer.from(withdrawalCredentials.substr(2), 'hex'),
-        amount: BigInt(31000000000), // 31 ETH in gwei
+        amount: BigInt(31999999000000000), // 31999999 ETH in gwei
         signature: getValidatorSignature(),
     };
     let depositDataRoot = getDepositDataRoot(depositData);
@@ -57,7 +57,7 @@ export async function stake(minipool, withdrawalCredentials, txOptions, validato
     // Check minpool details
     assertBN.notEqual(details1.status, minipoolStates.Staking, 'Incorrect initial minipool status');
     assertBN.equal(details2.status, minipoolStates.Staking, 'Incorrect updated minipool status');
-    assertBN.equal(details2.balance, details1.balance.sub('31'.ether), 'Incorrect updated minipool ETH balance');
+    assertBN.equal(details2.balance, details1.balance.sub('31999999'.ether), 'Incorrect updated minipool ETH balance');
 
     // Check minipool by validator pubkey
     assert.strictEqual(validatorMinipool2, minipool.address, 'Incorrect updated minipool by validator pubkey');

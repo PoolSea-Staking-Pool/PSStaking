@@ -67,9 +67,9 @@ export async function assignDepositsV2(txOptions) {
     // No legacy deposits
     if (expectedDepositAssignments === 0) {
         let scalingCount = maxSocialisedAssignments.toNumber();
-        let totalEthCount = depositPoolBalance.div('31'.ether).toNumber();
+        let totalEthCount = depositPoolBalance.div('32000000'.ether).toNumber();
         expectedDepositAssignments = Math.min(scalingCount, totalEthCount, maxDepositAssignments.toNumber(), minipoolQueueLength.toNumber());
-        expectedEthAssigned = '31'.ether.mul(expectedDepositAssignments.BN);
+        expectedEthAssigned = '31999999'.ether.mul(expectedDepositAssignments.BN);
 
         let indices = [...Array(expectedDepositAssignments).keys()];
         let addressesInQueue = await Promise.all(indices.map(i => poolseaMinipoolQueue.getMinipoolAt(i)));

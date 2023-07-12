@@ -68,7 +68,7 @@ export default function() {
             await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.reth.collateral.target', '50'.ether, {from: owner});
 
             // Make user deposit to fund a prelaunch minipool
-            let refundAmount = '16'.ether;
+            let refundAmount = '16000000'.ether;
             await userDeposit({from: random, value: refundAmount});
 
             // Stake RPL to cover minipools
@@ -78,7 +78,7 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: node});
 
             // Create minipool
-            prelaunchMinipool = await createMinipool({from: node, value: '16'.ether}, minipoolSalt);
+            prelaunchMinipool = await createMinipool({from: node, value: '16000000'.ether}, minipoolSalt);
         });
 
 
@@ -147,7 +147,7 @@ export default function() {
           await close(prelaunchMinipool, { from: node, });
 
           // Try to create the pool again
-          await shouldRevert(createMinipool({from: node, value: '16'.ether}, minipoolSalt), 'Was able to recreate minipool at same address', 'Minipool already exists or was previously destroyed');
+          await shouldRevert(createMinipool({from: node, value: '16000000'.ether}, minipoolSalt), 'Was able to recreate minipool at same address', 'Minipool already exists or was previously destroyed');
         });
 
 

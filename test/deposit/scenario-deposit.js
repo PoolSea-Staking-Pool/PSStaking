@@ -2,7 +2,7 @@ import {
     PoolseaDAOProtocolSettingsDeposit,
     PoolseaDepositPool,
     PoolseaDepositPoolOld,
-    PoolseaTokenRETH,
+    PoolseaTokenRPLS,
     PoolseaVault,
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
@@ -19,7 +19,7 @@ export async function deposit(txOptions, preUpdate = false) {
     ] = await Promise.all([
         PoolseaDAOProtocolSettingsDeposit.deployed(),
         preUpdate ? PoolseaDepositPoolOld.deployed() : PoolseaDepositPool.deployed(),
-        PoolseaTokenRETH.deployed(),
+        PoolseaTokenRPLS.deployed(),
         PoolseaVault.deployed(),
     ]);
 

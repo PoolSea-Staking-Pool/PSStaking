@@ -3,7 +3,7 @@ import {
   PoolseaNodeDistributorDelegate,
   PoolseaNodeDistributorFactory, PoolseaNodeManager,
   PoolseaStorage,
-  PoolseaTokenRETH
+  PoolseaTokenRPLS
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
@@ -14,7 +14,7 @@ export async function distributeRewards(nodeAddress, txOptions) {
   const poolseaNodeDistributorFactory = await PoolseaNodeDistributorFactory.deployed();
   const distributorAddress = await poolseaNodeDistributorFactory.getProxyAddress(nodeAddress);
   const distributor = await PoolseaNodeDistributorDelegate.at(distributorAddress);
-  const poolseaTokenRETH = await PoolseaTokenRETH.deployed();
+  const poolseaTokenRETH = await PoolseaTokenRPLS.deployed();
   const poolseaMinipoolManager = await PoolseaMinipoolManager.deployed();
   const poolseaNodeManager = await PoolseaNodeManager.deployed();
   // Get node withdrawal address

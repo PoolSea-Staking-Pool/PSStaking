@@ -24,16 +24,36 @@ const providerUrl = process.env.PROVIDER_URL || 'http://localhost:8545';
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
     solidity: {
-        version: '0.7.6',
-        settings: {
-            optimizer: {
-                enabled: true,
-                runs: 15000,
+        compilers: [
+            {
+                version: '0.7.6',
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 15000,
+                    },
+                },
             },
-        },
+            {
+                version: '0.6.11',
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 15000,
+                    },
+                },
+            },
+        ]
+
     },
     networks: {
-        hardhat: {},
+        hardhat: {
+            chainId: 943,
+            forking: {
+                url: 'https://rpc.v4.testnet.pulsechain.com',
+                gasPrice: 0
+            },
+        },
         localhost: {
             host: '127.0.0.1',
             port: 8545,

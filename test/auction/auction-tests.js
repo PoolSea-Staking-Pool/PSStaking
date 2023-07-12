@@ -53,7 +53,7 @@ export default function() {
             await setNodeTrusted(trustedNode, 'saas_1', 'node@home.com', owner);
 
             // Mint RPL to node & stake; create & stake minipool
-            const rplAmount = '10000'.ether;
+            const rplAmount = '320000000'.ether;
             await mintRPL(owner, node, rplAmount);
             await nodeStakeRPL(rplAmount, {from: node});
             minipool = await createMinipool({from: node, value: '8000000'.ether});
@@ -288,8 +288,8 @@ export default function() {
             await auctionCreateLot({from: random1});
             await auctionPlaceBid(0, {from: random1, value: '5'.ether});
             await auctionPlaceBid(0, {from: random2, value: '5'.ether});
-            await auctionPlaceBid(1, {from: random1, value: '3'.ether});
-            await auctionPlaceBid(1, {from: random2, value: '3'.ether});
+            await auctionPlaceBid(1, {from: random1, value: '6'.ether});
+            await auctionPlaceBid(1, {from: random2, value: '6'.ether});
 
             // Claim RPL on first lot from first address
             await claimBid(0, {

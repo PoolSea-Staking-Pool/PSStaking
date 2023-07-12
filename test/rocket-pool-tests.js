@@ -21,21 +21,24 @@ import nodeStakingTests from './node/node-staking-tests';
 import nodeDistributorTests from './node/node-distributor-tests';
 import daoProtocolTests from './dao/dao-protocol-tests';
 import daoNodeTrustedTests from './dao/dao-node-trusted-tests';
-import rethTests from './token/reth-tests';
-import rplTests from './token/rpl-tests';
+import rplsTests from './token/rpls-tests';
+import poolTests from './token/pool-tests';
 import rewardsPoolTests from './rewards/rewards-tests';
-import upgradeTests from './upgrade/upgrade-tests';
 import { injectBNHelpers } from './_helpers/bn';
 import { checkInvariants } from './_helpers/invariants';
 
 // Header
-console.log('\n');
-console.log('______           _        _    ______           _ ');
-console.log('| ___ \\         | |      | |   | ___ \\         | |');
-console.log('| |_/ /___   ___| | _____| |_  | |_/ /__   ___ | |');
-console.log('|    // _ \\ / __| |/ / _ \\ __| |  __/ _ \\ / _ \\| |');
-console.log('| |\\ \\ (_) | (__|   <  __/ |_  | | | (_) | (_) | |');
-console.log('\\_| \\_\\___/ \\___|_|\\_\\___|\\__| \\_|  \\___/ \\___/|_|');
+console.log("\n" +
+    " ________  ________  ________  ___       ________  _______   ________     \n" +
+    "|\\   __  \\|\\   __  \\|\\   __  \\|\\  \\     |\\   ____\\|\\  ___ \\ |\\   __  \\    \n" +
+    "\\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\|\\  \\ \\  \\    \\ \\  \\___|\\ \\   __/|\\ \\  \\|\\  \\   \n" +
+    " \\ \\   ____\\ \\  \\\\\\  \\ \\  \\\\\\  \\ \\  \\    \\ \\_____  \\ \\  \\_|/_\\ \\   __  \\  \n" +
+    "  \\ \\  \\___|\\ \\  \\\\\\  \\ \\  \\\\\\  \\ \\  \\____\\|____|\\  \\ \\  \\_|\\ \\ \\  \\ \\  \\ \n" +
+    "   \\ \\__\\    \\ \\_______\\ \\_______\\ \\_______\\____\\_\\  \\ \\_______\\ \\__\\ \\__\\\n" +
+    "    \\|__|     \\|_______|\\|_______|\\|_______|\\_________\\|_______|\\|__|\\|__|\n" +
+    "                                           \\|_________|                   \n" +
+    "                                                                          \n" +
+    "                                                                          \n")
 
 // BN helpers
 injectBNHelpers();
@@ -75,7 +78,6 @@ nodeDepositTests();
 nodeManagerTests();
 nodeStakingTests();
 nodeDistributorTests();
-rethTests();
-rplTests();
+rplsTests();
+poolTests();
 rewardsPoolTests();
-upgradeTests();

@@ -4,7 +4,7 @@ pragma abicoder v2;
 // SPDX-License-Identifier: GPL-3.0-only
 
 import "../PoolseaBase.sol";
-import "../../interface/token/PoolseaTokenRPLInterface.sol";
+import "../../interface/token/PoolseaTokenPOOLInterface.sol";
 import "../../interface/rewards/PoolseaRewardsPoolInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 import "../../interface/dao/node/PoolseaDAONodeTrustedInterface.sol";
@@ -54,7 +54,7 @@ contract PoolseaRewardsPool is PoolseaBase, PoolseaRewardsPoolInterface {
 
     // Returns the total amount of RPL that needs to be distributed to claimers at the current block
     function getPendingRPLRewards() override public view returns (uint256) {
-        PoolseaTokenRPLInterface rplContract = PoolseaTokenRPLInterface(getContractAddress("poolseaTokenRPL"));
+        PoolseaTokenPOOLInterface rplContract = PoolseaTokenPOOLInterface(getContractAddress("poolseaTokenRPL"));
         uint256 pendingInflation = rplContract.inflationCalculate();
         // Any inflation that has accrued so far plus any amount that would be minted if we called it now
         return getRPLBalance().add(pendingInflation);
@@ -205,7 +205,7 @@ contract PoolseaRewardsPool is PoolseaBase, PoolseaRewardsPoolInterface {
     // Executes reward snapshot and sends assets to the relays for distribution to reward recipients
     function _executeRewardSnapshot(RewardSubmission calldata _submission) private {
         // Get contract
-        PoolseaTokenRPLInterface rplContract = PoolseaTokenRPLInterface(getContractAddress("poolseaTokenRPL"));
+        PoolseaTokenPOOLInterface rplContract = PoolseaTokenPOOLInterface(getContractAddress("poolseaTokenRPL"));
         PoolseaVaultInterface poolseaVault = PoolseaVaultInterface(getContractAddress("poolseaVault"));
         // Execute inflation if required
         rplContract.inflationMintTokens();

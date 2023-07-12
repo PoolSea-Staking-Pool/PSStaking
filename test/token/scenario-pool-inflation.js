@@ -1,5 +1,5 @@
 import { getCurrentTime, increaseTime } from '../_utils/evm'
-import { PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
+import { PoolseaTokenPOOL, PoolseaVault } from '../_utils/artifacts';
 import { setRPLInflationIntervalRate, setRPLInflationStartTime } from '../dao/scenario-dao-protocol-bootstrap'
 import { assertBN } from '../_helpers/bn';
 
@@ -21,7 +21,7 @@ export async function rplClaimInflation(config, txOptions, tokenAmountToMatch = 
     }
 
     // Load contracts
-    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
     const poolseaVault = await PoolseaVault.deployed();
 
     // Get the previously last inflation calculated block

@@ -4,7 +4,7 @@ pragma solidity >0.5.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface PoolseaTokenRETHInterface is IERC20 {
+interface PoolseaTokenRPLSInterface is IERC20 {
     function getEthValue(uint256 _rethAmount) external view returns (uint256);
     function getRethValue(uint256 _ethAmount) external view returns (uint256);
     function getExchangeRate() external view returns (uint256);

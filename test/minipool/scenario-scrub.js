@@ -3,7 +3,7 @@ import {
     PoolseaDAONodeTrusted,
     PoolseaDAONodeTrustedSettingsMinipool, PoolseaDAOProtocolSettingsNode, PoolseaNetworkPrices,
     PoolseaNodeStaking,
-    PoolseaTokenRPL,
+    PoolseaTokenPOOL,
     PoolseaVault
 } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
@@ -17,7 +17,7 @@ export async function voteScrub(minipool, txOptions) {
     // Get contracts
     const poolseaNodeStaking = await PoolseaNodeStaking.deployed();
     const poolseaVault = await PoolseaVault.deployed();
-    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
     const poolseaDAONodeTrustedSettingsMinipool = await PoolseaDAONodeTrustedSettingsMinipool.deployed();
     const poolseaNetworkPrices = await PoolseaNetworkPrices.deployed();
     const poolseaDAOProtocolSettingsNode = await PoolseaDAOProtocolSettingsNode.deployed();

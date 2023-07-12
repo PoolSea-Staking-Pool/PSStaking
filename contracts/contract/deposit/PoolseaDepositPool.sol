@@ -14,7 +14,7 @@ import "../../interface/minipool/PoolseaMinipoolQueueInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsDepositInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsMinipoolInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
-import "../../interface/token/PoolseaTokenRETHInterface.sol";
+import "../../interface/token/PoolseaTokenRPLSInterface.sol";
 import "../../types/MinipoolDeposit.sol";
 
 /// @notice Accepts user deposits and mints rETH; handles assignment of deposited ETH to minipools
@@ -27,7 +27,7 @@ contract PoolseaDepositPool is PoolseaBase, PoolseaDepositPoolInterface, Poolsea
 
     // Immutables
     PoolseaVaultInterface immutable poolseaVault;
-    PoolseaTokenRETHInterface immutable poolseaTokenRETH;
+    PoolseaTokenRPLSInterface immutable poolseaTokenRETH;
 
     // Events
     event DepositReceived(address indexed from, uint256 amount, uint256 time);
@@ -53,7 +53,7 @@ contract PoolseaDepositPool is PoolseaBase, PoolseaDepositPoolInterface, Poolsea
 
         // Pre-retrieve non-upgradable contract addresses to save gas
         poolseaVault = PoolseaVaultInterface(getContractAddress("poolseaVault"));
-        poolseaTokenRETH = PoolseaTokenRETHInterface(getContractAddress("poolseaTokenRETH"));
+        poolseaTokenRETH = PoolseaTokenRPLSInterface(getContractAddress("poolseaTokenRETH"));
     }
 
     /// @notice Returns the current deposit pool balance

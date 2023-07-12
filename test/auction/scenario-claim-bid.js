@@ -1,4 +1,4 @@
-import { PoolseaAuctionManager, PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
+import { PoolseaAuctionManager, PoolseaTokenPOOL, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -12,7 +12,7 @@ export async function claimBid(lotIndex, txOptions) {
         poolseaVault,
     ] = await Promise.all([
         PoolseaAuctionManager.deployed(),
-        PoolseaTokenRPL.deployed(),
+        PoolseaTokenPOOL.deployed(),
         PoolseaVault.deployed(),
     ]);
 

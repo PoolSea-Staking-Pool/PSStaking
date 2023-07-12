@@ -82,8 +82,8 @@ export default function() {
             await mintRPL(owner, node, rplStake);
             await nodeStakeRPL(rplStake, {from: node});
 
-            prelaunchMinipool16 = await createVacantMinipool('16'.ether, {from: node});
-            prelaunchMinipool8 = await createVacantMinipool('8'.ether, {from: node});
+            prelaunchMinipool16 = await createVacantMinipool('16000000'.ether, {from: node});
+            prelaunchMinipool8 = await createVacantMinipool('8000000'.ether, {from: node});
 
             let prelaunch16Status = await prelaunchMinipool16.getStatus.call();
             let prelaunch8Status = await prelaunchMinipool8.getStatus.call();
@@ -91,7 +91,7 @@ export default function() {
             assertBN.equal(prelaunch8Status, minipoolStates.Prelaunch, 'Incorrect prelaunch minipool status');
 
             // ETH matched for node should be 40 ETH (24 + 16)
-            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '40'.ether, 'Incorrect ETH matched');
+            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '40000000'.ether, 'Incorrect ETH matched');
         });
 
 
@@ -110,7 +110,7 @@ export default function() {
             assertBN.equal(stakingStatus, minipoolStates.Staking, 'Incorrect staking minipool status');
             // Verify deposit credit balance increased by 16 ETH
             let creditBalance = await getNodeDepositCredit(node);
-            assertBN.equal(creditBalance, '16'.ether);
+            assertBN.equal(creditBalance, '16000000'.ether);
         });
 
 
@@ -124,7 +124,7 @@ export default function() {
             assertBN.equal(stakingStatus, minipoolStates.Staking, 'Incorrect staking minipool status');
             // Verify deposit credit balance increased by 24 ETH
             let creditBalance = await getNodeDepositCredit(node);
-            assertBN.equal(creditBalance, '24'.ether);
+            assertBN.equal(creditBalance, '24000000'.ether);
         });
 
 
@@ -136,19 +136,19 @@ export default function() {
 
         it(printTitle('node operator', 'can refund their pre-migration rewards'), async () => {
             // Create a vacant minipool with current balance of 33
-            let minipool = await createVacantMinipool('8'.ether, {from: node}, null, '33'.ether);
+            let minipool = await createVacantMinipool('8000000'.ether, {from: node}, null, '33000000'.ether);
             // Wait required scrub period
             await increaseTime(web3, promotionScrubDelay + 1);
             // Promote the minipool
             await promoteMinipool(minipool, {from: node});
             // Verify refund balance
             const refundBalance = await minipool.getNodeRefundBalance();
-            assertBN.equal(refundBalance, '1'.ether, 'Invalid refund balance');
+            assertBN.equal(refundBalance, '1000000'.ether, 'Invalid refund balance');
             // Simulate skim
             await web3.eth.sendTransaction({
                 from: owner,
                 to: minipool.address,
-                value: '1'.ether
+                value: '1000000'.ether
             });
             // Try to refund
             await refund(minipool, { from: node });
@@ -157,7 +157,7 @@ export default function() {
 
         it(printTitle('node operator', 'cannot call refund while vacant'), async () => {
             // Create a vacant minipool with current balance of 33
-            let minipool = await createVacantMinipool('8'.ether, {from: node}, null, '33'.ether);
+            let minipool = await createVacantMinipool('8000000'.ether, {from: node}, null, '33000000'.ether);
             // Try to refund
             await shouldRevert(refund(minipool, { from: node }), 'Was able to refund', 'Vacant minipool cannot refund');
         });
@@ -166,9 +166,9 @@ export default function() {
         it(printTitle('node operator', 'can not create a vacant minipool with an existing pubkey'), async () => {
             // Create minipool with a pubkey
             const pubkey = getValidatorPubkey();
-            await createVacantMinipool('16'.ether, {from: node}, null, '32'.ether, pubkey);
+            await createVacantMinipool('16000000'.ether, {from: node}, null, '32000000'.ether, pubkey);
             // Try to create a new vacant minipool using the same pubkey
-            await shouldRevert(createVacantMinipool('16'.ether, {from: node}, null, '32'.ether, pubkey), 'Was able to reuse pubkey', 'Validator pubkey is in use');
+            await shouldRevert(createVacantMinipool('16000000'.ether, {from: node}, null, '32000000'.ether, pubkey), 'Was able to reuse pubkey', 'Validator pubkey is in use');
         });
 
 
@@ -182,10 +182,10 @@ export default function() {
             await voteScrub(prelaunchMinipool16, {from: trustedNode1});
             await voteScrub(prelaunchMinipool16, {from: trustedNode2});
             // ETH matched should still be 40 ETH
-            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '40'.ether, 'Incorrect ETH matched');
+            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '40000000'.ether, 'Incorrect ETH matched');
             // After closing ETH matched should drop by 16
             await closeMinipool(prelaunchMinipool16, {from: node});
-            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '24'.ether, 'Incorrect ETH matched');
+            assertBN.equal(await poolseaNodeStaking.getNodeETHMatched(node), '24000000'.ether, 'Incorrect ETH matched');
             // 2 out of 3 should dissolve the minipool
             await voteScrub(prelaunchMinipool8, {from: trustedNode1});
             await voteScrub(prelaunchMinipool8, {from: trustedNode2});

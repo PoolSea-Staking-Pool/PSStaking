@@ -22,10 +22,10 @@ import {
     PoolseaMinipoolQueue,
     PoolseaMinipoolQueueOld,
     PoolseaNetworkFees, PoolseaNodeDeposit, PoolseaNodeStaking,
-    PoolseaTokenRETH,
+    PoolseaTokenRPLS,
 } from '../_utils/artifacts';
 import { increaseTime } from '../_utils/evm';
-import { burnReth } from '../token/scenario-reth-burn';
+import { burnReth } from '../token/scenario-rpls-burn';
 import { shouldRevert } from '../_utils/testing';
 import { assertBN } from '../_helpers/bn';
 import { reduceBond } from '../minipool/scenario-reduce-bond';
@@ -72,7 +72,7 @@ export default function() {
             // Setup
             before(async () => {
                 poolseaDepositPool = await PoolseaDepositPool.deployed();
-                poolseaTokenRETH = await PoolseaTokenRETH.deployed();
+                poolseaTokenRETH = await PoolseaTokenRPLS.deployed();
                 poolseaMinipoolQueue = await PoolseaMinipoolQueue.deployed();
                 poolseaNetworkFees = await PoolseaNetworkFees.deployed();
                 poolseaNodeStaking = await PoolseaNodeStaking.deployed();
@@ -506,7 +506,7 @@ export default function() {
 
             it('Can create a minipool from deposit credit with zero node balance in deposit pool', async () => {
                 // Get contracts
-                const poolseaTokenReth = await PoolseaTokenRETH.deployed();
+                const poolseaTokenReth = await PoolseaTokenRPLS.deployed();
                 const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Upgrade
@@ -539,7 +539,7 @@ export default function() {
 
             it('Stops node operator from withdrawing after rolling back an LEB8', async () => {
                 // Get contracts
-                const poolseaTokenReth = await PoolseaTokenRETH.deployed();
+                const poolseaTokenReth = await PoolseaTokenRPLS.deployed();
                 const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking
@@ -590,7 +590,7 @@ export default function() {
 
             it('Stops node operator from withdrawing after rolling back an LEB8 (with useLatest)', async () => {
                 // Get contracts
-                const poolseaTokenReth = await PoolseaTokenRETH.deployed();
+                const poolseaTokenReth = await PoolseaTokenRPLS.deployed();
                 const poolseaMinipoolBondReducer = await PoolseaMinipoolBondReducer.deployed();
 
                 // 1. Create 16 ETH minipool and progress to staking

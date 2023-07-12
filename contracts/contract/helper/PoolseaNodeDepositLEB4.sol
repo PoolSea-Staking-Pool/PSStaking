@@ -94,15 +94,15 @@ contract PoolseaNodeDepositLEB4 is PoolseaBase, PoolseaNodeDepositInterface {
 
     /// @notice Returns true if the given amount is a valid deposit amount
     function isValidDepositAmount(uint256 _amount) override public pure returns (bool) {
-        return _amount == 16 ether || _amount == 8 ether || _amount == 4 ether;
+        return _amount == 16000000 ether || _amount == 8000000 ether || _amount == 4000000 ether;
     }
 
     /// @notice Returns an array of valid deposit amounts
     function getDepositAmounts() override external pure returns (uint256[] memory) {
         uint256[] memory amounts = new uint256[](3);
-        amounts[0] = 16 ether;
-        amounts[1] = 8 ether;
-        amounts[2] = 4 ether;
+        amounts[0] = 16000000 ether;
+        amounts[1] = 8000000 ether;
+        amounts[2] = 4000000 ether;
         return amounts;
     }
 

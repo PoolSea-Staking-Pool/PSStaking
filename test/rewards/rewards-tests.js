@@ -146,18 +146,18 @@ export default function() {
             await submitPrices(block, '1'.ether, {from: registeredNodeTrusted2});
 
             // Mint and stake RPL
-            await mintRPL(owner, registeredNode1, '32'.ether);
-            await mintRPL(owner, registeredNode2, '32'.ether);
-            await nodeStakeRPL('32'.ether, {from: registeredNode1});
-            await nodeStakeRPL('32'.ether, {from: registeredNode2});
+            await mintRPL(owner, registeredNode1, '320000000'.ether);
+            await mintRPL(owner, registeredNode2, '320000000'.ether);
+            await nodeStakeRPL('320000000'.ether, {from: registeredNode1});
+            await nodeStakeRPL('320000000'.ether, {from: registeredNode2});
 
             // User deposits
-            await userDeposit({from: userOne, value: '48'.ether});
+            await userDeposit({from: userOne, value: '48000000'.ether});
 
             // Create minipools
-            let minipool1 = await createMinipool({from: registeredNode1, value: '16'.ether});
-            let minipool2 = await createMinipool({from: registeredNode2, value: '16'.ether});
-            let minipool3 = await createMinipool({from: registeredNode2, value: '16'.ether});
+            let minipool1 = await createMinipool({from: registeredNode1, value: '16000000'.ether});
+            let minipool2 = await createMinipool({from: registeredNode2, value: '16000000'.ether});
+            let minipool3 = await createMinipool({from: registeredNode2, value: '16000000'.ether});
 
             // Wait required scrub period
             await increaseTime(web3, scrubPeriod + 1);
@@ -170,8 +170,8 @@ export default function() {
             // Check node effective stakes
             let node1EffectiveStake = await getNodeEffectiveRPLStake(registeredNode1);
             let node2EffectiveStake = await getNodeEffectiveRPLStake(registeredNode2);
-            assertBN.equal(node1EffectiveStake, '16'.ether, 'Incorrect node 1 effective stake');
-            assertBN.equal(node2EffectiveStake, '32'.ether, 'Incorrect node 2 effective stake');
+            assertBN.equal(node1EffectiveStake, '16000000'.ether, 'Incorrect node 1 effective stake');
+            assertBN.equal(node2EffectiveStake, '32000000'.ether, 'Incorrect node 2 effective stake');
         });
 
 

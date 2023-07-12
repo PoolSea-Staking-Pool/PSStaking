@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { PoolseaDAOProtocol, PoolseaDAOProtocolSettingsRewards, PoolseaDAOProtocolSettingsInflation, PoolseaTokenRPL, PoolseaVault } from '../_utils/artifacts';
+import { PoolseaDAOProtocol, PoolseaDAOProtocolSettingsRewards, PoolseaDAOProtocolSettingsInflation, PoolseaTokenPOOL, PoolseaVault } from '../_utils/artifacts';
 import { assertBN } from '../_helpers/bn';
 
 
@@ -95,7 +95,7 @@ export async function setRewardsClaimIntervalTime(intervalTime, txOptions) {
 export async function spendRewardsClaimTreasury(_invoiceID, _recipientAddress, _amount, txOptions) {
     // Load contracts
     const poolseaDAOProtocol = await PoolseaDAOProtocol.deployed();
-    const poolseaTokenRPL = await PoolseaTokenRPL.deployed();
+    const poolseaTokenRPL = await PoolseaTokenPOOL.deployed();
     const poolseaVault = await PoolseaVault.deployed();
 
     // Get data about the tx

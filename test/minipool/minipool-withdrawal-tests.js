@@ -89,7 +89,7 @@ export default function() {
             await setDAOProtocolBootstrapSetting(PoolseaDAOProtocolSettingsNetwork, 'network.node.fee.maximum', fee, {from: owner});
 
             // Deposit some user funds to assign to pools
-            let userDepositAmount = '16'.ether;
+            let userDepositAmount = '16000000'.ether;
             await userDeposit({from: random, value: userDepositAmount});
 
             // Stake RPL to cover minipools
@@ -101,7 +101,7 @@ export default function() {
             await nodeStakeRPL(rplStake, {from: trustedNode});
 
             // Create minipools
-            minipool = await createMinipool({from: node, value: '16'.ether});
+            minipool = await createMinipool({from: node, value: '16000000'.ether});
 
             // Wait required scrub period
             await increaseTime(web3, scrubPeriod + 1);
@@ -153,41 +153,41 @@ export default function() {
         }
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, false, '17', '19');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, false, '17000000', '19000000');
         });
 
 
-        it(printTitle('random user', 'can process withdrawal when balance is greater than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('random user', 'can process withdrawal when balance is greater than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '36', random, false, '17', '19', true);
+            await withdrawAndCheck(minipool, '36000000', random, false, '17000000', '19000000', true);
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 ETH and less than 32 ETH'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 mln PLS and less than 32 mln PLS'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', nodeWithdrawalAddress, true, '16', '12');
+            await withdrawAndCheck(minipool, '28000000', nodeWithdrawalAddress, true, '16000000', '12000000');
         });
 
 
-        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 ETH and less than 32 ETH'), async () => {
+        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 mln PLS and less than 32 mln PLS'), async () => {
             // Wait 14 days
             await increaseTime(web3, userDistributeStartTime + 1)
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', random, false, '16', '12', true);
+            await withdrawAndCheck(minipool, '28000000', random, false, '16000000', '12000000', true);
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 ETH, less than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is greater than 16 mln PLS, less than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', nodeWithdrawalAddress, false, '16', '12');
+            await withdrawAndCheck(minipool, '28000000', nodeWithdrawalAddress, false, '16000000', '12000000');
         });
 
 
-        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 ETH, less than 32 ETH and not marked as withdrawable'), async () => {
+        it(printTitle('random user', 'can process withdrawal when balance is greater than 16 mln PLS, less than 32 mln PLS and not marked as withdrawable'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', random, false, '16', '12', true);
+            await withdrawAndCheck(minipool, '28000000', random, false, '16000000', '12000000', true);
         });
 
 
@@ -196,7 +196,7 @@ export default function() {
             await web3.eth.sendTransaction({
                 from: random,
                 to: minipool.address,
-                value: '32'.ether
+                value: '32000000'.ether
             });
             await beginUserDistribute(minipool, {from: random});
             await shouldRevert(beginUserDistribute(minipool, {from: random}), 'Was able to begin user distribution again', 'User distribution already pending');
@@ -208,7 +208,7 @@ export default function() {
             await web3.eth.sendTransaction({
                 from: random,
                 to: minipool.address,
-                value: '32'.ether
+                value: '32000000'.ether
             });
             await beginUserDistribute(minipool, {from: random});
             await increaseTime(web3, userDistributeLength + userDistributeStartTime + 1)
@@ -216,42 +216,42 @@ export default function() {
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 ETH'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 mln PLS'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '15', nodeWithdrawalAddress, true, '15', '0');
+            await withdrawAndCheck(minipool, '15000000', nodeWithdrawalAddress, true, '15000000', '0');
         });
 
 
-        it(printTitle('random address', 'cannot slash a node operator by sending 4 ETH and distribute after 14 days'), async () => {
+        it(printTitle('random address', 'cannot slash a node operator by sending 4 mln PLS and distribute after 14 days'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '28', nodeWithdrawalAddress, true, '16', '12');
+            await withdrawAndCheck(minipool, '28000000', nodeWithdrawalAddress, true, '16000000', '12000000');
             // Wait 14 days and mine enough blocks to pass cooldown
             await increaseTime(web3, 60 * 60 * 24 * 14 + 1)
             await mineBlocks(web3, 101)
             // Process withdraw and attempt to slash
-            await withdrawAndCheck(minipool, '8', random, false, '8', '0', true);
+            await withdrawAndCheck(minipool, '8000000', random, false, '8000000', '0', true);
             await shouldRevert(minipool.slash(), 'Was able to slash minipool', 'No balance to slash')
         });
 
 
-        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 ETH'), async () => {
+        it(printTitle('node operator withdrawal address', 'can process withdrawal when balance is less than 16 mln PLS'), async () => {
             // Process withdraw
-            await withdrawAndCheck(minipool, '15', nodeWithdrawalAddress, false, '15', '0');
+            await withdrawAndCheck(minipool, '15000000', nodeWithdrawalAddress, false, '15000000', '0');
         });
 
 
-        it(printTitle('node operator withdrawal address', 'should fail when trying to distribute rewards with greater than 8 ETH balance'), async () => {
+        it(printTitle('node operator withdrawal address', 'should fail when trying to distribute rewards with greater than 8 mln PLS balance'), async () => {
             // Process withdraw
             await web3.eth.sendTransaction({
                 from: random,
                 to: minipool.address,
                 gas: 12450000,
-                value: '8.001'.ether
+                value: '8001000'.ether
             });
 
             await shouldRevert(minipool.distributeBalance(true, {
                 from: nodeWithdrawalAddress
-            }), 'Distribute succeeded', 'Balance exceeds 8 ether');
+            }), 'Distribute succeeded', 'Balance exceeds 8 mln ether');
         });
 
         // ETH penalty events
@@ -261,7 +261,7 @@ export default function() {
             // Penalise the minipool 50% of it's ETH
             await penaltyTestContract.setPenaltyRate(minipool.address, maxPenaltyRate);
             // Process withdraw - 36 ETH would normally give node operator 19 and user 17 but with a 50% penalty, and extra 9.5 goes to the user
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, true, '26.5', '9.5');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, true, '26500000', '9500000');
         });
 
 
@@ -269,7 +269,7 @@ export default function() {
             // Try to penalise the minipool 75% of it's ETH (max is 50%)
             await penaltyTestContract.setPenaltyRate(minipool.address, web3.utils.toWei('0.75'));
             // Process withdraw - 36 ETH would normally give node operator 19 and user 17 but with a 50% penalty, and extra 9.5 goes to the user
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, true, '26.5', '9.5');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, true, '26500000', '9500000');
         });
 
 
@@ -280,7 +280,7 @@ export default function() {
             // Try to penalise the minipool 50%
             await penaltyTestContract.setPenaltyRate(minipool.address, web3.utils.toWei('0.5'));
             // Process withdraw
-            await withdrawAndCheck(minipool, '36', nodeWithdrawalAddress, true, '17', '19');
+            await withdrawAndCheck(minipool, '36000000', nodeWithdrawalAddress, true, '17000000', '19000000');
         });
     })
 }

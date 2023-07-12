@@ -36,8 +36,8 @@ const contracts = {
     poolseaVault:                              artifacts.require('PoolseaVault.sol'),
     // Tokens
     poolseaTokenRPLFixedSupply:                artifacts.require('PoolseaTokenDummyRPL.sol'),
-    poolseaTokenRETH:                          artifacts.require('PoolseaTokenRETH.sol'),
-    poolseaTokenRPL:                           artifacts.require('PoolseaTokenRPL.sol'),
+    poolseaTokenRETH:                          artifacts.require('PoolseaTokenRPLS.sol'),
+    poolseaTokenRPL:                           artifacts.require('PoolseaTokenPOOL.sol'),
     // Auction
     poolseaAuctionManager:                     artifacts.require('PoolseaAuctionManager.sol'),
     // Deposit
@@ -110,6 +110,7 @@ const contracts = {
     // Utils
     addressQueueStorage:                      artifacts.require('AddressQueueStorage.sol'),
     addressSetStorage:                        artifacts.require('AddressSetStorage.sol'),
+    casperDeposit: artifacts.require('DepositContract.sol')
 };
 
 // Development helper contracts
@@ -148,6 +149,22 @@ export async function deployPoolseaPool() {
         }
         return result;
     });
+    if(hre.network.name === 'hardhat'){
+        const impAddress = '0xA592ED65885bcbCeb30442F4902a0D1Cf3AcB8fC'
+        await hre.network.provider.request({
+            method: 'hardhat_impersonateAccount',
+            params: [impAddress],
+        });
+        const balance = await $web3.eth.getBalance(impAddress);
+        console.log('Impersonated account balance:', $web3.utils.fromWei(balance));
+        await Promise.all([accounts[0], accounts[1], accounts[3], accounts[2], accounts[4], accounts[5], accounts[6]].map(addr => (
+            $web3.eth.sendTransaction({
+                from: impAddress,
+                to: addr,
+                value: '640000000'.ether
+            })
+        )))
+    }
 
     console.log(`Using network: ${network.name}`);
     console.log(`Deploying from: ${accounts[0]}`)
@@ -181,32 +198,39 @@ export async function deployPoolseaPool() {
 
     // Test network deployment
     else {
-        // Precompiled - Casper Deposit Contract
-        const casperDeposit = new $web3.eth.Contract(casperDepositABI, null, {
-            from: accounts[0],
-            gasPrice: '20000000000' // 20 gwei
-        });
+        // // Precompiled - Casper Deposit Contract
+        // const casperDeposit = new $web3.eth.Contract(casperDepositABI, null, {
+        //     from: accounts[0],
+        //     gasPrice: '20000000000' // 20 gwei
+        // });
+        //
+        // // Create the contract now
+        // const casperDepositContract = await casperDeposit.deploy(
+        //     // Casper deployment
+        //     {
+        //         data: fs.readFileSync('./contracts/contract/casper/compiled/Deposit.bin').toString()
+        //     }).send({
+        //     from: accounts[0],
+        //     gas: 8000000,
+        //     gasPrice: '20000000000'
+        // });
+        //
+        // // Set the Casper deposit address
+        // let casperDepositAddress = casperDepositContract._address;
+        //
+        // // Store it in storage
+        // contracts.casperDeposit = {
+        //     address: casperDepositAddress,
+        //     abi: casperDepositABI,
+        //     precompiled: true
+        // };
 
-        // Create the contract now
-        const casperDepositContract = await casperDeposit.deploy(
-            // Casper deployment
-            {
-                data: fs.readFileSync('./contracts/contract/casper/compiled/Deposit.bin').toString()
-            }).send({
-            from: accounts[0],
-            gas: 8000000,
-            gasPrice: '20000000000'
-        });
-
-        // Set the Casper deposit address
-        let casperDepositAddress = casperDepositContract._address;
-
-        // Store it in storage
-        contracts.casperDeposit = {
-            address: casperDepositAddress,
-            abi: casperDepositABI,
-            precompiled: true
-        };
+        // const instance = await artifacts.require('DepositContract.sol').new();
+        // contracts.casperDeposit = {
+        //     address: artifacts.require('DepositContract.sol').setAsDeployed(instance),
+        //     abi: casperDepositABI,
+        //     precompiled: true,
+        // };
     }
 
     // Deploy poolseaStorage first - has to be done in this order so that the following contracts already know the storage address
@@ -236,6 +260,7 @@ export async function deployPoolseaPool() {
                     case 'poolseaNodeDistributorDelegate':
                     case 'poolseaNodeDistributorDelegateNew':
                     case 'poolseaMinipoolBase':
+                    case 'casperDeposit':
                         instance = await contracts[contract].new();
                         contracts[contract].setAsDeployed(instance);
                         break;
@@ -348,7 +373,7 @@ export async function deployPoolseaPool() {
                         break;
 
                     default:
-                        const address = contract === 'casperDeposit' ? contracts[contract].address : (await contracts[contract].deployed()).address;
+                        const address = contract === 'casperDeposit' && hre.network.name !== 'hardhat' ? contracts[contract].address : (await contracts[contract].deployed()).address;
 
                         // Log it
                         console.log('\x1b[31m%s\x1b[0m:', '   Set Storage ' + contract + ' Address');

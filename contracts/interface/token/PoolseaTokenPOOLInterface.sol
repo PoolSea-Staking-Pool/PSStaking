@@ -4,7 +4,7 @@ pragma solidity >0.5.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface PoolseaTokenRPLInterface is IERC20 {
+interface PoolseaTokenPOOLInterface is IERC20 {
     function getInflationCalcTime() external view returns(uint256);
     function getInflationIntervalTime() external view returns(uint256);
     function getInflationIntervalRate() external view returns(uint256);
