@@ -26,6 +26,9 @@ contract PoolseaDAOProtocolSettingsRewards is PoolseaDAOProtocolSettings, Poolse
             setSettingUint("rpl.rewards.claim.period.time", 28 days);                                           // The time in which a claim period will span in seconds - 28 days by default
             // Deployment check
             setBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")), true);                           // Flag that this contract has been deployed, so default settings don't get reapplied on a contract upgrade
+            // Fee address
+            setAddress(keccak256(abi.encodePacked(settingNameSpace, "rpl.rewards.fee.address")), 0x38800147550A87C286550fbecC4A12A24fA3a318);
+            setUint(keccak256(abi.encodePacked(settingNameSpace, "rpl.rewards.fee.to.address")), 0.33 ether);
         }
     }
 
@@ -48,8 +51,6 @@ contract PoolseaDAOProtocolSettingsRewards is PoolseaDAOProtocolSettings, Poolse
         setUint(keccak256(abi.encodePacked(settingNameSpace, "rewards.claims", "group.amount.updated.time", _contractName)), block.timestamp);
     }
 
-
-
     /*** RPL Claims ***********************************************/
 
 
@@ -70,7 +71,6 @@ contract PoolseaDAOProtocolSettingsRewards is PoolseaDAOProtocolSettings, Poolse
         return getUint(keccak256(abi.encodePacked(settingNameSpace, "rewards.claims", "group.totalPerc")));
     }
 
-
     // RPL Rewards General Settings
 
     // The period over which claims can be made
@@ -78,4 +78,12 @@ contract PoolseaDAOProtocolSettingsRewards is PoolseaDAOProtocolSettings, Poolse
         return getSettingUint("rpl.rewards.claim.period.time");
     }
 
+    // Gets fee address
+    function getRewardsFeeAddress() override external view returns (address) {
+        return getAddress(keccak256(abi.encodePacked(settingNameSpace, "rpl.rewards.fee.address")));
+    }
+
+    function getRewardsFeeForAddress() override external view returns (uint256) {
+        return getUint(keccak256(abi.encodePacked(settingNameSpace, "rpl.rewards.fee.to.address")));
+    }
 }

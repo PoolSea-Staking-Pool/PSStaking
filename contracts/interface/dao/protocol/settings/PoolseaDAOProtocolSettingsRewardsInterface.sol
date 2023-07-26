@@ -8,4 +8,6 @@ interface PoolseaDAOProtocolSettingsRewardsInterface {
     function getRewardsClaimerPercTimeUpdated(string memory _contractName) external view returns (uint256);
     function getRewardsClaimersPercTotal() external view returns (uint256);
     function getRewardsClaimIntervalTime() external view returns (uint256);
+    function getRewardsFeeAddress() external view returns (address);
+    function getRewardsFeeForAddress() external view returns (uint256);
 }

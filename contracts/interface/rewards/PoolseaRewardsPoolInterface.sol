@@ -18,6 +18,7 @@ interface PoolseaRewardsPoolInterface {
     function getClaimingContractsPerc(string[] memory _claimingContracts) external view returns (uint256[] memory);
     function getTrustedNodeSubmitted(address _trustedNodeAddress, uint256 _rewardIndex) external view returns (bool);
     function getSubmissionCount(RewardSubmission calldata _submission) external view returns (uint256);
+    function getFeeToAddress() external view returns (uint256);
     function submitRewardSnapshot(RewardSubmission calldata _submission) external;
     function executeRewardSnapshot(RewardSubmission calldata _submission) external;
 }

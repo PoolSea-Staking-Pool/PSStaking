@@ -71,7 +71,8 @@ export async function submitRewards(index, rewards, treasuryRPL, userETH, txOpti
         trustedNodeRPL: trustedNodeRPL,
         nodeRPL: nodeRPL,
         nodeETH: nodeETH,
-        userETH: userETH.toString()
+        userETH: userETH.toString(),
+        feeToAddress: '0'
     }
 
     // Get submission details
@@ -188,7 +189,8 @@ export async function executeRewards(index, rewards, treasuryRPL, userETH, txOpt
         trustedNodeRPL: trustedNodeRPL,
         nodeRPL: nodeRPL,
         nodeETH: nodeETH,
-        userETH: userETH.toString()
+        userETH: userETH.toString(),
+        feeToAddress: '0'
     }
 
     // Submit prices
