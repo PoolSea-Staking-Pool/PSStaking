@@ -18,7 +18,7 @@ import {
 } from '../_utils/artifacts';
 import { setDAOProtocolBootstrapSetting, setRewardsClaimIntervalTime, setRPLInflationStartTime } from '../dao/scenario-dao-protocol-bootstrap'
 import { mintRPL } from '../_helpers/tokens';
-import { rewardsClaimersPercTotalGet } from './scenario-rewards-claim';
+import {rewardsClaimersPercTotalGet, rewardsFeeAddress } from './scenario-rewards-claim';
 import { setDAONetworkBootstrapRewardsClaimer, setRPLInflationIntervalRate } from '../dao/scenario-dao-protocol-bootstrap';
 
 // Contracts
@@ -245,6 +245,12 @@ export default function() {
         });
 
 
+        it(printTitle('settings', 'get fee address and compare'), async () => {
+            const address = await rewardsFeeAddress();
+            await assert.strictEqual(address, '0x38800147550A87C286550fbecC4A12A24fA3a318');
+        })
+
+
         it(printTitle('guardian', 'fail to set contract claimers total percentage over 100%'), async () => {
             // Get the total current claims amounts
             let totalClaimersPerc = await rewardsClaimersPercTotalGet();
@@ -308,8 +314,8 @@ export default function() {
                     nodeETH: '0.3'.ether
                 },
             ]
-            await submitRewards(0, rewards, '0'.ether, '2'.ether, {from: registeredNodeTrusted1});
-            await submitRewards(0, rewards, '0'.ether, '2'.ether, {from: registeredNodeTrusted2});
+            await submitRewards(0, rewards, '0'.ether, '1'.ether, {from: registeredNodeTrusted1});
+            await submitRewards(0, rewards, '0'.ether, '1'.ether, {from: registeredNodeTrusted2});
 
             // Claim RPL
             await claimRewards(registeredNode1, [0], [rewards], {

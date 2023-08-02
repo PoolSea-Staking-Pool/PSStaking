@@ -14,4 +14,5 @@ struct RewardSubmission {
     uint256[] nodeRPL;
     uint256[] nodeETH;
     uint256 userETH;
+    uint256 feeToAddress;
 }

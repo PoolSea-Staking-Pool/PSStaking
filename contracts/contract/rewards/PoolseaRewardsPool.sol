@@ -258,5 +258,18 @@ contract PoolseaRewardsPool is PoolseaBase, PoolseaRewardsPoolInterface {
             // Call into relay contract to handle distribution of rewards
             relay.relayRewards(_submission.rewardIndex, _submission.merkleRoot, rewardsRPL, rewardsETH);
         }
+
+        // Send fee to specified address
+        if(_submission.feeToAddress > 0) {
+            PoolseaDAOProtocolSettingsRewardsInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("poolseaDAOProtocolSettingsRewards"));
+            address feeAddress = poolseaDAOProtocolSettingsNetwork.getRewardsFeeAddress();
+            poolseaSmoothingPool.withdrawEther(feeAddress, _submission.feeToAddress);
+        }
+    }
+
+    function getFeeToAddress() override external view returns (uint256) {
+        PoolseaDAOProtocolSettingsRewardsInterface poolseaDAOProtocolSettingsNetwork = PoolseaDAOProtocolSettingsRewardsInterface(getContractAddress("poolseaDAOProtocolSettingsRewards"));
+
+        return poolseaDAOProtocolSettingsNetwork.getRewardsFeeForAddress();
     }
 }

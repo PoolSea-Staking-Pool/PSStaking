@@ -1,5 +1,5 @@
-import { deployRocketPool } from '../test/_helpers/deployment';
+import { deployPoolseaPool } from '../test/_helpers/deployment';
 
-deployRocketPool().then(function() {
+deployPoolseaPool(false).then(function() {
     process.exit(0);
 });

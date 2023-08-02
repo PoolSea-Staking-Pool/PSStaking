@@ -136,7 +136,7 @@ poolseaMinipoolAbi.push({ stateMutability: 'payable', type: 'receive'});
 
 
 // Deploy poolsea Pool
-export async function deployPoolseaPool() {
+export async function deployPoolseaPool(setDeployedStatus = true) {
     // Set our web3 provider
     const network = hre.network;
     let $web3 = new Web3(network.provider);
@@ -173,16 +173,16 @@ export async function deployPoolseaPool() {
     const casperDepositABI = loadABI('./contracts/contract/casper/compiled/Deposit.abi');
 
     // Live deployment
-    if ( network.name === 'live' ) {
+    if ( network.name === 'pulseTest' || network.name === 'localhost') {
         // Casper live contract address
-        let casperDepositAddress = '0x00000000219ab540356cBB839Cbe05303d7705Fa';
+        let casperDepositAddress = '0x3693693693693693693693693693693693693693';
         contracts.casperDeposit = {
             address: casperDepositAddress,
             abi: casperDepositABI,
             precompiled: true
         };
         // Add our live RPL token address in place
-        contracts.poolseaTokenRPLFixedSupply.address = '0xb4efd85c19999d84251304bda99e90b92300bd93';
+        // contracts.poolseaTokenRPLFixedSupply.address = '0xb4efd85c19999d84251304bda99e90b92300bd93';
     }
 
     // Goerli test network
@@ -374,7 +374,7 @@ export async function deployPoolseaPool() {
 
                     default:
                         const address = contract === 'casperDeposit' && hre.network.name !== 'hardhat' ? contracts[contract].address : (await contracts[contract].deployed()).address;
-
+                        
                         // Log it
                         console.log('\x1b[31m%s\x1b[0m:', '   Set Storage ' + contract + ' Address');
                         console.log('     ' + address);
@@ -451,9 +451,11 @@ export async function deployPoolseaPool() {
         deployBlock
     );
 
-    // Disable direct access to storage now
-    await poolseaStorageInstance.setDeployedStatus();
-    if(await poolseaStorageInstance.getDeployedStatus() !== true) throw 'Storage Access Not Locked Down!!';
+    if(setDeployedStatus) { 
+        // Disable direct access to storage now
+        await poolseaStorageInstance.setDeployedStatus();
+        if(await poolseaStorageInstance.getDeployedStatus() !== true) throw 'Storage Access Not Locked Down!!';
+    }
 
     // Log it
     console.log('\n');
