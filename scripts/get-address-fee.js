@@ -4,7 +4,7 @@ const { utils } = require("ethers");
 
 export async function main() {
     const contract = artifacts.require('PoolseaStorage');
-    const settingsContract = artifacts.require('PoolseaDAOProtocolSettingsNode');
+    const rewardsPool = artifacts.require('PoolseaRewardsPool');
 
     const network = hre.network;
     let $web3 = new Web3(network.provider);
@@ -17,12 +17,19 @@ export async function main() {
         }
         return result;
     });
-    const deployedContract = await contract.at('0x9F5d9B88CdC90a8357b390932e9C46032D0adf01');
-    const encodedSetting = utils.keccak256(utils.solidityPack(['string', 'string'], ['dao.protocol.setting.', 'rewards']));
-    const encoded = utils.keccak256(utils.solidityPack(['bytes32', 'string'], [encodedSetting, 'rpl.rewards.fee.to.address']));
-    const fee = await deployedContract.getUint(encoded);
-    console.log('Storage - ', utils.formatUnits(fee.toString(), 18));
-    
+    const deployedContract = await contract.at('0xa39c7c87d5F1f306b978B52E393288fBf451B503');
+    const deployedContractRewards = await rewardsPool.at('0x192C7997425DE3F63B3fA56f8e972778e896B6a3');
+
+    console.log("Rewards index: ", +(await deployedContractRewards.getRewardIndex()))
+
+    // const encodedSetting = utils.keccak256(utils.solidityPack(['string', 'string'], ['dao.protocol.setting.', 'rewards']));
+    // const encoded = utils.keccak256(utils.solidityPack(['bytes32', 'string', 'string', 'string'], [encodedSetting, 'rewards.claims', 'group.amount.updated.time', 'poolseaClaimDAO']));
+    // const fee = await deployedContract.getUint(encoded);
+    // console.log('Storage - ', new Date(+fee * 1000));
+
+    // await deployedContract.setBool(encoded, true)
+    // console.log('Storage 1 - ', await deployedContract.getBool(encoded));
+
     // await deployedContract.setUint(encoded, utils.parseUnits('33', 16));
 
     // const newFee = await deployedContract.getUint(encoded);
