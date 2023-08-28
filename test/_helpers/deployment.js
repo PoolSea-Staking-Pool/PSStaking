@@ -35,7 +35,7 @@ const contracts = {
     // Vault
     poolseaVault:                              artifacts.require('PoolseaVault.sol'),
     // Tokens
-    poolseaTokenRPLFixedSupply:                artifacts.require('PoolseaTokenDummyRPL.sol'),
+    poolseaTokenRPLFixedSupply:                artifacts.require('PoolseaTokenDummyPOOL.sol'),
     poolseaTokenRETH:                          artifacts.require('PoolseaTokenRPLS.sol'),
     poolseaTokenRPL:                           artifacts.require('PoolseaTokenPOOL.sol'),
     // Auction
@@ -374,7 +374,7 @@ export async function deployPoolseaPool(setDeployedStatus = true) {
 
                     default:
                         const address = contract === 'casperDeposit' && hre.network.name !== 'hardhat' ? contracts[contract].address : (await contracts[contract].deployed()).address;
-                        
+
                         // Log it
                         console.log('\x1b[31m%s\x1b[0m:', '   Set Storage ' + contract + ' Address');
                         console.log('     ' + address);
@@ -451,7 +451,7 @@ export async function deployPoolseaPool(setDeployedStatus = true) {
         deployBlock
     );
 
-    if(setDeployedStatus) { 
+    if(setDeployedStatus) {
         // Disable direct access to storage now
         await poolseaStorageInstance.setDeployedStatus();
         if(await poolseaStorageInstance.getDeployedStatus() !== true) throw 'Storage Access Not Locked Down!!';

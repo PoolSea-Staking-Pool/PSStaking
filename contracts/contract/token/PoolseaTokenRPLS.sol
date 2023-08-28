@@ -10,8 +10,8 @@ import "../../interface/network/PoolseaNetworkBalancesInterface.sol";
 import "../../interface/token/PoolseaTokenRPLSInterface.sol";
 import "../../interface/dao/protocol/settings/PoolseaDAOProtocolSettingsNetworkInterface.sol";
 
-// rETH is a tokenised stake in the Poolsea Pool network
-// rETH is backed by ETH (subject to liquidity) at a variable exchange rate
+// rPLS is a tokenised stake in the Poolsea Pool network
+// rPLS is backed by PLS (subject to liquidity) at a variable exchange rate
 
 contract PoolseaTokenRPLS is PoolseaBase, ERC20, PoolseaTokenRPLSInterface {
 

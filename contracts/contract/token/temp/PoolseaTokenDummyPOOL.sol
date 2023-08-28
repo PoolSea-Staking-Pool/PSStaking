@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @title Dummy Poolsea Pool Token (RPL) contract (do not deploy to mainnet)
 
-contract PoolseaTokenDummyRPL is ERC20, Ownable {
+contract PoolseaTokenDummyPOOL is ERC20, Ownable {
 
 
     /**** Properties ***********/
@@ -31,7 +31,7 @@ contract PoolseaTokenDummyRPL is ERC20, Ownable {
     /**** Methods ***********/
 
     // Construct with our token details
-    constructor(address _poolseaStorageAddress) ERC20("Poolsea Pool Dummy RPL", "DRPL") {}
+    constructor(address _poolseaStorageAddress) ERC20("Poolsea Pool Dummy POOL", "DPOOL") {}
 
 
     // @dev Mint the Poolsea Pool Tokens (RPL)
