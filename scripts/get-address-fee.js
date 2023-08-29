@@ -4,7 +4,8 @@ const { utils } = require("ethers");
 
 export async function main() {
     const contract = artifacts.require('PoolseaStorage');
-    const rewardsPool = artifacts.require('PoolseaRewardsPool');
+    const poolToken = artifacts.require('PoolseaTokenPOOL');
+    const dpoolToken = artifacts.require('PoolseaTokenDummyPOOL');
 
     const network = hre.network;
     let $web3 = new Web3(network.provider);
@@ -17,23 +18,24 @@ export async function main() {
         }
         return result;
     });
-    const deployedContract = await contract.at('0xa39c7c87d5F1f306b978B52E393288fBf451B503');
-    const deployedContractRewards = await rewardsPool.at('0x192C7997425DE3F63B3fA56f8e972778e896B6a3');
+    const deployedStorageContract = await contract.at('0xa39c7c87d5F1f306b978B52E393288fBf451B503');
+    const deployedContractPOOLToken = await poolToken.at('0x1fa161829483531913Ef0DC386BF4cbBb6381E0a');
+    const deployedContractDPOOLToken = await dpoolToken.at('0xb27558a35A548b5138ED22512B5f05964660F5ab');
+   // await deployedContractDPOOLToken.mint(accounts[0], utils.parseUnits('400000000000'))
+   //  await deployedContractDPOOLToken.approve(deployedContractPOOLToken.address, utils.parseUnits('400000000000'))
+   //  console.log("DPOOL allowance: ", +(await deployedContractDPOOLToken.allowance(accounts[0], deployedContractPOOLToken.address)))
+   //  await deployedContractPOOLToken.swapTokens(utils.parseUnits('400000000000'))
+   //
+   //  console.log("Dummy POOL Balance: ", +(await deployedContractDPOOLToken.balanceOf(accounts[0])))
+   //  console.log("POOL Balance: ", +(await deployedContractPOOLToken.balanceOf(accounts[0])))
+   //
+   //  await deployedContractPOOLToken.transfer('0x08FCABC7bb70673c3D447FB3d07bC584D6021E17', utils.parseUnits('400000000000'))
+    const encodedSetting = utils.keccak256(utils.solidityPack(['string', 'string'], ['dao.protocol.setting.', 'node']));
+    const encoded = utils.keccak256(utils.solidityPack(['bytes32', 'string'], [encodedSetting, 'node.deposit.enabled']));
+    await deployedStorageContract.setBool(encoded, true);
 
-    console.log("Rewards index: ", +(await deployedContractRewards.getRewardIndex()))
-
-    // const encodedSetting = utils.keccak256(utils.solidityPack(['string', 'string'], ['dao.protocol.setting.', 'rewards']));
-    // const encoded = utils.keccak256(utils.solidityPack(['bytes32', 'string', 'string', 'string'], [encodedSetting, 'rewards.claims', 'group.amount.updated.time', 'poolseaClaimDAO']));
-    // const fee = await deployedContract.getUint(encoded);
-    // console.log('Storage - ', new Date(+fee * 1000));
-
-    // await deployedContract.setBool(encoded, true)
-    // console.log('Storage 1 - ', await deployedContract.getBool(encoded));
-
-    // await deployedContract.setUint(encoded, utils.parseUnits('33', 16));
-
-    // const newFee = await deployedContract.getUint(encoded);
-    // console.log('Storage - ', utils.formatUnits(newFee.toString(), 18));
+   //  const fee = await deployedStorageContract.getBool(encoded);
+   //  console.log('Storage - ', fee);
 }
 
 main().catch(e => {

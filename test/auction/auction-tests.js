@@ -4,7 +4,6 @@ import { shouldRevert } from '../_utils/testing';
 import {
     PoolseaDAONodeTrustedSettingsMinipool,
     PoolseaDAOProtocolSettingsAuction,
-    PoolseaNodeStaking
 } from '../_utils/artifacts';
 import { auctionCreateLot, auctionPlaceBid, getLotStartBlock, getLotPriceAtBlock } from '../_helpers/auction';
 import { userDeposit } from '../_helpers/deposit';
