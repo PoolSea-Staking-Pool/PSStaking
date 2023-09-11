@@ -1,0 +1,39 @@
+{
+  "rewardsFileVersion": 1,
+  "rulesetVersion": 5,
+  "index": 0,
+  "network": "pulsechain-testnet-v4",
+  "startTime": "1970-01-01T00:00:00Z",
+  "endTime": "2023-09-11T08:03:19Z",
+  "consensusEndBlock": 1306303,
+  "executionEndBlock": 17465942,
+  "intervalsPassed": 19611,
+  "merkleRoot": "0xf255ccc952b2851a7b6686bfd8e6f3f4f74dc45ab8a25dd11f25f80a39253e88",
+  "minipoolPerformanceFileCid": "---",
+  "totalRewards": {
+    "protocolDaoRpl": "481282388521905323140329388",
+    "totalCollateralRpl": "3368976719653337261982305716",
+    "totalOracleDaoRpl": "962564777043810646280658776",
+    "totalSmoothingPoolEth": "0",
+    "poolStakerSmoothingPoolEth": "0",
+    "nodeOperatorSmoothingPoolEth": "0"
+  },
+  "networkRewards": {
+    "0": {
+      "collateralRpl": "3368976719653337261982305716",
+      "oracleDaoRpl": "962564777043810646280658776",
+      "smoothingPoolEth": "0"
+    }
+  },
+  "nodeRewards": {
+    "0x08fcabc7bb70673c3d447fb3d07bc584d6021e17": {
+      "rewardNetwork": 0,
+      "collateralRpl": "3368976719653337261982305716",
+      "oracleDaoRpl": "962564777043810646280658776",
+      "smoothingPoolEth": "0",
+      "smoothingPoolEligibilityRate": 0,
+      "merkleProof": []
+    }
+  },
+  "amountToFeeAddress": null
+}

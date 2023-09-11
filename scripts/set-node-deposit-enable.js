@@ -16,10 +16,12 @@ export async function main() {
         }
         return result;
     });
-    const deployedStorageContract = await contract.at('0xa39c7c87d5F1f306b978B52E393288fBf451B503');
+    const deployedStorageContract = await contract.at('0x49F30583D50bE3C82b40c46E2b413e67Df1BcABd');
     const encodedSetting = utils.keccak256(utils.solidityPack(['string', 'string'], ['dao.protocol.setting.', 'node']));
     const encoded = utils.keccak256(utils.solidityPack(['bytes32', 'string'], [encodedSetting, 'node.deposit.enabled']));
+    const encodedReg = utils.keccak256(utils.solidityPack(['bytes32', 'string'], [encodedSetting, 'node.registration.enabled']));
     await deployedStorageContract.setBool(encoded, true);
+    await deployedStorageContract.setBool(encodedReg, true);
 }
 
 main().catch(e => {

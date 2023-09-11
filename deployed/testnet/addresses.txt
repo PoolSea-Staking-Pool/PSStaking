@@ -1,0 +1,144 @@
+ Deploy Contracts
+  ******************************************
+   Set Storage Address:
+     0x49F30583D50bE3C82b40c46E2b413e67Df1BcABd
+   Set Storage poolseaVault Address:
+     0x42A1969280e0f6D2fFa4A599Af55e353831A05f1
+   Set Storage poolseaTokenRPLFixedSupply Address:
+     0xBdAC6a3475b970a34CbF62009471ac16EC083cE6
+   Set Storage poolseaTokenRETH Address:
+     0x874499c8CeC4D539f921918A16A71C857871778A
+   Set Storage poolseaTokenRPL Address:
+     0xe53851D6963949113D8a290C6DDd4917a10F05Ef
+   Set Storage poolseaAuctionManager Address:
+     0xf3BadE18ceEbB80249020593Be31F853D11Ea08E
+   Set Storage poolseaDepositPool Address:
+     0x073f79E94d168b2927178A8aBB7269Fa7D59B38D
+   Set Storage poolseaMinipoolDelegate Address:
+     0x4C97b8755F3C4Cd069eE7F34E8f536b4876AFD47
+   Set Storage poolseaMinipoolManager Address:
+     0x99e4F26E8C773A0da81FDb80F95CB1e320e383DA
+   Set Storage poolseaMinipoolQueue Address:
+     0x4F7b857c3ac3A2900b7606e0a9451F39A729Ff88
+   Set Storage poolseaMinipoolStatus Address:
+     0x3172Ac5f498F11Fa14acd3187E3d1248606BBb8c
+   Set Storage poolseaMinipoolPenalty Address:
+     0x11509535041C5DB455c892F1b23DA7E274dBc3DC
+   Set Storage poolseaNetworkBalances Address:
+     0x0b7c12058E982a13976a9D1326CF3254114F17e5
+   Set Storage poolseaNetworkFees Address:
+     0xd7567c37d1867C64E413b7F133b8dd688bf16a7f
+   Set Storage poolseaNetworkPrices Address:
+     0x0D2ac593A0Fc4e321C5Ba5D47Cd3AEB26fe101D4
+   Set Storage poolseaNetworkPenalties Address:
+     0x4bC301F540Ae0166Caa449deec4Ecc2Bf31d497f
+   Set Storage poolseaRewardsPool Address:
+     0xF7f7078CCD558DBbFd33aA604A5560B7F6154726
+   Set Storage poolseaClaimDAO Address:
+     0xa41F05bc62Ee71c488B01c66052BcD45d8B73b2a
+   Set Storage poolseaNodeDeposit Address:
+     0xDbd8A48aC00B82ec75502f3145E8a58e1F193f41
+   Set Storage poolseaNodeManager Address:
+     0xf9F58189Bf246063118B4CdE95560f3dB774A0B3
+   Set Storage poolseaNodeStaking Address:
+     0xdd5622Ce19d3ca1c78B29eBeb889c187be2227Da
+   Set Storage poolseaDAOProposal Address:
+     0xE7f9014ECE552Badeb35830645DbCB8aF85f42Ff
+   Set Storage poolseaDAONodeTrusted Address:
+     0xa30cc5342f452136CecFD557E9b1De97F51385A3
+   Set Storage poolseaDAONodeTrustedProposals Address:
+     0x01ABc351514C7874228D7c4Bf75C511372a6D907
+   Set Storage poolseaDAONodeTrustedActions Address:
+     0x331e70A63330a19c0E9C11F4df01373538DD077a
+   Set Storage poolseaDAONodeTrustedUpgrade Address:
+     0x17a1FfA5C40b9eC4F2E5B3E7D15E24a7c8A34032
+   Set Storage poolseaDAONodeTrustedSettingsMembers Address:
+     0x11b37741B9c843A6B9F50425Cb966c418030F351
+   Set Storage poolseaDAONodeTrustedSettingsProposals Address:
+     0xF265d70D51d5D68eCA9201EB827178805A969796
+   Set Storage poolseaDAONodeTrustedSettingsMinipool Address:
+     0x3d73801142dF9D68Bc54865F0E927B04a4f8998F
+   Set Storage poolseaDAOProtocol Address:
+     0x014F1622e58A102ed4DF018eBc9985B32D2d03d7
+   Set Storage poolseaDAOProtocolProposals Address:
+     0x703CFE3bFA3AfB361d6827CE7E13db6b873b3cE5
+   Set Storage poolseaDAOProtocolActions Address:
+     0x35aF981042E5e9C931CAB4B192d9D9E1d195aCA4
+   Set Storage poolseaDAOProtocolSettingsInflation Address:
+     0x8aa7C2827f2f6Bdd079732C76dEc4eb718CfeEF4
+   Set Storage poolseaDAOProtocolSettingsRewards Address:
+     0x5BD308897cf45eF6EB042e2322126042330fa095
+   Set Storage poolseaDAOProtocolSettingsAuction Address:
+     0xe9B1F75d315D93A33E82D2724432b2a302074a00
+   Set Storage poolseaDAOProtocolSettingsNode Address:
+     0x855CEbcaeAa6157b74b86dA7d8675BA3B2833190
+   Set Storage poolseaDAOProtocolSettingsNetwork Address:
+     0xcAc3628415018273eb805a631E4Ff4643ceCbae4
+   Set Storage poolseaDAOProtocolSettingsDeposit Address:
+     0x7C6AbF8fFfD43C9Ed460529D01d6836aC0088e6b
+   Set Storage poolseaDAOProtocolSettingsMinipool Address:
+     0x5e4C9E4315a5de6df2fe80Afc4073DdF75033e2e
+   Set Storage poolseaMerkleDistributorMainnet Address:
+     0x05E741648d5aFfB2E1f3B6ed2bE4Ade565Bda4bF
+   Set Storage poolseaDAONodeTrustedSettingsRewards Address:
+     0xC1c819dA3Ba903A81d3F68aD197402C7285101A4
+   Set Storage poolseaSmoothingPool Address:
+     0x31aD4d2ecedEE89567075E6379c70bfe299241c3
+   Set Storage poolseaNodeDistributorFactory Address:
+     0x04FE4151BA471934d5eAc954b507eC657527C5a9
+   Set Storage poolseaNodeDistributorDelegate Address:
+     0xC0E90901F522498E30Cc6Ab034681440d6180351
+   Set Storage poolseaMinipoolFactory Address:
+     0x9481193E1a6D37C17b75aCE0Eb4Ca18A10cd02Ba
+   Set Storage poolseaUpgradeOneDotTwo Address:
+     0x1c82Da4D5407E17fb1F60bd5ec2060b4F447A5a8
+   Set Storage addressQueueStorage Address:
+     0xd93e25415B220283c9F7f1EA47512C40Dc27Fe24
+   Set Storage addressSetStorage Address:
+     0x93d1826000f440bcA90bA8A6ef2B3D8F867774Bd
+   Set Storage casperDeposit Address:
+     0x3693693693693693693693693693693693693693
+   Set Storage poolseaStorage Address:
+     0x49F30583D50bE3C82b40c46E2b413e67Df1BcABd
+
+
+  Deployed poolseaNodeDeposit to:
+    0x16DC4E792f03D17B16E73f358A0FaFBf0C28828e
+  Deployed poolseaMinipoolDelegate to:
+    0xCacb04A0d028a0bC1B1836Bb3d6d5c098BcBc701
+  Deployed poolseaDAOProtocolSettingsMinipool to:
+    0x93805287fA6dd009E68d43485552faF63197e0fD
+  Deployed poolseaMinipoolQueue to:
+    0xA201C919Cc882F7A0193A018B0f4b7b40d45D222
+  Deployed poolseaDepositPool to:
+    0xF0D812643EEcB8C3B0dbc13c2b40b8A57864A992
+  Deployed poolseaDAOProtocolSettingsDeposit to:
+    0x56a0e9463B1724A794Db9e9475DC7120A3566643
+  Deployed poolseaMinipoolManager to:
+    0x664E823E2FC52d9EE1401FbD3B9eEa75F9f49dA1
+  Deployed poolseaNodeStaking to:
+    0x9B2af1B95D6De7068e779001DB651Fbe39dB2f41
+  Deployed poolseaNodeDistributorDelegate to:
+    0x507C67AcaBBD5BeEfB0469eFC42c771036253c7B
+  Deployed poolseaMinipoolFactory to:
+    0x0B3ac54eF66282F1Ee9C09DEe2b0f1bAD8e2A15B
+  Deployed poolseaNetworkFees to:
+    0x770EC61aE6D6B46843bBeB72bd3f098bb685d3BC
+  Deployed poolseaNetworkPrices to:
+    0x13E17E1AD7C65bE10C4827cCb0f4E9fACF57F677
+  Deployed poolseaMinipoolBase to:
+    0xC70adc40ce1edb1Ef74907c6DBc23f0a9127B991
+  Deployed poolseaNodeManager to:
+    0xf5D22bf51653025eFce60680729F4f93eB0CD202
+  Deployed poolseaDAONodeTrustedSettingsMinipool to:
+    0x0e3251F54D1470Ef28C6A651EaB78A00D5305CeF
+  Deployed poolseaDAOProtocolSettingsNode to:
+    0x36A0b6cfe3F008210eA1Fd06DE991Ae4a8b2D94F
+  Deployed poolseaNetworkBalances to:
+    0x38462169b94D24c87Be3Cc095f60c52039C2e69f
+  Deployed poolseaRewardsPool to:
+    0xCFD04E2A831E4c14B5A71dA44f8d2796682c77D7
+  Deployed poolseaMinipoolBondReducer to:
+    0x297f90cB373f2Bf710fD6861ebf839195f518aa5
+  Deployed poolseaUpgradeOneDotTwo to:
+    0x21A978e608AD1d1AaC37c5837F5E9f13010d9D03
