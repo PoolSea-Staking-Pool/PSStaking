@@ -1,7 +1,7 @@
 const hre = require('hardhat');
 const Web3 = require('web3');
-const { utils, constants, ethers } = require("ethers");
-const rewardsTree = require('./first-rewards-gen-file.json')
+const { utils } = require("ethers");
+const rewardsTree = require('./rewards-gen-file.json')
 
 export async function main() {
     const rewPool = artifacts.require('PoolseaRewardsPool');
@@ -23,16 +23,27 @@ export async function main() {
     const encoded = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaRewardsPool']));
     const encodedRPL = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaTokenRPL']));
     const encodedRPLS = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaTokenRETH']));
-    const encodedAddrRPLS = utils.keccak256(utils.solidityPack(['string'], ["contract.addresspoolseaTokenRETH"]));
-    const encodedExist = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.exists", '0x7558D20C18Da91374A0832a5116a094c5c0DC602']));
+    const smoothingPoolEncode = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaSmoothingPool']));
+    const smoothingPoolAddr = await deployedContractStorage.getAddress(smoothingPoolEncode)
+    console.log("Address smoothing pool: ", smoothingPoolAddr)
     console.log("Address rew pool: ", await deployedContractStorage.getAddress(encoded))
     console.log("Address pool: ", await deployedContractStorage.getAddress(encodedRPL))
     console.log("Address rpls: ", await deployedContractStorage.getAddress(encodedRPLS))
-    console.log("Address verify rpls: ", await deployedContractStorage.getAddress(encodedAddrRPLS))
-    console.log("Contract exist: ", await deployedContractStorage.getBool(encodedExist))
     console.log("Sender: ", accounts[0])
 
-    const rewardIndex = 0;
+    const totalETH = BigInt(+rewardsTree.totalRewards.totalSmoothingPoolEth) + BigInt(+(rewardsTree.amountToFeeAddress || '0'))
+    console.log("Total ETH to smoothing pool: %s (%s)", totalETH.toString(), utils.formatEther(totalETH.toString()))
+    let smoothingBalance = await $web3.eth.getBalance(smoothingPoolAddr)
+    console.log('Smoothing pool balance: ', utils.formatEther(smoothingBalance))
+    const spBig = BigInt(+smoothingBalance)
+    if (totalETH > spBig){
+        const dif = totalETH - spBig;
+        await $web3.eth.sendTransaction({from: accounts[0], to: smoothingPoolAddr, value: dif.toString()})
+        smoothingBalance = await $web3.eth.getBalance(smoothingPoolAddr)
+        console.log('Smoothing pool balance after send: ', utils.formatEther(smoothingBalance))
+    }
+
+    const rewardIndex = rewardsTree.index;
     const merkleTreeCID = 0;
     const trustedNodeRPL = Object.values(rewardsTree.nodeRewards).map(details => details.oracleDaoRpl)
     const nodeRPL = Object.values(rewardsTree.nodeRewards).map(details => details.collateralRpl)
