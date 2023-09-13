@@ -19,6 +19,7 @@ require('@babel/polyfill');
 // Config from environment
 const mnemonicPhrase = process.env.MNEMONIC || 'test test test test test test test test test test test junk';
 const mnemonicPassword = process.env.MNEMONIC_PASSWORD;
+const nodeWalletPrivateKey = process.env.NODE_WALLET_PRIVATE_KEY;
 const providerUrl = process.env.PROVIDER_URL || 'http://localhost:8545';
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -59,17 +60,6 @@ module.exports = {
             port: 8545,
             network_id: '*',
         },
-        testnet: {
-            url: `${providerUrl}`,
-            accounts: {
-                mnemonic: mnemonicPhrase,
-                path: 'm/44\'/60\'/0\'/0',
-                initialIndex: 0,
-                count: 1,
-                passphrase: mnemonicPassword,
-            },
-            network_id: '*',
-        },
         pulseTest: {
             url: 'https://rpc.v4.testnet.pulsechain.com',
             accounts: {
@@ -79,6 +69,18 @@ module.exports = {
                 count: 1,
                 passphrase: mnemonicPassword,
             },
+            // accounts: [nodeWalletPrivateKey],
+        },
+        pulse: {
+            url: 'https://rpc.pulsechain.com',
+            accounts: {
+                mnemonic: mnemonicPhrase,
+                path: 'm/44\'/60\'/0\'/0',
+                initialIndex: 0,
+                count: 1,
+                passphrase: mnemonicPassword,
+            },
+            // accounts: [nodeWalletPrivateKey],
         },
     },
     paths: {
