@@ -142,6 +142,7 @@ export async function upgrade() {
                             ],
                         ];
                         await instance.set(...args);
+                        await instance.execute();
                         break;
 
                     // All other contracts - pass storage address

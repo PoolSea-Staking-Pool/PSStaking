@@ -41,3 +41,11 @@ npm hardhat run ./scripts/deploy-upgrade-v1.2.js --network <network>
 ```
 5) #### Save addresses from upgrade logs to same file from 2 point 
 > Addresses from upgrade logs override addresses from first deployment logs with the same names
+
+## Remove ownership
+> Make sure you have done everything necessary with owner access.
+
+#### For remove ownership from contracts, run next script
+```shell
+npm hardhat run ./scripts/set-deployed-status.js --network <network>
+```

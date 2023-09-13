@@ -173,7 +173,7 @@ export async function deployPoolseaPool(setDeployedStatus = true) {
     const casperDepositABI = loadABI('./contracts/contract/casper/compiled/Deposit.abi');
 
     // Live deployment
-    if ( network.name === 'pulseTest' || network.name === 'localhost') {
+    if ( network.name === 'pulseTest' || network.name === 'pulse' || network.name === 'localhost') {
         // Casper live contract address
         let casperDepositAddress = '0x3693693693693693693693693693693693693693';
         contracts.casperDeposit = {
@@ -463,19 +463,11 @@ export async function deployPoolseaPool(setDeployedStatus = true) {
     console.log('\n');
 
     // Deploy development help contracts
-    if (network.name !== 'live' && network.name !== 'goerli') {
+    if (network.name !== 'pulse' && network.name !== 'pulseTest') {
         let instance = await revertOnTransfer.new();
         revertOnTransfer.setAsDeployed(instance);
 
         instance = await poolseaNodeDepositLEB4.new(poolseaStorageInstance.address);
         poolseaNodeDepositLEB4.setAsDeployed(instance);
-    }
-
-    // Perform upgrade if we are not running in test environment
-    if (network.name !== 'hardhat') {
-        console.log('Executing upgrade to v1.2')
-        const PoolseaUpgradeOneDotTwo = artifacts.require('PoolseaUpgradeOneDotTwo')
-        const poolseaUpgradeOneDotTwo = await PoolseaUpgradeOneDotTwo.deployed();
-        await poolseaUpgradeOneDotTwo.execute({ from: accounts[0] });
     }
 };

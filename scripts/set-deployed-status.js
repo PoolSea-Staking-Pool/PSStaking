@@ -12,6 +12,11 @@ const rocketStorage = artifacts.require('PoolseaStorage.sol');
 
 // Upgrade Rocket Pool
 export async function setDeployedStatus() {
+    const storageContractAddress = process.env.ROCKET_STORAGE;
+    if(!storageContractAddress) {
+        console.log("Invalid storage address.")
+        return
+    }
     // Set our web3 provider
     const network = hre.network;
     let $web3 = new Web3(network.provider);
@@ -29,7 +34,7 @@ export async function setDeployedStatus() {
     console.log(`Call from: ${accounts[0]}`)
     console.log('\n');
 
-    let rocketStorageInstance = await rocketStorage.at(process.env.ROCKET_STORAGE);
+    let rocketStorageInstance = await rocketStorage.at(storageContractAddress);
 
     await rocketStorageInstance.setDeployedStatus();
 
