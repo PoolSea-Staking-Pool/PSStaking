@@ -68,7 +68,7 @@ export async function main() {
         nodeRPL,
         nodeETH,
         userETH: rewardsTree.totalRewards.poolStakerSmoothingPoolEth,
-        feeToAddress: rewardsTree.amountToFeeAddress || '0'
+        feeToAddress: rewardsTree.amountToFeeAddress?.toString() || '0'
     }
     await deployedContractRewardsPool.submitRewardSnapshot(submission);
 }
