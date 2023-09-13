@@ -213,6 +213,9 @@ contract PoolseaUpgradeOneDotTwo is PoolseaBase {
         setBool(keccak256(abi.encodePacked(settingNameSpace, "minipool.bond.reduction.enabled")), true);
         settingNameSpace = keccak256(abi.encodePacked("dao.protocol.setting.", "node"));
         setBool(keccak256(abi.encodePacked(settingNameSpace, "node.vacant.minipools.enabled")), true);
+        setBool(keccak256(abi.encodePacked(settingNameSpace, "node.deposit.enabled")), true);
+        setBool(keccak256(abi.encodePacked(settingNameSpace, "node.smoothing.pool.registration.enabled")), true);
+        setBool(keccak256(abi.encodePacked(settingNameSpace, "node.registration.enabled")), true);
 
         // Claim intervals
         for (uint256 i = 0; i < intervals.length; i++) {
