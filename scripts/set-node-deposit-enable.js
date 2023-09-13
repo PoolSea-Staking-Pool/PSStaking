@@ -3,6 +3,11 @@ const Web3 = require('web3');
 const { utils } = require("ethers");
 
 export async function main() {
+    const storageContractAddress = process.env.ROCKET_STORAGE;
+    if(!storageContractAddress) {
+        console.log("Invalid storage address.")
+        return
+    }
     const contract = artifacts.require('PoolseaStorage');
 
     const network = hre.network;
@@ -16,7 +21,7 @@ export async function main() {
         }
         return result;
     });
-    const deployedStorageContract = await contract.at('0x49F30583D50bE3C82b40c46E2b413e67Df1BcABd');
+    const deployedStorageContract = await contract.at(storageContractAddress);
     const encodedSetting = utils.keccak256(utils.solidityPack(['string', 'string'], ['dao.protocol.setting.', 'node']));
     const encoded = utils.keccak256(utils.solidityPack(['bytes32', 'string'], [encodedSetting, 'node.deposit.enabled']));
     const encodedReg = utils.keccak256(utils.solidityPack(['bytes32', 'string'], [encodedSetting, 'node.registration.enabled']));

@@ -3,6 +3,13 @@ const Web3 = require('web3');
 const { utils, constants, ethers } = require("ethers");
 
 export async function main() {
+    const nodeAddressForSimulate = '0x08FCABC7bb70673c3D447FB3d07bC584D6021E17'
+    const storageContractAddress = process.env.ROCKET_STORAGE;
+    if(!storageContractAddress) {
+        console.log("Invalid storage address.")
+        return
+    }
+    const storage = artifacts.require('PoolseaStorage');
     const minipoolMan = artifacts.require('PoolseaMinipoolManager');
     const nodeStaking = artifacts.require('PoolseaNodeStaking');
     const rewPool = artifacts.require('PoolseaRewardsPool');
@@ -22,12 +29,30 @@ export async function main() {
         }
         return result;
     });
-    const deployedContractMinipoolMan = await minipoolMan.at('0xA2f8921947DC31Ab1C029bD32A3658753deD21d6');
-    const deployedContractNodeStaking = await nodeStaking.at('0x0698686D09cD452439bB58821A74cB1b32eA601c');
-    const deployedContractRewardsPool = await rewPool.at('0x192C7997425DE3F63B3fA56f8e972778e896B6a3');
-    const deployedContractNetworkPrices = await networkPrices.at('0x894f7e968BBE9c602f1E6Abbb6dE4Bd640cF19A8');
-    const deployedContractTrustedNode = await odao.at('0x8c3c2137094b44da0aFFf1429157d3181e3C58Bd');
-    const deployedContractNodeMan = await nodeMan.at('0x49AC1477B884971E4D11F5F1F810A525F9105662');
+
+    const deployedContractStorage = await storage.at(storageContractAddress);
+    const encodedMinipoolMan = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaMinipoolManager']));
+    const encodedNodeStaking = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaNodeStaking']));
+    const encodedRewardsPool = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaRewardsPool']));
+    const encodedNetworkPrices = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaNetworkPrices']));
+    const encodedTrustedNode = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaDAONodeTrusted']));
+    const encodedNodeManager = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaNodeManager']));
+
+    const [addressMinipoolMan, addressNodeStaking, addressRewardsPool, addressNetworkPrices, addressTrustedNode, addressNodeManager] = await Promise.all([
+    deployedContractStorage.getAddress(encodedMinipoolMan),
+    deployedContractStorage.getAddress(encodedNodeStaking),
+    deployedContractStorage.getAddress(encodedRewardsPool),
+    deployedContractStorage.getAddress(encodedNetworkPrices),
+    deployedContractStorage.getAddress(encodedTrustedNode),
+    deployedContractStorage.getAddress(encodedNodeManager)
+    ])
+
+    const deployedContractMinipoolMan = await minipoolMan.at(addressMinipoolMan);
+    const deployedContractNodeStaking = await nodeStaking.at(addressNodeStaking);
+    const deployedContractRewardsPool = await rewPool.at(addressRewardsPool);
+    const deployedContractNetworkPrices = await networkPrices.at(addressNetworkPrices);
+    const deployedContractTrustedNode = await odao.at(addressTrustedNode);
+    const deployedContractNodeMan = await nodeMan.at(addressNodeManager);
 
     const penRew = await deployedContractRewardsPool.getPendingRPLRewards()
     const rewPercent = await deployedContractRewardsPool.getClaimingContractPerc("poolseaClaimNode")
@@ -35,11 +60,11 @@ export async function main() {
     console.log("Pending rewards: ", BigInt(+(penRew)).toString())
     console.log("Rew percent: ", +(rewPercent))
     console.log("calculatedTotalNodeRewards: ", BigInt(+(calculatedTotalNodeRewards)).toString())
-    const nodeRPLStake = await deployedContractNodeStaking.getNodeRPLStake('0x08FCABC7bb70673c3D447FB3d07bC584D6021E17')
+    const nodeRPLStake = await deployedContractNodeStaking.getNodeRPLStake(nodeAddressForSimulate)
     console.log("nodeRPLStake: ", BigInt(+(nodeRPLStake)).toString())
-    console.log("nodeEffectiveRPLStake: ", BigInt(+(await deployedContractNodeStaking.getNodeEffectiveRPLStake('0x08FCABC7bb70673c3D447FB3d07bC584D6021E17'))).toString())
-    const nodesCount = +(await deployedContractMinipoolMan.getNodeMinipoolCount("0x08FCABC7bb70673c3D447FB3d07bC584D6021E17"))
-    const minipoolsAddresses = await Promise.all(Array.from(Array(nodesCount).keys()).map(i => deployedContractMinipoolMan.getNodeMinipoolAt("0x08FCABC7bb70673c3D447FB3d07bC584D6021E17", i)))
+    console.log("nodeEffectiveRPLStake: ", BigInt(+(await deployedContractNodeStaking.getNodeEffectiveRPLStake(nodeAddressForSimulate))).toString())
+    const nodesCount = +(await deployedContractMinipoolMan.getNodeMinipoolCount(nodeAddressForSimulate))
+    const minipoolsAddresses = await Promise.all(Array.from(Array(nodesCount).keys()).map(i => deployedContractMinipoolMan.getNodeMinipoolAt(nodeAddressForSimulate, i)))
     console.log("minipoolsAddresses: ", minipoolsAddresses)
     const minipoolsContracts = await Promise.all(minipoolsAddresses.map(addr => minipoolDelegate.at(addr)))
     const usersDepositsBalance = await Promise.all(minipoolsContracts.map(contr => contr.getUserDepositBalance()))

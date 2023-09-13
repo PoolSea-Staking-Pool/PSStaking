@@ -4,6 +4,11 @@ const { utils } = require("ethers");
 const rewardsTree = require('./rewards-gen-file.json')
 
 export async function main() {
+    const storageContractAddress = process.env.ROCKET_STORAGE;
+    if(!storageContractAddress) {
+        console.log("Invalid storage address.")
+        return
+    }
     const rewPool = artifacts.require('PoolseaRewardsPool');
     const storage = artifacts.require('PoolseaStorage');
 
@@ -18,19 +23,21 @@ export async function main() {
         }
         return result;
     });
-    const deployedContractRewardsPool = await rewPool.at('0x7558D20C18Da91374A0832a5116a094c5c0DC602');
-    const deployedContractStorage = await storage.at('0x49F30583D50bE3C82b40c46E2b413e67Df1BcABd');
+
+    const deployedContractStorage = await storage.at(storageContractAddress);
     const encoded = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaRewardsPool']));
     const encodedRPL = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaTokenRPL']));
     const encodedRPLS = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaTokenRETH']));
     const smoothingPoolEncode = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaSmoothingPool']));
     const smoothingPoolAddr = await deployedContractStorage.getAddress(smoothingPoolEncode)
+    const rewardsPoolAddr = await deployedContractStorage.getAddress(encoded)
     console.log("Address smoothing pool: ", smoothingPoolAddr)
-    console.log("Address rew pool: ", await deployedContractStorage.getAddress(encoded))
+    console.log("Address rew pool: ", rewardsPoolAddr)
     console.log("Address pool: ", await deployedContractStorage.getAddress(encodedRPL))
     console.log("Address rpls: ", await deployedContractStorage.getAddress(encodedRPLS))
     console.log("Sender: ", accounts[0])
 
+    const deployedContractRewardsPool = await rewPool.at(rewardsPoolAddr);
     const totalETH = BigInt(+rewardsTree.totalRewards.totalSmoothingPoolEth) + BigInt(+(rewardsTree.amountToFeeAddress || '0'))
     console.log("Total ETH to smoothing pool: %s (%s)", totalETH.toString(), utils.formatEther(totalETH.toString()))
     let smoothingBalance = await $web3.eth.getBalance(smoothingPoolAddr)
