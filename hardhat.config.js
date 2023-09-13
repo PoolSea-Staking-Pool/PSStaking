@@ -49,9 +49,9 @@ module.exports = {
     },
     networks: {
         hardhat: {
-            chainId: 943,
+            chainId: 369,
             forking: {
-                url: 'https://rpc.v4.testnet.pulsechain.com',
+                url: 'https://rpc.pulsechain.com',
                 gasPrice: 0
             },
         },

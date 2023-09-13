@@ -24,6 +24,8 @@ function apiEndpoint (network) {
       return 'https://api.etherscan.io/api'
     case 'pulseTest':
       return 'https://scan.v4.testnet.pulsechain.com/api'
+    case 'pulse':
+      return 'https://scan.pulsechain.com/api'
   }
   throw new Error(`Unknown network ${network}`)
 }
@@ -36,6 +38,8 @@ function networkToId (network) {
       return '1'
     case 'pulseTest':
       return '943'
+    case 'pulse':
+      return '369'
   }
   throw new Error(`Unknown network ${network}`)
 }
