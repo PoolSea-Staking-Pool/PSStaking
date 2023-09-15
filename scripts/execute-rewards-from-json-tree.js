@@ -38,17 +38,10 @@ export async function main() {
     console.log("Sender: ", accounts[0])
 
     const deployedContractRewardsPool = await rewPool.at(rewardsPoolAddr);
-    const totalETH = BigInt(+rewardsTree.totalRewards.totalSmoothingPoolEth) + BigInt(+(rewardsTree.amountToFeeAddress || '0'))
-    console.log("Total ETH to smoothing pool: %s (%s)", totalETH.toString(), utils.formatEther(totalETH.toString()))
-    let smoothingBalance = await $web3.eth.getBalance(smoothingPoolAddr)
-    console.log('Smoothing pool balance: ', utils.formatEther(smoothingBalance))
-    const spBig = BigInt(+smoothingBalance)
-    if (totalETH > spBig){
-        const dif = totalETH - spBig;
-        await $web3.eth.sendTransaction({from: accounts[0], to: smoothingPoolAddr, value: dif.toString()})
-        smoothingBalance = await $web3.eth.getBalance(smoothingPoolAddr)
-        console.log('Smoothing pool balance after send: ', utils.formatEther(smoothingBalance))
-    }
+    const totalETH = BigInt(+rewardsTree.totalRewards.totalSmoothingPoolEth)
+    const totalETHToAddress = BigInt(+(rewardsTree.amountToFeeAddress || '0'))
+    const feePercToAddress = +totalETHToAddress.toString() * 100 / +totalETH.toString()
+    console.log('feePercToAddress: ', feePercToAddress)
 
     const rewardIndex = rewardsTree.index;
     const merkleTreeCID = 0;
