@@ -1,41 +1,41 @@
 {
   "rewardsFileVersion": 1,
   "rulesetVersion": 5,
-  "index": 3,
+  "index": 4,
   "network": "pulsechain-testnet-v4",
-  "startTime": "2023-09-13T00:00:00Z",
-  "endTime": "2023-09-15T14:43:09Z",
-  "consensusStartBlock": 1326080,
-  "consensusEndBlock": 1343262,
-  "executionStartBlock": 17479555,
-  "executionEndBlock": 17491490,
-  "intervalsPassed": 2,
-  "merkleRoot": "0xb6421adc5821d858e45d5446d50898bd97b8aa799fc5f5921d4db7652c25b1db",
+  "startTime": "2023-09-15T00:00:00Z",
+  "endTime": "2023-09-18T09:23:19Z",
+  "consensusStartBlock": 1343264,
+  "consensusEndBlock": 1367263,
+  "executionStartBlock": 17491491,
+  "executionEndBlock": 17508592,
+  "intervalsPassed": 3,
+  "merkleRoot": "0x7b6871b30009fab99e84b4f16cd3a99df517e6d538c0cde7c829c9e4f83b082f",
   "minipoolPerformanceFileCid": "---",
   "totalRewards": {
-    "protocolDaoRpl": "481604165174525795673499948",
-    "totalCollateralRpl": "3371229156221680569714499633",
-    "totalOracleDaoRpl": "963208330349051591346999895",
-    "totalSmoothingPoolEth": "259544076631480672",
-    "poolStakerSmoothingPoolEth": "74774648477529583",
-    "nodeOperatorSmoothingPoolEth": "99119882865562468"
+    "protocolDaoRpl": "481732936065046514556366883",
+    "totalCollateralRpl": "3372130552455325601894568171",
+    "totalOracleDaoRpl": "963465872130093029112733763",
+    "totalSmoothingPoolEth": "8067099430000001",
+    "poolStakerSmoothingPoolEth": "3468852754900001",
+    "nodeOperatorSmoothingPoolEth": "3080825272317000"
   },
   "networkRewards": {
     "0": {
-      "collateralRpl": "3371229156221680569714499633",
-      "oracleDaoRpl": "963208330349051591346999895",
-      "smoothingPoolEth": "99119882865562468"
+      "collateralRpl": "3372130552455325601894568171",
+      "oracleDaoRpl": "963465872130093029112733763",
+      "smoothingPoolEth": "3080825272317000"
     }
   },
   "nodeRewards": {
     "0x08fcabc7bb70673c3d447fb3d07bc584d6021e17": {
       "rewardNetwork": 0,
-      "collateralRpl": "3371229156221680569714499633",
-      "oracleDaoRpl": "963208330349051591346999895",
-      "smoothingPoolEth": "99119882865562468",
+      "collateralRpl": "3372130552455325601894568171",
+      "oracleDaoRpl": "963465872130093029112733763",
+      "smoothingPoolEth": "3080825272317000",
       "smoothingPoolEligibilityRate": 0,
       "merkleProof": []
     }
   },
-  "amountToFeeAddress": 85649545288388621
+  "amountToFeeAddress": 1517421402783000
 }
