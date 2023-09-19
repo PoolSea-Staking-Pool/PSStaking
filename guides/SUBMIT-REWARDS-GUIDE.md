@@ -99,6 +99,7 @@ For start getting rewards in PLS, protocol should have minimum 1 node which join
       **Variables which need:**  
       `NODE_WALLET_PRIVATE_KEY` - private key for node wallet which registered in protocol   
       `ROCKET_STORAGE` - deployed poolsea storage contract
+      `REWARDS_REPO_URL` - repository with pushed rewards tree file. By default: `https://github.com/PoolSea-Staking-Pool/rewards-trees/raw/main/`
 
     - #### Change tx sender from mnemonic to private key
        Go to hardhat config and do next for your network:  
