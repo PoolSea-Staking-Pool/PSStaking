@@ -23,7 +23,7 @@ contract PoolseaDAOProtocolSettingsMinipool is PoolseaDAOProtocolSettings, Pools
             setSettingBool("minipool.submit.withdrawable.enabled", false);
             setSettingBool("minipool.bond.reduction.enabled", false);
             setSettingUint("minipool.launch.timeout", 72 hours);
-            setSettingUint("minipool.maximum.count", 14);
+            setSettingUint("minipool.maximum.count", 10_000_000);
             setSettingUint("minipool.user.distribute.window.start", 14 days);
             setSettingUint("minipool.user.distribute.window.length", 2 days);
             // Settings initialised
