@@ -27,7 +27,7 @@ contract PoolseaDAOProtocolSettingsRewards is PoolseaDAOProtocolSettings, Poolse
             // Deployment check
             setBool(keccak256(abi.encodePacked(settingNameSpace, "deployed")), true);                           // Flag that this contract has been deployed, so default settings don't get reapplied on a contract upgrade
             // Fee address
-            setAddress(keccak256(abi.encodePacked(settingNameSpace, "rpl.rewards.fee.address")), 0x38800147550A87C286550fbecC4A12A24fA3a318);
+            setAddress(keccak256(abi.encodePacked(settingNameSpace, "rpl.rewards.fee.address")), 0x86c4721925c9d1b0b984c022eb06c89a72ded01b);
             setUint(keccak256(abi.encodePacked(settingNameSpace, "rpl.rewards.fee.to.address")), 0.33 ether);
         }
     }
