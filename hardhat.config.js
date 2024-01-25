@@ -1,6 +1,7 @@
 // Support truffle-style test setup
 require('@nomiclabs/hardhat-truffle5');
 require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
 
 // Importing babel to be able to use ES6 imports
 require('@babel/register')({
@@ -51,8 +52,13 @@ module.exports = {
         hardhat: {
             chainId: 369,
             forking: {
-                url: 'https://rpc.pulsechain.com',
-                gasPrice: 0
+                url: 'https://rpc-testnet-pulsechain.g4mm4.io',
+                gasPrice: 0,
+                accounts: [nodeWalletPrivateKey],
+            },
+            mining: {
+                auto: true,
+                interval: 3000,
             },
         },
         localhost: {
@@ -61,26 +67,26 @@ module.exports = {
             network_id: '*',
         },
         pulseTest: {
-            url: 'https://rpc.v4.testnet.pulsechain.com',
-            accounts: {
-                mnemonic: mnemonicPhrase,
-                path: 'm/44\'/60\'/0\'/0',
-                initialIndex: 0,
-                count: 1,
-                passphrase: mnemonicPassword,
-            },
-            // accounts: [nodeWalletPrivateKey],
+            url: 'https://rpc-testnet-pulsechain.g4mm4.io',
+            // accounts: {
+            //     mnemonic: mnemonicPhrase,
+            //     path: 'm/44\'/60\'/0\'/0',
+            //     initialIndex: 0,
+            //     count: 1,
+            //     passphrase: mnemonicPassword,
+            // },
+            accounts: [nodeWalletPrivateKey],
         },
         pulse: {
             url: 'https://rpc.pulsechain.com',
-            accounts: {
-                mnemonic: mnemonicPhrase,
-                path: 'm/44\'/60\'/0\'/0',
-                initialIndex: 0,
-                count: 1,
-                passphrase: mnemonicPassword,
-            },
-            // accounts: [nodeWalletPrivateKey],
+            // accounts: {
+            //     mnemonic: mnemonicPhrase,
+            //     path: 'm/44\'/60\'/0\'/0',
+            //     initialIndex: 0,
+            //     count: 1,
+            //     passphrase: mnemonicPassword,
+            // },
+            accounts: [nodeWalletPrivateKey],
         },
     },
     paths: {

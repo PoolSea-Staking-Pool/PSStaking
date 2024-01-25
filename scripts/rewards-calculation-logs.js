@@ -1,6 +1,8 @@
+import {keccak256} from "ethereumjs-util";
+
 const hre = require('hardhat');
 const Web3 = require('web3');
-const { utils, constants, ethers } = require("ethers");
+const { ethers } = require("ethers");
 
 export async function main() {
     const nodeAddressForSimulate = '0x08FCABC7bb70673c3D447FB3d07bC584D6021E17'
@@ -31,12 +33,12 @@ export async function main() {
     });
 
     const deployedContractStorage = await storage.at(storageContractAddress);
-    const encodedMinipoolMan = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaMinipoolManager']));
-    const encodedNodeStaking = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaNodeStaking']));
-    const encodedRewardsPool = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaRewardsPool']));
-    const encodedNetworkPrices = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaNetworkPrices']));
-    const encodedTrustedNode = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaDAONodeTrusted']));
-    const encodedNodeManager = utils.keccak256(utils.solidityPack(['string', 'string'], ["contract.address", 'poolseaNodeManager']));
+    const encodedMinipoolMan = ethers.keccak256(ethers.solidityPacked(['string', 'string'], ["contract.address", 'poolseaMinipoolManager']));
+    const encodedNodeStaking = ethers.keccak256(ethers.solidityPacked(['string', 'string'], ["contract.address", 'poolseaNodeStaking']));
+    const encodedRewardsPool = ethers.keccak256(ethers.solidityPacked(['string', 'string'], ["contract.address", 'poolseaRewardsPool']));
+    const encodedNetworkPrices = ethers.keccak256(ethers.solidityPacked(['string', 'string'], ["contract.address", 'poolseaNetworkPrices']));
+    const encodedTrustedNode = ethers.keccak256(ethers.solidityPacked(['string', 'string'], ["contract.address", 'poolseaDAONodeTrusted']));
+    const encodedNodeManager = ethers.keccak256(ethers.solidityPacked(['string', 'string'], ["contract.address", 'poolseaNodeManager']));
 
     const [addressMinipoolMan, addressNodeStaking, addressRewardsPool, addressNetworkPrices, addressTrustedNode, addressNodeManager] = await Promise.all([
     deployedContractStorage.getAddress(encodedMinipoolMan),
@@ -46,6 +48,8 @@ export async function main() {
     deployedContractStorage.getAddress(encodedTrustedNode),
     deployedContractStorage.getAddress(encodedNodeManager)
     ])
+
+    console.log('reth: ', await deployedContractStorage.getAddress(keccak256('contract.addresspoolseaTokenRETH')),)
 
     const deployedContractMinipoolMan = await minipoolMan.at(addressMinipoolMan);
     const deployedContractNodeStaking = await nodeStaking.at(addressNodeStaking);
@@ -71,8 +75,8 @@ export async function main() {
     const nodesDepositsBalance = await Promise.all(minipoolsContracts.map(contr => contr.getNodeDepositBalance()))
     console.log("users deposit balances: ", usersDepositsBalance.map(el => BigInt(+(el))).toString())
     console.log("nodes deposit balances: ", nodesDepositsBalance.map(el => BigInt(+(el))).toString())
-    const minFraction = BigInt(+utils.parseUnits('0.1'));
-    const maxFraction = BigInt(+utils.parseUnits('1.5'));
+    const minFraction = ethers.parseUnits('0.1');
+    const maxFraction = ethers.parseUnits('1.5');
     const rplPrice = await deployedContractNetworkPrices.getRPLPrice()
     const eligibleBorrowedEth = usersDepositsBalance.reduce((previousValue, currentValue) => previousValue + BigInt(+(currentValue)), BigInt(0))
     const eligibleBondedEth = nodesDepositsBalance.reduce((previousValue, currentValue) => previousValue + BigInt(+(currentValue)), BigInt(0))
@@ -87,7 +91,8 @@ export async function main() {
     console.log("oDao members: ", membersAddresses)
     const membersDetails = await Promise.all(membersAddresses.map(addr => deployedContractNodeMan.getNodeDetails(addr)))
     console.log("oDao members data: ", membersDetails)
-    console.log("rewards intervals passed: ", await deployedContractRewardsPool.getClaimIntervalsPassed())
+    console.log("rewards intervals passed: ", +(await deployedContractRewardsPool.getClaimIntervalsPassed()))
+
 }
 
 main().catch(e => {

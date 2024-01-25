@@ -29,5 +29,13 @@
     "pako": "^1.0.6",
     "query-string": "^7.0.1",
     "web3": "^1.2.8"
+  },
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@uniswap/sdk-core": "^4.0.10",
+    "@uniswap/v3-periphery": "^1.4.3",
+    "@uniswap/v3-sdk": "^3.9.0",
+    "bignumber.js": "^9.1.2",
+    "web3-eth-contract": "^4.2.0"
   }
 }
